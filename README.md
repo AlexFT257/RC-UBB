@@ -8,6 +8,7 @@ npm i express cors apollo-server-express graphql graphql-import-node graphql-too
 
 npm i -D @types/cors @types/express @types/express-graphql @types/node nodemon ts-node typescript
 
+npm install jsonwebtoken
 
 bg-[#E2E2E2] para el background #E2E2E2
 
