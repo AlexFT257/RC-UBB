@@ -38,7 +38,8 @@ export default function prueba() {
   };
 
   return (
-    <div>
+    // TODO: Agregar un key que no sea Math.random()
+    <div key={Math.random()}>
       <h1>PRUEBA DE DATOS</h1>
       <form onSubmit={handleSubmit}>
         <div>
