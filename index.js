@@ -131,29 +131,8 @@ const typeDefinitions = gql`
 
 
     type Query {
-        count_alumnos_carrera: Int!
-        count_alumnos_asignatura: Int!
-        count_publicaciones_usuario: Int!
-        count_publicaciones_grupo: Int!
-        count_comentarios_publicacion: Int!
-        count_comentarios_comentario: Int!
-        count_megusta_publicacion: Int!
-        count_megusta_comentario: Int!
-        count_votos_votacion: Int!
-        count_votos_opcion: Int!
-        count_mensajes_chat: Int!
-        count_mensajes_usuario: Int!
-        count_imagenes_chat: Int!
-        count_imagenes_usuario: Int!
-        count_grupos_usuario: Int!
-        count_grupos_admin: Int!
-        count_miembros_grupo: Int!
-        count_amigos_usuario: Int!
-        count_amigos_solicitud: Int!
-        count_amigos_solicitud_enviada: Int!
-        count_amigos_solicitud_recibida: Int!
-        count_amigos_solicitud_aceptada: Int!
-        count_amigos_solicitud_rechazada: Int!
+        all_carreras: [Carrera]!
+        all_usuarios: [Usuario]!
     }
 
     type Mutation {
@@ -169,67 +148,76 @@ const typeDefinitions = gql`
 
 const resolvers = {
     Query: {
-        count_alumnos_carrera: () => Carrera.Usuario.countDocument(),
+        all_carreras: () => Carrera,
+        all_usuarios: () => Usuario
     },
     Mutation: {
-        crearUsuario: async (_, { input }) => {
+        crearUsuario: async (root, args) => {
+            const usuario = new Usuario({ ...args })
             try {
-                const usuario = await Usuario.create(input);
-                return usuario;
+                await usuario.save()
             } catch (error) {
-                console.error(error);
-                throw new Error("Error al crear usuario");
+                throw new UserInputError(error.message, {
+                    invalidArgs: args
+                })
             }
         },
-        editarUsuario: async (_, { id, input }) => {
+        editarUsuario: async (root, args) => {
+            const usuario = await Usuario.findOne({ rut: args.rut })
+            if(!usuario){
+                return null
+            }
+            usuario = new Usuario({ ...args })
             try {
-                const usuario = await Usuario.findByIdAndUpdate(id, input, { new: true });
-                if (!usuario) throw new Error("Usuario no encontrado");
-                return usuario;
+                await usuario.save()
             } catch (error) {
-                console.error(error);
-                throw new Error("Error al editar usuario");
+                throw new UserInputError(error.message, {
+                    invalidArgs: args
+                })
             }
         },
-        eliminarUsuario: async (_, { id }) => {
+        eliminarUsuario: async (root, args) => {
+            const usuario = await Usuario.findOne({ rut: args.rut })
             try {
-                const usuario = await Usuario.findByIdAndDelete(id);
-                if (!usuario) throw new Error("Usuario no encontrado");
-                return usuario;
+                await Usuario.deleteOne({ rut: args.rut })
             } catch (error) {
-                console.error(error);
-                throw new Error("Error al eliminar usuario");
+                throw new UserInputError(error.message, {
+                    invalidArgs: args
+                })
             }
         },
-        crearCarrera: async (_, { input }) => {
+        crearCarrera: async (root, args) => {
             try {
-                const carrera = await Carrera.create(input);
-                return carrera;
+                const carrera = new Carrera({ ...args });
+                await carrera.save();
             } catch (error) {
-                console.error(error);
-                throw new Error('Error al crear carrera');
+                throw new UserInputError(error.message, {
+                    invalidArgs: args
+                })
             }
         },
-        editarCarrera: async (_, { id, input }) => {
+        editarCarrera: async (root, args) => {
+            const carrera = await Carrera.findOne({ acronimo: args.acronimo })
+            if(!carrera){
+                return null
+            }
+            carrera = new Carrera({ ...args })
             try {
-                const carrera = await Carrera.findByPk(id);
-                if (!carrera) throw new Error('Carrera no encontrada');
-                await carrera.update(input);
-                return carrera;
+                await carrera.save()
             } catch (error) {
-                console.error(error);
-                throw new Error('Error al editar carrera');
+                throw new UsuarioInputError(error.message, {
+                    invalidArgs: args
+                })
             }
         },
-        eliminarCarrera: async (_, { id }) => {
+        eliminarCarrera: async (root, args) => {
+            const carrera = await Carrera.findOne({ acronimo: args.acronimo })
             try {
-                const carrera = await Carrera.findByPk(id);
-                if (!carrera) throw new Error('Carrera no encontrada');
-                await carrera.destroy();
-                return 'Carrera eliminada correctamente';
+                await Carrera.deleteOne({ acronimo: args.acronimo })
             } catch (error) {
-                console.error(error);
-                throw new Error('Error al eliminar carrera');
+                throw new UserInputError(error.message, {
+                    invalidArgs: args
+                })
             }
         },
     },

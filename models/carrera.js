@@ -11,6 +11,7 @@ const schema = new mongoose.Schema({
     acronimo: {
         type: String,
         required: true,
+        unique: true
     }
 })
 
