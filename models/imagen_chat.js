@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
     usuario: [
@@ -21,4 +21,4 @@ const schema = new mongoose.Schema({
     }
 })
 
-export default mongoose.model("Imagen_chat", schema)
+module.exports = mongoose.model("Imagen_chat", schema);

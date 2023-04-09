@@ -1,5 +1,6 @@
-import mongoose from "mongoose"
-dotenv.config()
+const mongoose = require("mongoose");
+const dotenv = require('dotenv')
+dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI
 

@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
     imagen_url:{
@@ -12,4 +12,4 @@ const schema = new mongoose.Schema({
     ]
 })
 
-export default mongoose.model("Chat", schema)
+module.exports = mongoose.model("Chat", schema);

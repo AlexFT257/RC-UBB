@@ -1,5 +1,6 @@
-import mongoose from "mongoose"
-import uniqueValidator from "mongoose-unique-validator"
+const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
+
 
 const schema = new mongoose.Schema({
     nombre: {
@@ -35,12 +36,6 @@ const schema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId
         }
     ],
-    asignaturas: [
-        {
-            ref: "Asignatura",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
     estado: {
         type: String,
         required: true
@@ -50,22 +45,34 @@ const schema = new mongoose.Schema({
         required: true
     },
     rol: {
+        type: String,
         required: true
     },
-    amigos: {
-        required: true
-    },
-    publicaciones: {
-        required: true
-    },
-    me_gusta: {
-        required: true
-    },
-    comentarios: {
-        type: Array,
-        required: true
-    }
+    amigos: [
+        {
+            ref: "Usuario",
+            type: mongoose.Schema.Types.ObjectId
+        }
+    ],
+    publicaciones: [
+        {
+            ref: "Publicacion",
+            type: mongoose.Schema.Types.ObjectId
+        }
+    ],
+    me_gusta: [
+        {
+            ref: "Me_Gusta",
+            type: mongoose.Schema.Types.ObjectId
+        }
+    ],
+    comentarios: [
+        {
+            ref: "Comentario",
+            type: mongoose.Schema.Types.ObjectId
+        }
+    ]
 })
 
 schema.plugin(uniqueValidator)
-export default mongoose.model("Usuario", schema)
+module.exports = mongoose.model("Usuario", schema);

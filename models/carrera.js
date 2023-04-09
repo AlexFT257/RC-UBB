@@ -1,5 +1,5 @@
-import mongoose from "mongoose"
-import uniqueValidator from "mongoose-unique-validator"
+const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const schema = new mongoose.Schema({
     nombre: {
@@ -11,14 +11,8 @@ const schema = new mongoose.Schema({
     acronimo: {
         type: String,
         required: true,
-    },
-    asignaturas: [
-        {
-            ref: "Asignatura",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ]
+    }
 })
 
 schema.plugin(uniqueValidator)
-export default mongoose.model("Carrera", schema)
+module.exports = mongoose.model("Carrera", schema);

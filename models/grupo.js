@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
     nombre: {
@@ -31,4 +31,4 @@ const schema = new mongoose.Schema({
     ]
 })
 
-export default mongoose.model("Grupo", schema)
+module.exports = mongoose.model("Grupo", schema);

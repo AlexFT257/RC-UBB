@@ -1,24 +1,25 @@
-import { ApolloServer, AuthenticationError, UserInputError, gql  } from "apollo-server";
-import './db.js'
-import Asignatura from "./models/asignatura.js"
-import Carrera from "./models/carrera.js"
-import Chat from './models/chat.js'
-import Comentario from "./models/comentario.js"
-import Grupo from './models/grupo.js'
-import Imagen_chat from "./models/imagen_chat.js"
-import Me_gusta from "./models/me_gusta.js"
-import Mensaje from './models/mensaje.js'
-import Opcion from './models/opcion.js'
-import Publicacion from './models/publicacion.js'
-import Usuario from './models/usuario.js'
-import Votacion from './models/votacion.js'
-import jwt from 'jsonwebtoken'
+const { ApolloServer, AuthenticationError, UserInputError, gql } = require('apollo-server');
+require('./db.js')
+const Carrera = require('./models/carrera.js');
+const Chat = require('./models/chat.js');
+const Comentario = require('./models/comentario.js');
+const Grupo = require('./models/grupo.js');
+const Imagen_chat = require('./models/imagen_chat.js');
+const Me_gusta = require('./models/me_gusta.js');
+const Mensaje = require('./models/mensaje.js');
+const Opcion = require('./models/opcion.js');
+const Publicacion = require('./models/publicacion.js');
+const Usuario = require('./models/usuario.js');
+const Votacion = require('./models/votacion.js');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 
 dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET
-
 const typeDefinitions = gql`
+
+    #scalar Date
 
     type Usuario {
         id: ID!
@@ -26,15 +27,14 @@ const typeDefinitions = gql`
         apellido: String!
         rut: String!
         email: String!
-        fecha_nacimiento: Date!
+        #fecha_nacimiento: Date!
         carrera: [Carrera]!
-        asignaturas: [Asignatura]!
         estado: String!
         grupos: [Grupo]
         rol: String
         amigos: [Usuario]
         publicaciones: [Publicacion]
-        me_gusta: [me_gusta]
+        me_gusta: [Me_gusta]
         comentarios: [Comentario]
     }
 
@@ -42,17 +42,6 @@ const typeDefinitions = gql`
         id: ID!
         nombre: String!
         acronimo: String!
-        asignaturas: [Asignatura]
-    }
-
-    type Asignatura {
-        id: ID!
-        cod_asignatura: String!
-        nombre: String!
-        semestre: String!
-        prof_encargado: String!
-        cupos: Int!
-        alumnos: [Usuario]
     }
 
     type Tipo_publicacion {
@@ -64,7 +53,7 @@ const typeDefinitions = gql`
     type Publicacion {
         id: ID!
         usuario: [Usuario]!
-        hora: Date!
+        #hora: Date!
         tipo: [Tipo_publicacion]!
         imagen_url: String
         texto: String
@@ -75,7 +64,7 @@ const typeDefinitions = gql`
 
     type Me_gusta {
         id: ID!
-        tipo : [tipo_megusta]!
+        tipo: [Tipo_megusta]!
         publicacion: [Publicacion]
         comentario: [Comentario]
     }
@@ -103,7 +92,7 @@ const typeDefinitions = gql`
         id: ID!
         usuario: [Usuario]!
         texto: String!
-        hora: Date!
+        #hora: Date!
         me_gusta: [Me_gusta]
         comentarios: [Comentario]
     }
@@ -127,14 +116,14 @@ const typeDefinitions = gql`
         id: ID!
         Usuario: [Usuario]!
         url: String!
-        hora: Date!
+        #hora: Date!
         texto: String
         visto: [Usuario]
     }
 
     type Mensaje {
         id: ID!
-        hora: Date!
+        #hora: Date!
         usuario: [Usuario]!
         texto: String!
         visto: [Usuario]
@@ -168,31 +157,81 @@ const typeDefinitions = gql`
     }
 
     type Mutation {
-        logear(email: String!, password: String!): [Usuario]!
-        registrar(nombre: String!, apellido: String!, rut: String!, email: String!, password: String!, fecha_nacimiento: Date!, carrera: String!, asignaturas: [String]!): [Usuario]!
-        crear_grupo(nombre: String!, descripcion: String!, admin: String!): [Grupo]!
-        agregar_miembro_grupo(id_grupo: String!, id_usuario: String!): [Usuario]!
-        agregar_amigo(id_usuario: String!, id_amigo: String!): [Usuario]!
-        aceptar_amigo(id_usuario: String!, id_amigo: String!): [Usuario]!
-        rechazar_amigo(id_usuario: String!, id_amigo: String!): [Usuario]!
-        crear_publicacion(usuario: String!, tipo: String!, imagen_url: String, texto: String, votaciones: [String]): [publicacion]!
-        crear_comentario(usuario: String!, texto: String!, hora: Date!, publicacion: String!, comentario: String!): [Comentario]!
-        crear_megusta(usuario: String!, tipo: String!, publicacion: String!, comentario: String!): [Me_gusta]!
-        crear_votacion(usuario: String!, pregunta: String!, opciones: [String]): [Votacion]!
-        crear_opcion(texto: String!, votos: [String]): [Opcion]!
-        crear_mensaje(usuario: String!, texto: String!, hora: Date!, chat: String!): [Mensaje]!
-        crear_imagen_chat(usuario: String!, url: String!, hora: Date!, texto: String!, visto: [String]): [Imagen_chat]!
-        crear_carrera(nombre: String!, acronimo: String!): [Carrera]!
+        crearUsuario(nombre: String!, apellido: String!, rut: String!, email: String!, carrera: String!, estado: String!, rol: String): Usuario
+        editarUsuario(id: ID!, nombre: String!, apellido: String!, rut: String!, email: String!, carrera: String!, estado: String!, rol: String): Usuario
+        eliminarUsuario(id: ID!): Usuario
+        crearCarrera(nombre: String!, acronimo: String!): Carrera
+        editarCarrera(id: ID!, nombre: String!, acronimo: String!): Carrera
+        eliminarCarrera(id: ID!): Carrera
     }
 
 `
 
 const resolvers = {
     Query: {
-
+        count_alumnos_carrera: () => Carrera.Usuario.countDocument(),
     },
     Mutation: {
-
+        crearUsuario: async (_, { input }) => {
+            try {
+                const usuario = await Usuario.create(input);
+                return usuario;
+            } catch (error) {
+                console.error(error);
+                throw new Error("Error al crear usuario");
+            }
+        },
+        editarUsuario: async (_, { id, input }) => {
+            try {
+                const usuario = await Usuario.findByIdAndUpdate(id, input, { new: true });
+                if (!usuario) throw new Error("Usuario no encontrado");
+                return usuario;
+            } catch (error) {
+                console.error(error);
+                throw new Error("Error al editar usuario");
+            }
+        },
+        eliminarUsuario: async (_, { id }) => {
+            try {
+                const usuario = await Usuario.findByIdAndDelete(id);
+                if (!usuario) throw new Error("Usuario no encontrado");
+                return usuario;
+            } catch (error) {
+                console.error(error);
+                throw new Error("Error al eliminar usuario");
+            }
+        },
+        crearCarrera: async (_, { input }) => {
+            try {
+                const carrera = await Carrera.create(input);
+                return carrera;
+            } catch (error) {
+                console.error(error);
+                throw new Error('Error al crear carrera');
+            }
+        },
+        editarCarrera: async (_, { id, input }) => {
+            try {
+                const carrera = await Carrera.findByPk(id);
+                if (!carrera) throw new Error('Carrera no encontrada');
+                await carrera.update(input);
+                return carrera;
+            } catch (error) {
+                console.error(error);
+                throw new Error('Error al editar carrera');
+            }
+        },
+        eliminarCarrera: async (_, { id }) => {
+            try {
+                const carrera = await Carrera.findByPk(id);
+                if (!carrera) throw new Error('Carrera no encontrada');
+                await carrera.destroy();
+                return 'Carrera eliminada correctamente';
+            } catch (error) {
+                console.error(error);
+                throw new Error('Error al eliminar carrera');
+            }
+        },
     },
     Tipo_publicacion: {
 

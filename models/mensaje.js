@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
     hora: {
@@ -18,4 +18,4 @@ const schema = new mongoose.Schema({
     }
 })
 
-export default mongoose.model("Mensaje", schema)
+module.exports = mongoose.model("Mensaje", schema);
