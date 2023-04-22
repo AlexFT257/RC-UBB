@@ -13,9 +13,17 @@ const schema = new mongoose.Schema({
         }
     ],
     texto: {
-        type: String,
-        required: true
-    }
+        type: String
+    },
+    imagen: {
+        type: String
+    },
+    visto: [
+        {
+            ref: "Usuario",
+            type: mongoose.Schema.Types.ObjectId,
+        }
+    ]
 })
 
 module.exports = mongoose.model("Mensaje", schema);

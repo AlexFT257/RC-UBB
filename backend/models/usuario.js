@@ -13,11 +13,11 @@ const schema = new mongoose.Schema({
         required: true,
         minlength: 3
     },
-    rut: {
+    nombre_usuario: {
         type: String,
         required: true,
         unique: true,
-        minlength: 7
+        minlength: 3
     },
     correo: {
         type: String,
@@ -27,7 +27,6 @@ const schema = new mongoose.Schema({
     },
     fecha_nacimiento: {
         type: Date,
-        required: true,
         min: "1970-01-01"
     },
     carrera: [

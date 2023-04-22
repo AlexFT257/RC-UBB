@@ -1,248 +1,70 @@
-const { ApolloServer, AuthenticationError, UserInputError, gql } = require('apollo-server');
+const { ApolloServer } = require('apollo-server');
 require('./db.js')
-const Carrera = require('./models/carrera.js');
-const Chat = require('./models/chat.js');
-const Comentario = require('./models/comentario.js');
-const Grupo = require('./models/grupo.js');
-const Imagen_chat = require('./models/imagen_chat.js');
-const Me_gusta = require('./models/me_gusta.js');
-const Mensaje = require('./models/mensaje.js');
-const Opcion = require('./models/opcion.js');
-const Publicacion = require('./models/publicacion.js');
-const Usuario = require('./models/usuario.js');
-const Votacion = require('./models/votacion.js');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const express = require('express');
-const cors = require('cors');
-const app = express();
-
-app.use(cors());
-
-
-
-
-
+const { mergeTypeDefs, mergeResolvers } = require('@graphql-toolkit/schema-merging');
+//Definitions
+const dbDefinitions = require('./gqlDefinitions/dbDefinitions.js');
+const mutationsDefinitions = require('./gqlDefinitions/mutationsDefinition.js');
+const queriesDefinitions = require('./gqlDefinitions/queriesDefinition.js');
+//Mutations
+const carreraMutation = require('./mutation/carreraMutation.js');
+const chatMutation = require('./mutation/chatMutation.js');
+const comentarioMutation = require('./mutation/comentarioMutation.js');
+const grupoMutation = require('./mutation/grupoMutation.js');
+const meGustaMutation = require('./mutation/meGustaMutation.js');
+const mensajeMutation = require('./mutation/mensajeMutation.js');
+const opcionMutation = require('./mutation/opcionMutation.js');
+const publicacionMutation = require('./mutation/publicacionMutation.js');
+const usuarioMutation = require('./mutation/usuarioMutation.js');
+const votacionMutation = require('./mutation/votacionMutation.js');
+//Queries
+const { carreraQueries } = require('./queries/carreraQueries.js');
+const { chatQueries } = require('./queries/chatQueries.js');
+const { comentarioQueries } = require('./queries/comentarioQueries.js');
+const { grupoQueries } = require('./queries/grupoQueries.js');
+const { meGustaQueries } = require('./queries/meGustaQueries.js');
+const { mensajeQueries } = require('./queries/mensajeQueries.js');
+const { opcionQueries } = require('./queries/opcionQueries.js');
+const { publicacionQueries } = require('./queries/publicacionQueries.js');
+const { usuarioQueries } = require('./queries/usuarioQueries.js');
+const { votacionQueries } = require('./queries/votacionQueries.js');
+//se importa el .env
 dotenv.config()
+const JWT_SECRET = process.env.JWT_SECRET //se obtiene el JWT_SECRET del .env
 
-const JWT_SECRET = process.env.JWT_SECRET
-const typeDefinitions = gql`
-
-    #scalar Date
-
-    type Usuario {
-        id: ID!
-        nombre: String!
-        apellido: String!
-        rut: String!
-        email: String!
-        #fecha_nacimiento: Date!
-        carrera: [Carrera]!
-        estado: String!
-        grupos: [Grupo]
-        rol: String
-        amigos: [Usuario]
-        publicaciones: [Publicacion]
-        me_gusta: [Me_gusta]
-        comentarios: [Comentario]
-    }
-
-    type Carrera {
-        id: ID!
-        nombre: String!
-        acronimo: String!
-    }
-
-    type Tipo_publicacion {
-        imagen: Boolean!
-        texto: Boolean!
-        votacion: Boolean!
-    }
-
-    type Publicacion {
-        id: ID!
-        usuario: [Usuario]!
-        #hora: Date!
-        tipo: [Tipo_publicacion]!
-        imagen_url: String
-        texto: String
-        votaciones: [Votacion]
-        comentarios: [Comentario]
-        me_gusta: [Me_gusta]
-    }
-
-    type Me_gusta {
-        id: ID!
-        tipo: [Tipo_megusta]!
-        publicacion: [Publicacion]
-        comentario: [Comentario]
-    }
-
-    type Tipo_megusta {
-        publicacion: Boolean!
-        comentario: Boolean!
-    }
-
-    type Votacion {
-        id: ID!
-        publicacion: [Publicacion]!
-        creador: [Usuario]!
-        pregunta: String!
-        opciones: [Opcion]!
-    }
-
-    type Opcion {
-        id: ID!
-        texto: String!
-        votos: [Usuario]
-    }
-
-    type Comentario {
-        id: ID!
-        usuario: [Usuario]!
-        texto: String!
-        #hora: Date!
-        me_gusta: [Me_gusta]
-        comentarios: [Comentario]
-    }
-
-    type Grupo {
-        id: ID!
-        nombre: String!
-        descripcion: String
-        chat: [Chat]!
-        admin: [Usuario]!
-        miembros: [Usuario]!
-    }
-
-    type Chat {
-        id: ID!
-        Imagen_chat: [Imagen_chat]
-        mensajes: [Mensaje]
-    }
-
-    type Imagen_chat {
-        id: ID!
-        Usuario: [Usuario]!
-        url: String!
-        #hora: Date!
-        texto: String
-        visto: [Usuario]
-    }
-
-    type Mensaje {
-        id: ID!
-        #hora: Date!
-        usuario: [Usuario]!
-        texto: String!
-        visto: [Usuario]
-    }
-
-
-    type Query {
-        all_carreras: [Carrera]!
-        all_usuarios: [Usuario]!
-    }
-
-    type Mutation {
-        crearUsuario(nombre: String!, apellido: String!, rut: String!, email: String!, carrera: String!, estado: String!, rol: String): Usuario
-        editarUsuario(id: ID!, nombre: String!, apellido: String!, rut: String!, email: String!, carrera: String!, estado: String!, rol: String): Usuario
-        eliminarUsuario(id: ID!): Usuario
-        crearCarrera(nombre: String!, acronimo: String!): Carrera
-        editarCarrera(id: ID!, nombre: String!, acronimo: String!): Carrera
-        eliminarCarrera(id: ID!): Carrera
-    }
-
-`
-
+//se crean los resolvers
 const resolvers = {
     Query: {
-        all_carreras: () => Carrera,
-        all_usuarios: () => Usuario
+        ...carreraQueries,
+        ...chatQueries,
+        ...comentarioQueries,
+        ...grupoQueries,
+        ...meGustaQueries,
+        ...mensajeQueries,
+        ...opcionQueries,
+        ...publicacionQueries,
+        ...usuarioQueries,
+        ...votacionQueries
     },
     Mutation: {
-        crearUsuario: async (root, args) => {
-            const usuario = new Usuario({ ...args })
-            try {
-                await usuario.save()
-            } catch (error) {
-                throw new UserInputError(error.message, {
-                    invalidArgs: args
-                })
-            }
-        },
-        editarUsuario: async (root, args) => {
-            const usuario = await Usuario.findOne({ rut: args.rut })
-            if(!usuario){
-                return null
-            }
-            usuario = new Usuario({ ...args })
-            try {
-                await usuario.save()
-            } catch (error) {
-                throw new UserInputError(error.message, {
-                    invalidArgs: args
-                })
-            }
-        },
-        eliminarUsuario: async (root, args) => {
-            const usuario = await Usuario.findOne({ rut: args.rut })
-            try {
-                await Usuario.deleteOne({ rut: args.rut })
-            } catch (error) {
-                throw new UserInputError(error.message, {
-                    invalidArgs: args
-                })
-            }
-        },
-        crearCarrera: async (root, args) => {
-            try {
-                const carrera = new Carrera({ ...args });
-                const savedCarrera = await carrera.save();
-                return savedCarrera;
-            } catch (error) {
-                throw new UserInputError(error.message, {
-                    invalidArgs: args
-                })
-            }
-        },
-        editarCarrera: async (root, args) => {
-            const carrera = await Carrera.findOne({ acronimo: args.acronimo })
-            if(!carrera){
-                return null
-            }
-            carrera = new Carrera({ ...args })
-            try {
-                await carrera.save()
-            } catch (error) {
-                throw new UsuarioInputError(error.message, {
-                    invalidArgs: args
-                })
-            }
-        },
-        eliminarCarrera: async (root, args) => {
-            const carrera = await Carrera.findOne({ acronimo: args.acronimo })
-            try {
-                await Carrera.deleteOne({ acronimo: args.acronimo })
-            } catch (error) {
-                throw new UserInputError(error.message, {
-                    invalidArgs: args
-                })
-            }
-        },
-    },
-    Tipo_publicacion: {
-
-    },
-    Tipo_megusta: {
-
-    },
+        ...carreraMutation,
+        ...chatMutation,
+        ...comentarioMutation,
+        ...grupoMutation,
+        ...meGustaMutation,
+        ...mensajeMutation,
+        ...opcionMutation,
+        ...publicacionMutation,
+        ...usuarioMutation,
+        ...votacionMutation
+    }
 
 }
 
 const server = new ApolloServer({
-    typeDefs: typeDefinitions,
-    resolvers//FALTA EL METODO DE INICIO DE SESION
+    typeDefs: mergeTypeDefs([dbDefinitions, mutationsDefinitions, queriesDefinitions]),
+    resolvers
 })
 
 server.listen().then(({ url }) => {
