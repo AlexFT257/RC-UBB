@@ -9,24 +9,12 @@ type Query {
     #Chat
     all_chats: [Chat]!
     buscarChat(id: ID!): [Chat]
-    #Comentario
-    all_comentarios: [Comentario]!
-    buscarComentarioId(id: ID!): [Comentario]
-    buscarComentarioUsuario(usuario: ID!): [Comentario]
-    buscarComentarioPublicacion(publicacion: ID!): [Comentario]
-    buscarComentario(buscar: String!): [Comentario]
     #Grupo
     all_grupos: [Grupo]!
     buscarGrupo(buscar: String!): [Grupo]
     buscarGrupoId(id: ID!): [Grupo]
     buscarGrupoUsuario(usuario: ID!): [Grupo]
     buscarGrupoAdmin(admin: ID!): [Grupo]
-    #Me_gusta
-    all_meGusta: [Me_gusta]!
-    buscarMeGustaId(id: ID!): [Me_gusta]
-    buscarMeGustaTipo(tipo: String!): [Me_gusta]
-    buscarMeGustaUsuario(usuario: ID!): [Me_gusta]
-    buscarMeGustaPublicacion(publicacion: ID!): [Me_gusta]
     #Mensaje
     all_mensajes: [Mensaje]!
     buscarMensaje(buscar: String!): [Mensaje]
