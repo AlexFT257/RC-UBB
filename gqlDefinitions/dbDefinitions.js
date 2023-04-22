@@ -17,8 +17,8 @@ type Usuario {
     rol: String
     amigos: [Usuario]
     publicaciones: [Publicacion]
-    me_gusta: [Me_gusta]
-    comentarios: [Comentario]
+    me_gusta: [Publicacion]
+    comentarios: [Publicacion]
 }
 
 type Carrera {
@@ -26,7 +26,6 @@ type Carrera {
     nombre: String!
     acronimo: String!
 }
-
 
 type Publicacion {
     id: ID!
@@ -36,14 +35,6 @@ type Publicacion {
     texto: String
     votaciones: [Votacion]
     comentarios: [Publicacion]
-    me_gusta: [Me_gusta]
-}
-
-type Me_gusta {
-    id: ID!
-    tipo: String!
-    usuario: [Usuario]!
-    publicacion: [Publicacion]
 }
 
 type Votacion {
@@ -54,21 +45,11 @@ type Votacion {
     opciones: [Opcion]!
 }
 
-
 type Opcion {
     id: ID!
     texto: String!
     votos: [Usuario]
     cantVotos: Int!
-}
-
-type Comentario {
-    id: ID!
-    usuario: [Usuario]!
-    texto: String!
-    hora: Date!
-    me_gusta: [Me_gusta]
-    comentarios: [Comentario]
 }
 
 

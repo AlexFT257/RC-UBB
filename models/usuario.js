@@ -61,7 +61,7 @@ const schema = new mongoose.Schema({
     ],
     me_gusta: [
         {
-            ref: "Me_Gusta",
+            ref: "Publicacion",
             type: mongoose.Schema.Types.ObjectId
         }
     ],

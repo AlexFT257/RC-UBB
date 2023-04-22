@@ -15,10 +15,6 @@ type Mutation {
     crearPublicacion(usuario: ID!, hora: Date!, imagen_url: String, texto: String): Publicacion
     editarPublicacion(id: ID!, usuario: ID!, hora: Date!, imagen_url: String, texto: String): Publicacion
     eliminarPublicacion(id: ID!): Publicacion
-    #Me_gusta
-    crearMeGusta(tipo: String!, usuario: ID!, publicacion: ID): Me_gusta
-    editarMeGusta(id: ID!, tipo: String!, usuario: ID!, publicacion: ID): Me_gusta
-    eliminarMeGusta(id: ID!): Me_gusta
     #Votacion
     crearVotacion(publicacion: ID!, creador: ID!, pregunta: String!, opciones: [String]): Votacion
     editarVotacion(id: ID!, publicacion: ID!, creador: ID!, pregunta: String!, opciones: [String]): Votacion
@@ -27,10 +23,6 @@ type Mutation {
     crearOpcion(texto: String!, votos: [ID]): Opcion
     editarOpcion(id: ID!, texto: String!, votos: [ID]): Opcion
     eliminarOpcion(id: ID!): Opcion
-    #Comentario
-    crearComentario(usuario: ID!, texto: String!, hora: Date!): Comentario
-    editarComentario(id: ID!, usuario: ID!, texto: String!, hora: Date!): Comentario
-    eliminarComentario(id: ID!): Comentario
     #Grupo
     crearGrupo(nombre: String!, descripcion: String, chat: ID!, admin: ID!, miembros: [ID]): Grupo
     editarGrupo(id: ID!, nombre: String!, descripcion: String, chat: ID!, admin: ID!, miembros: [ID]): Grupo
@@ -44,7 +36,5 @@ type Mutation {
     editarMensaje(id: ID!, hora: Date!, usuario: ID!, texto: String, imagen: String, visto: [ID]): Mensaje
     eliminarMensaje(id: ID!): Mensaje
 }
-
 `
-
 module.exports = typeDefs;
