@@ -51,7 +51,7 @@ export default function EventList() {
     return (
       <li
         key={event.id}
-        className="flex flex-row border-b snap-start border-gray-200 xl:p-4  dark:border-gray-700"
+        className="flex flex-row border-b  snap-start border-gray-200 xl:p-4  dark:border-gray-700"
       >
         {/* imagen del calendario con la fecha*/}
         <div className="flex  relative">

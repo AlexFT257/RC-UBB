@@ -32,7 +32,7 @@ export default function Home() {
       authorImg: "/bodoque.jpeg",
       group: "31 Minutos",
       content: "Hola, soy Juan Carlos Bodoque",
-      images: ["/juanin.png", "/juanin.png"],
+      images: ["/juanin.png", "/tulio.png", "/bodoque.jpeg", "/juanin.png"],
       date: "2023-04-22",
       likes: 123,
       dislikes: 0,
@@ -119,7 +119,7 @@ export default function Home() {
           // contenedor del comentario
           <div
             key={comment.id}
-            className="my-2 dark:bg-bgDarkColorTrasparent dark:text-[#a9dacb]  rounded-md shadow-md"
+            className="my-2 rounded-md shadow-md  dark:bg-bgDarkColorTrasparent dark:text-[#a9dacb]"
           >
             <div className=" flex flex-row items-center justify-between gap-2   p-2">
               <div className="flex items-center gap-2 align-middle">
@@ -133,7 +133,7 @@ export default function Home() {
                 {/* div para la fecha y nombre de usuario */}
                 <div className="flex flex-col gap-2">
                   {/* div nombre y fecha */}
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-2">
                     <h1 className=" font-semibold">{comment.author}</h1>
                     <h2 className="text-sm text-gray-500">
                       {dateParsed(comment.date)}
@@ -145,7 +145,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="flex p-2 gap-2">
+              <div className="flex gap-2 p-2">
                 <AiOutlineLike className="text-2xl" />
                 <h1 className="">{comment.likes}</h1>
                 <AiOutlineMessage className="text-2xl" />
@@ -160,6 +160,89 @@ export default function Home() {
         return null;
       }
     });
+
+    const imagesHandler = (images) => {
+      if (images.length < 0) {
+        return <></>;
+      } else if (images.length === 1) {
+        return (
+          <div key={randomUUID} className="flex justify-center">
+            <Image
+              src={images[0]}
+              alt="Foto Perfil"
+              className="w-full rounded "
+              height={500}
+              width={500}
+            />
+          </div>
+        );
+      } else if (images.length === 2) {
+        return (
+          <div key={randomUUID} className="grid grid-cols-2 m-2 gap-2">
+            {images.map((image) => (
+              <Image
+                src={image}
+                alt="Foto Perfil"
+                className="  rounded "
+                height={500}
+                width={500}
+              />
+            ))}
+          </div>
+        );
+      } else if (images.length === 3) {
+        
+        
+        return (
+          <div key={randomUUID} className="grid gap-2  grid-cols-2 grid-rows-2">
+            {images.map((image, index) => {
+              if(index === 0){
+                return (
+                  <Image
+                    src={image}
+                    alt="Foto Perfil"
+                    className="rounded h-full row-span-2"
+                    height={1000}
+                    width={500}
+                  />
+                )
+              }else{
+                return (
+                  <Image
+                  src={image}
+                  alt="Foto Perfil"
+                  className="rounded  row-span-1"
+                  height={500}
+                  width={500}
+                />
+                )
+              }
+
+
+      })}
+
+
+          </div>
+        );
+      } else if (images.length === 4 || images.length > 4) {
+        return (
+          <div key={randomUUID} className="grid gap-2 grid-cols-2 grid-rows-2">
+            {/* quedaron terrible grandes las imagenes perdon :c */}
+            {images.map((image) => {
+              return (
+                <Image
+                  src={image}
+                  alt="Foto Perfil"
+                  className="rounded "
+                  height={500}
+                  width={500}
+                />
+              );
+            })}
+          </div>
+        );
+      }
+    };
 
     console.log(commentList);
     console.log(commentList === null);
@@ -176,8 +259,8 @@ export default function Home() {
                 src={publication.authorImg}
                 alt="Foto Perfil"
                 className="rounded "
-                height={75}
-                width={75}
+                height={60}
+                width={60}
               />
               {/* div para la fecha y nombre de usuario */}
               <div>
@@ -198,24 +281,13 @@ export default function Home() {
             <p className="">{publication.content}</p>
             {/* contenedor de images si corresponde */}
             <div className="flex justify-center">
-              <div className="my-2 flex h-1/5 w-1/5 flex-row justify-center gap-2">
-                {publication.images.map((image) => (
-                  <Image
-                    key={randomUUID}
-                    src={image}
-                    alt="Foto Perfil"
-                    className="h-full rounded-md shadow-md hover:opacity-80"
-                    height={1000}
-                    width={1000}
-                  />
-                ))}
-              </div>
+              {imagesHandler(publication.images)}
             </div>
           </div>
           {/* footer */}
           <div className=" bg-slate- ">
             {/* informacion de publicacion */}
-            <div className="m-2  flex flex-row gap-2 items-center  font-semibold md:justify-between">
+            <div className="m-2  flex flex-row items-center gap-2  font-semibold md:justify-between">
               {/* left side */}
               <div className="flex flex-row items-center gap-2">
                 <button className=" ">
@@ -228,10 +300,10 @@ export default function Home() {
                 </div>
               </div>
               {/* right side */}
-                <button className="flex p-2 hover:cursor-pointer hover:opacity-80 active:opacity-70">
+              <button className="flex p-2 hover:cursor-pointer hover:opacity-80 active:opacity-70">
                 <AiOutlineShareAlt className="text-2xl" />
-                </button>
-                {/* inserte icono(?) */}
+              </button>
+              {/* inserte icono(?) */}
             </div>
 
             {commentList[0] !== null ? (
@@ -246,13 +318,13 @@ export default function Home() {
             </div>
             {/* input para comentar */}
             <div className="flex items-center gap-2">
-              <AiOutlinePicture className="text-3xl ml-4" />
+              <AiOutlinePicture className="ml-4 text-3xl" />
               <textarea
                 type="text"
                 className="m-2 h-10 w-full resize-none rounded-md p-2 transition-all duration-500  ease-in-out focus:h-20 dark:bg-[#03001c] dark:text-[#a9dacb]"
                 placeholder="Comentar"
               />
-              <AiOutlineSend className="text-3xl mr-4" />
+              <AiOutlineSend className="mr-4 text-3xl" />
             </div>
           </div>
         </div>
@@ -273,7 +345,7 @@ export default function Home() {
 
       <main className="min-h-screen ">
         {/* Header */}
-        <Header className="sticky top-0"/>
+        <Header className="sticky top-0" />
 
         {/* content */}
         <div className=" grid  w-screen grid-flow-col grid-cols-5 ">
@@ -282,13 +354,12 @@ export default function Home() {
             {/* perfil */}
             <ProfileDisplay />
 
-
             {/* grupos recientes */}
             <RecentGroups />
           </div>
 
           {/* Publicaciones / feed */}
-          <div className="bg-slate- col-span-5 transition-all delay-75 duration-300 ease-in-out  p-2 lg:col-span-3">
+          <div className="bg-slate- col-span-5 p-2 transition-all delay-75 duration-300  ease-in-out lg:col-span-3">
             {/* publiacaiones cards */}
             {publicationList}
           </div>

@@ -8,6 +8,7 @@ import Header from "../components/header";
 import ProfileDisplay from "../components/profileDisplay";
 import RecentGroups from "../components/recentGroups";
 import FriendList from "../components/friendList";
+import EventList from "@/components/eventList";
 
 export default function GroupPage() {
   const [date, setDate] = useState("");
@@ -34,7 +35,7 @@ export default function GroupPage() {
           {/* content */}
           <div className=" grid  w-screen grid-flow-col grid-cols-5">
             {/* Perfil y grupos recientes(?) */}
-            <div className="col-span-1 dark:bg-[#231842] dark:text-[#a9dacb] m-2 hidden h-fit flex-col rounded-md  bg-white p-2 text-black  shadow-xl lg:flex">
+            <div className="col-span-1  dark:text-[#a9dacb] m-2 hidden h-fit flex-col rounded-md   p-2 text-black  shadow-xl lg:flex">
               {/* perfil */}
               <ProfileDisplay />
 
@@ -150,12 +151,10 @@ export default function GroupPage() {
                 </div>
               </div>
             </div>
-            <div className="col-span-1 dark:bg-[#231842] dark:text-[#a9dacb] m-2 hidden h-fit flex-col rounded-md bg-white p-2 text-black  shadow-xl lg:flex">
-              {/* Lista de amigos */}
-              <div>
-                <h1 className="text-2xl font-semibold">Amigos</h1>
-              </div>
-              {/* Lista */}
+            <div className="col-span-1  dark:text-[#a9dacb] m-2 hidden h-fit flex-col rounded-md  p-2 text-black  shadow-xl lg:flex">
+              {/* calendario */}
+              <EventList/>
+              {/* Lista de amigos */}             
               <FriendList />
             </div>
           </div>
