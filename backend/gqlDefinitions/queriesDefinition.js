@@ -34,6 +34,7 @@ type Query {
     buscarPublicacionHora(hora: Date!): [Publicacion]
     #Usuario
     all_usuarios: [Usuario]!
+    
     buscarUsuario(buscar: String!): [Usuario]
     buscarUsuarioId(id: ID!): [Usuario]
     buscarUsuarioCorreo(email: String!): [Usuario]
@@ -53,6 +54,7 @@ type Query {
     buscarVotacionPublicacion(publicacion: ID!): [Publicacion]
     #buscarVotacionResultados(id: ID!): [Votacion]
 }
+
 `
 
 module.exports = typeDefs;
