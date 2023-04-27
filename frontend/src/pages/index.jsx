@@ -21,6 +21,8 @@ import {
   AiOutlineSend,
   AiOutlinePicture,
 } from "react-icons/ai";
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -333,6 +335,7 @@ export default function Home() {
   });
 
   return (
+    
     <div className="bg-[#e2e2e2]  dark:bg-[#03001C]">
       <Head>
         <title>RC UBB</title>
@@ -379,5 +382,6 @@ export default function Home() {
         </div>
       </main>
     </div>
+    
   );
 }
