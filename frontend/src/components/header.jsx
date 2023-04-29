@@ -73,7 +73,7 @@ export default function Header() {
       return (
         <div
           key={id}
-          className="flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2"
+          className="flex flex-grow m-2 justify-between rounded-md bg-bgDarkColorTrasparent p-2"
         >
           <div className="flex flex-col">
             {/* TODO: inserte aqui la foto (user no tiene foto) */}
@@ -102,7 +102,7 @@ export default function Header() {
     console.log("Grupos", groups?.data);
     return groups?.buscarGrupo.map(
       ({ id, nombre, privacidad, descripcion }) => (
-        <div key={id}>
+        <div key={id} className="m-2">
           <p>
             {nombre} {privacidad} {descripcion}
           </p>
@@ -175,11 +175,13 @@ export default function Header() {
         {isComponentVisible && (
           // el posicionamiento del dropdown se hace con tailwind y absolute pa que
           // se vea abajo del input y no se mueva con el scroll
-          <div className="absolute left-1/4 top-20 z-50   w-1/2 rounded-lg p-4  shadow-lg dark:text-[#a9dacb] dark:backdrop-blur-3xl">
+          <div className="absolute left-1/4 top-20 z-50   w-1/2 rounded-lg p-4  shadow-2xl dark:text-[#a9dacb]  bg-accentDarkColor border border-textDarkColor  ">
+            <h1 className="text-xl ">Personas</h1>
             <div className="flex flex-col gap-2">
               <Users data={data} error={error} loading={loading} />
             </div>
-            <div>
+            <h1 className="text-xl ">Grupos</h1>
+            <div className="gap-2 flex flex-col">
               <Groups
                 groups={groups?.data}
                 error2={error2}
