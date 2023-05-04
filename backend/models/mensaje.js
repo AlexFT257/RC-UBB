@@ -1,0 +1,29 @@
+const mongoose = require("mongoose");
+
+const schema = new mongoose.Schema({
+    hora: {
+        type: Date,
+        required: true
+    },
+    usuario:[
+        {
+            ref: "Usuario",
+            type: mongoose.Schema.Types.ObjectId,
+            required: true
+        }
+    ],
+    texto: {
+        type: String
+    },
+    imagen: {
+        type: String
+    },
+    visto: [
+        {
+            ref: "Usuario",
+            type: mongoose.Schema.Types.ObjectId,
+        }
+    ]
+})
+
+module.exports = mongoose.model("Mensaje", schema);
