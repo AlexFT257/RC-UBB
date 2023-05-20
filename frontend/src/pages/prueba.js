@@ -39,7 +39,7 @@ export default function prueba() {
 
   return (
     <div>
-      <h1>PRUEBA DE DATOS</h1>
+      <h1>MI PAGINA PERRONA </h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="nombre">Nombre:</label>

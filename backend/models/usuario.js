@@ -48,6 +48,10 @@ const schema = new mongoose.Schema({
         type: String,
         required: true
     },
+    
+    foto_perfil: {
+       type: String
+    },
     amigos: [
         {
             ref: "Usuario",
