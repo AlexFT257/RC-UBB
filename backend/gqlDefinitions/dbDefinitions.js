@@ -10,6 +10,7 @@ type Usuario {
     apellido: String!
     nombre_usuario: String!
     correo: String!
+    contrasena:String!
     fecha_nacimiento: Date
     carrera: [Carrera]!
     estado: String!
@@ -20,7 +21,9 @@ type Usuario {
     me_gusta: [Publicacion]
     comentarios: [Publicacion]
 }
-
+type Token{
+    value: String!
+}
 type Carrera {
     id: ID!
     nombre: String!

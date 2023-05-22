@@ -3,6 +3,7 @@ const uniqueValidator = require("mongoose-unique-validator");
 
 
 const schema = new mongoose.Schema({
+    _id: mongoose.Types.ObjectId,
     nombre: {
         type: String,
         required: true,
@@ -25,8 +26,14 @@ const schema = new mongoose.Schema({
         unique: true,
         minlength: 7
     },
+    contrasena: {
+        type: String,
+        required: true,
+        minlength: 8
+    },
     fecha_nacimiento: {
         type: Date,
+        required: true,
         min: "1970-01-01"
     },
     carrera: [

@@ -4,7 +4,11 @@ const typeDefs = gql`
 
 type Mutation {
     #Usuario
-    crearUsuario(nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
+    crearUsuario(nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!,contrasena:String!,fecha_nacimiento: Date, carrera: ID!, estado: String!, rol: String): Usuario
+    login(correo:String!, contrasena:String!):Token
+    forgotPassword(correo: String!): ForgotPasswordResponse!
+    verificarClaveTemporal(correo: String!, claveTemporal: String!): Boolean!
+
     editarUsuario(id: ID!, nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
     eliminarUsuario(id: ID!): Usuario
     #Carrera
@@ -35,6 +39,9 @@ type Mutation {
     crearMensaje(hora: Date!, usuario: ID!, texto: String, imagen: String, visto: [ID]): Mensaje
     editarMensaje(id: ID!, hora: Date!, usuario: ID!, texto: String, imagen: String, visto: [ID]): Mensaje
     eliminarMensaje(id: ID!): Mensaje
+}
+type ForgotPasswordResponse {
+  success: Boolean!
 }
 `
 module.exports = typeDefs;
