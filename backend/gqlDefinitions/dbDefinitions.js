@@ -22,6 +22,15 @@ type Usuario {
     comentarios: [Publicacion]
 }
 
+type calendario {
+        id: ID!
+        titulo: String!
+        fecha_inicio: Date!
+        fecha_fin: Date!
+        descripcion: String
+        usuario: [Usuario]!
+    }
+
 type Carrera {
     id: ID!
     nombre: String!

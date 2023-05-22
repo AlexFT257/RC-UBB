@@ -8,6 +8,7 @@ const dbDefinitions = require('./gqlDefinitions/dbDefinitions.js');
 const mutationsDefinitions = require('./gqlDefinitions/mutationsDefinition.js');
 const queriesDefinitions = require('./gqlDefinitions/queriesDefinition.js');
 //Mutations
+const calendarioMutation = require('./mutation/calendarioMutation.js');
 const carreraMutation = require('./mutation/carreraMutation.js');
 const chatMutation = require('./mutation/chatMutation.js');
 const grupoMutation = require('./mutation/grupoMutation.js');
@@ -42,6 +43,7 @@ const resolvers = {
         ...votacionQueries
     },
     Mutation: {
+        ...calendarioMutation,
         ...carreraMutation,
         ...chatMutation,
         ...grupoMutation,
