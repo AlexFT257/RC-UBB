@@ -111,7 +111,7 @@ export default function Home() {
       return "hace un momento";
     }
   };
-
+  
   // map de publicaciones
   const publicationList = publications.map((publication) => {
     // mapeo de comentarios

@@ -11,7 +11,6 @@ const schema = new mongoose.Schema({
     },
     chat:[
         {
-            required: true,
             ref: "Chat",
             type: mongoose.Schema.Types.ObjectId
         }

@@ -11,6 +11,7 @@ const usuarioQueries = {
                 { nombre: { $regex: args.buscar, $options: 'i' } },
                 { apellido: { $regex: args.buscar, $options: 'i' } },
                 { nombre_usuario: { $regex: args.buscar, $options: 'i' } },
+                { correo: { $regex: args.buscar, $options: 'i' }},
             ]
         });
         return usuario;

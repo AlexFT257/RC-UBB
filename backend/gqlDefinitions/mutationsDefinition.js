@@ -24,8 +24,8 @@ type Mutation {
     editarOpcion(id: ID!, texto: String!, votos: [ID]): Opcion
     eliminarOpcion(id: ID!): Opcion
     #Grupo
-    crearGrupo(nombre: String!, descripcion: String, chat: ID!, admin: ID!, miembros: [ID]): Grupo
-    editarGrupo(id: ID!, nombre: String!, descripcion: String, chat: ID!, admin: ID!, miembros: [ID]): Grupo
+    crearGrupo(nombre: String!, descripcion: String, chat: ID, admin: ID!, miembros: [ID]): Grupo
+    editarGrupo(id: ID!, nombre: String!, descripcion: String, chat: ID, admin: ID!, miembros: [ID]): Grupo
     eliminarGrupo(id: ID!): Grupo
     #Chat
     crearChat(mensajes: [ID]): Chat

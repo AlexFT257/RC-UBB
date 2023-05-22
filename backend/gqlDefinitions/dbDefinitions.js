@@ -57,7 +57,7 @@ const typeDefs = gql`
     privacidad: String!
     vencimiento: Date
     descripcion: String
-    chat: [Chat]!
+    chat: [Chat]
     admin: [Usuario]!
     miembros: [Usuario]!
   }

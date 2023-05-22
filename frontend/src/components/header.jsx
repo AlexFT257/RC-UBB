@@ -8,21 +8,23 @@ import {
   AiOutlineGroup,
   AiOutlineIdcard,
   AiOutlineUserAdd,
+  AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 // import { SEARCH_USERS } from "@/graphql/queries";
 import { useEffect, useState, useRef } from "react";
 // import axios from "axios";
 import { gql, useQuery } from "@apollo/client";
-import { KeyObject } from "crypto";
 
 export default function Header() {
   const [search, setSearch] = useState("");
+  const [searchGroup, setSearchGroup] = useState("");
   const [showResults, setShowResults] = useState(false);
 
   // esta funcion cambia el valor del search cada vez que se escribe en el input
   const handleSearch = (e) => {
     e.preventDefault();
     setSearch(e.target.value);
+    setSearchGroup(e.target.value);
   };
 
   // Las dos siguientes constantes son las consultas a la API de los datos
@@ -39,10 +41,9 @@ export default function Header() {
 
   const GET_GROUP_BY_NAME = gql`
   query {
-    buscarGrupo(buscar: "${search}") {
+    buscarGrupo(buscar: "${searchGroup}") {
       id
       nombre
-      privacidad
       descripcion
     }
   }
@@ -52,7 +53,53 @@ export default function Header() {
   // y como es un hook no puede estar dentro de una funcion
   // por eso se declaran los loading error y data aqui y se pasan como props a la funcion
   const { loading, error, data } = useQuery(GET_USER_BY_NAME);
-  const { loading2, error2, groups } = useQuery(GET_GROUP_BY_NAME);
+  const { loading2, error2, data: groups } = useQuery(GET_GROUP_BY_NAME);
+
+  // la funcion Groups recibe los datos de la consulta y los muestra en pantalla
+  function Groups({ groups, error2, loading2 }) {
+    if (loading2) return <p>Loading...</p>;
+    if (error2) return <p>Error :</p>;
+    console.log("Grupos", groups?.buscarGrupo);
+
+    if (groups?.buscarGrupo?.length === 0) {
+      return (
+        <div className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2">
+          <div className="flex flex-col">
+            <h1>No se encontraron grupos</h1>
+          </div>
+        </div>
+      );
+    }
+
+    // funcion que envia la solicitud de unirse al grupo
+    const handleResquestGroup = (e) => {
+      e.preventDefault();
+      console.log("Solicitud enviada");
+    };
+
+    return groups?.buscarGrupo?.map(({ id, nombre, descripcion }) => (
+      <div
+          key={id}
+          className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2"
+        >
+          <div className="flex flex-col">
+            {/* TODO: inserte aqui la foto (user no tiene foto) */}
+            <h1>
+              {nombre}
+            </h1>
+            <p className="hidden lg:flex">{descripcion}</p>
+          </div>
+          <div className="m-2 flex">
+            <button
+              onClick={handleResquestGroup}
+              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            >
+              <AiOutlineUsergroupAdd />
+            </button>
+          </div>
+        </div>
+    ));
+  }
 
   // la funcion Users recibe los datos de la consulta y los muestra en pantalla
   function Users({ data, error, loading }) {
@@ -61,8 +108,18 @@ export default function Header() {
     if (error) return <p>Error</p>;
     console.log("Usuarios", data);
 
-    return data?.buscarUsuario?.map(({ id, nombre, apellido, correo }) => {
+    // si no hay usuarios que mostrar, muestra un mensaje
+    if (data?.buscarUsuario?.length === 0) {
+      return (
+        <div className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2">
+          <div className="flex flex-col">
+            <h1>No se encontraron usuarios</h1>
+          </div>
+        </div>
+      );
+    }
 
+    return data?.buscarUsuario?.map(({ id, nombre, apellido, correo }) => {
       // funcion que envia la solicitud de amistad
       const handleAddFriend = (e) => {
         e.preventDefault();
@@ -73,14 +130,14 @@ export default function Header() {
       return (
         <div
           key={id}
-          className="flex flex-grow m-2 justify-between rounded-md bg-bgDarkColorTrasparent p-2"
+          className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2"
         >
           <div className="flex flex-col">
             {/* TODO: inserte aqui la foto (user no tiene foto) */}
             <h1>
               {nombre} {apellido}
             </h1>
-            <p className="hidden md:flex">{correo}</p>
+            <p className="hidden lg:flex">{correo}</p>
           </div>
           <div className="m-2 flex">
             <button
@@ -93,22 +150,6 @@ export default function Header() {
         </div>
       );
     });
-  }
-
-  // la funcion Groups recibe los datos de la consulta y los muestra en pantalla
-  function Groups({ groups, error2, loading2 }) {
-    if (loading2) return <p>Loading...</p>;
-    if (error2) return <p>Error :</p>;
-    console.log("Grupos", groups?.data);
-    return groups?.buscarGrupo.map(
-      ({ id, nombre, privacidad, descripcion }) => (
-        <div key={id} className="m-2">
-          <p>
-            {nombre} {privacidad} {descripcion}
-          </p>
-        </div>
-      )
-    );
   }
 
   console.log(search);
@@ -175,18 +216,14 @@ export default function Header() {
         {isComponentVisible && (
           // el posicionamiento del dropdown se hace con tailwind y absolute pa que
           // se vea abajo del input y no se mueva con el scroll
-          <div className="absolute left-1/4 top-20 z-50   w-1/2 rounded-lg p-4  shadow-2xl dark:text-[#a9dacb]  bg-accentDarkColor border border-textDarkColor  ">
+          <div className="absolute left-1/4 top-20 z-50   w-1/2 rounded-lg border  border-textDarkColor bg-accentDarkColor  p-4 shadow-2xl dark:text-[#a9dacb]  ">
             <h1 className="text-xl ">Personas</h1>
             <div className="flex flex-col gap-2">
               <Users data={data} error={error} loading={loading} />
             </div>
             <h1 className="text-xl ">Grupos</h1>
-            <div className="gap-2 flex flex-col">
-              <Groups
-                groups={groups?.data}
-                error2={error2}
-                loading2={loading2}
-              />
+            <div className="flex flex-col gap-2">
+              <Groups groups={groups} error2={error2} loading2={loading2} />
             </div>
           </div>
         )}
