@@ -7,6 +7,10 @@ type Mutation {
     crearUsuario(nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
     editarUsuario(id: ID!, nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
     eliminarUsuario(id: ID!): Usuario
+    #calendario
+    crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
+    editarEvento(id: ID!, titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
+    eliminarEvento(id: ID!): calendario
     #Carrera
     crearCarrera(nombre: String!, acronimo: String!): Carrera
     editarCarrera(id: ID!, nombre: String!, acronimo: String!): Carrera
