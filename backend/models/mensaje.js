@@ -1,29 +1,23 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-    hora: {
-        type: Date,
-        required: true
-    },
-    usuario:[
-        {
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId,
-            required: true
-        }
-    ],
-    texto: {
-        type: String
-    },
-    imagen: {
-        type: String
-    },
-    visto: [
-        {
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId,
-        }
-    ]
+  fecha: {
+    type: Date,
+    required: true
+  },
+  usuario: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Usuario',
+    required: true
+  },
+  texto: String,
+  imagenes: [String],
+  visto: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario'
+    }
+  ]
 })
 
-module.exports = mongoose.model("Mensaje", schema);
+module.exports = mongoose.model('Mensaje', schema)

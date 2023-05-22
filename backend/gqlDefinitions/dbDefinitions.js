@@ -1,80 +1,102 @@
-const { gql } = require("apollo-server");
+const { gql } = require('apollo-server');
+
 
 const typeDefs = gql`
-  scalar Date
 
-  type Usuario {
+scalar Date
+
+type Usuario {
     id: ID!
     nombre: String!
     apellido: String!
-    nombre_usuario: String!
+    foto_perfil: String
+    username: String!
     correo: String!
     fecha_nacimiento: Date
-    carrera: [Carrera]!
-    estado: String!
+    chats:[Chat]
+    carrera: Carrera!
     grupos: [Grupo]
-    rol: String
     amigos: [Usuario]
     publicaciones: [Publicacion]
-    me_gusta: [Publicacion]
+    likes: [Publicacion]
     comentarios: [Publicacion]
-  }
+}
 
-  type Carrera {
+type Carrera {
     id: ID!
     nombre: String!
-    acronimo: String!
-  }
+    acronimo: String! 
+    alumnos: [Usuario]
+}
 
-  type Publicacion {
+type Publicacion {
     id: ID!
-    usuario: [Usuario]!
-    hora: Date!
-    imagen_url: String
+    usuario: Usuario!
+    fecha: Date!
+    imagenes: [String]
     texto: String
-    votaciones: [Votacion]
+    votacion: Votacion
     comentarios: [Publicacion]
-  }
+    likes:[Usuario]
+}
 
-  type Votacion {
+type Votacion {
     id: ID!
-    publicacion: [Publicacion]!
-    creador: [Usuario]!
     pregunta: String!
     opciones: [Opcion]!
-  }
+}
 
-  type Opcion {
+type Opcion {
     id: ID!
     texto: String!
-    votos: [Usuario]
-    cantVotos: Int!
-  }
+    votos: [Usuario]!
+}
 
-  type Grupo {
+input VotacionInput {
+    pregunta: String!
+    opciones: [OpcionInput]!
+}
+
+input OpcionInput {
+    texto: String!
+    votos: [ID!]
+}
+
+type Grupo {
     id: ID!
     nombre: String!
     privacidad: String!
     vencimiento: Date
     descripcion: String
-    chat: [Chat]
-    admin: [Usuario]!
+    chat: Chat!
+    admins: [Usuario]!
     miembros: [Usuario]!
-  }
+}
 
-  type Chat {
+type Chat {
     id: ID!
+    usuarios: [Usuario]!
+    nombre: String!
     mensajes: [Mensaje]
-  }
+}
 
-  type Mensaje {
+type Mensaje {
     id: ID!
-    hora: Date!
-    usuario: [Usuario]!
+    fecha: Date!
+    usuario: Usuario!
     texto: String
-    imagen: String
+    imagenes: [String]
     visto: [Usuario]
-  }
-`;
+}
+
+input MensajeInput { 
+    fecha: Date!
+    usuario: ID!
+    texto: String
+    imagenes: [String]
+    visto: [ID]
+}
+
+`
 
 module.exports = typeDefs;

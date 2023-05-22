@@ -1,5 +1,6 @@
 const { ApolloServer } = require('apollo-server');
 require('./db.js')
+require('./SocketServer.js')
 const dotenv = require('dotenv');
 const { mergeTypeDefs } = require('@graphql-toolkit/schema-merging');
 //Definitions
@@ -10,8 +11,7 @@ const queriesDefinitions = require('./gqlDefinitions/queriesDefinition.js');
 const carreraMutation = require('./mutation/carreraMutation.js');
 const chatMutation = require('./mutation/chatMutation.js');
 const grupoMutation = require('./mutation/grupoMutation.js');
-const mensajeMutation = require('./mutation/mensajeMutation.js');
-const opcionMutation = require('./mutation/opcionMutation.js');
+const mensajeMutation = require('./mutation/mensajeMutation.js')
 const publicacionMutation = require('./mutation/publicacionMutation.js');
 const usuarioMutation = require('./mutation/usuarioMutation.js');
 const votacionMutation = require('./mutation/votacionMutation.js');
@@ -20,10 +20,12 @@ const { carreraQueries } = require('./queries/carreraQueries.js');
 const { chatQueries } = require('./queries/chatQueries.js');
 const { grupoQueries } = require('./queries/grupoQueries.js');
 const { mensajeQueries } = require('./queries/mensajeQueries.js');
-const { opcionQueries } = require('./queries/opcionQueries.js');
 const { publicacionQueries } = require('./queries/publicacionQueries.js');
 const { usuarioQueries } = require('./queries/usuarioQueries.js');
 const { votacionQueries } = require('./queries/votacionQueries.js');
+//Nesting
+const { UsuarioNesting, CarreraNesting, MensajeNesting, ChatNesting } = require('./nesting/nestings.js')
+
 //se importa el .env
 dotenv.config()
 const JWT_SECRET = process.env.JWT_SECRET //se obtiene el JWT_SECRET del .env
@@ -35,7 +37,6 @@ const resolvers = {
         ...chatQueries,
         ...grupoQueries,
         ...mensajeQueries,
-        ...opcionQueries,
         ...publicacionQueries,
         ...usuarioQueries,
         ...votacionQueries
@@ -45,19 +46,22 @@ const resolvers = {
         ...chatMutation,
         ...grupoMutation,
         ...mensajeMutation,
-        ...opcionMutation,
         ...publicacionMutation,
         ...usuarioMutation,
         ...votacionMutation
-    }
+    },
+    Usuario: {...UsuarioNesting},
+    Carrera: {...CarreraNesting},
+    Chat: {...ChatNesting},
+    Mensaje: {...MensajeNesting}
 
 }
 
-const server = new ApolloServer({
+const apolloServer = new ApolloServer({
     typeDefs: mergeTypeDefs([dbDefinitions, mutationsDefinitions, queriesDefinitions]),
     resolvers
 })
 
-server.listen().then(({ url }) => {
+apolloServer.listen().then(({ url }) => {
     console.log(`Server ready at ${url}`)
 })

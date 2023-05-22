@@ -1,33 +1,33 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-    nombre: {
-        type: String,
-        required: true,
-        minlength: 3
-    },
-    descripcion: {
-        type: String,
-    },
-    chat:[
-        {
-            ref: "Chat",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    admin: [
-        {
-            required: true,
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    miembros: [
-        {
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ]
+  nombre: {
+    type: String,
+    required: true
+  },
+  privacidad: {
+    type: String,
+    required: true
+  },
+  vencimiento: Date,
+  descripcion: String,
+  chat: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Chat',
+    required: true
+  },
+  admins: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario'
+    }
+  ],
+  miembros: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario'
+    }
+  ]
 })
 
-module.exports = mongoose.model("Grupo", schema);
+module.exports = mongoose.model('Grupo', schema)
