@@ -27,7 +27,8 @@ type calendario {
         fecha_inicio: Date!
         fecha_fin: Date!
         descripcion: String
-        usuario: [Usuario]!
+        creador: Usuario!
+        invitados: [Usuario]
     }
 
 type Carrera {
