@@ -1,7 +1,5 @@
 const { ApolloServer } = require('apollo-server');
-require('./db.js')
 require('./SocketServer.js')
-const dotenv = require('dotenv');
 //Nesting
 const { mergeTypeDefs } = require('@graphql-toolkit/schema-merging');
 const jwt = require('jsonwebtoken');
