@@ -5,9 +5,11 @@ const carreraMutation = {
     crearCarrera: async (root, args) => {
         try {
             const carrera = new Carrera({ ...args });
+            console.log("TRYING", carrera);
             await carrera.save();
             return carrera;
         } catch (error) {
+            console.log("ERROR", error);
             throw new UserInputError(error.message, {
                 invalidArgs: args
             })

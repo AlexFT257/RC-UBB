@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server');
 
+
 const typeDefs = gql`
 
 scalar Date
@@ -8,39 +9,52 @@ type Usuario {
     id: ID!
     nombre: String!
     apellido: String!
-    nombre_usuario: String!
+    foto_perfil: String
+    username: String!
     correo: String!
+    contrasena:String!
     fecha_nacimiento: Date
-    carrera: [Carrera]!
-    estado: String!
+    chats:[Chat]
+    carrera: Carrera!
     grupos: [Grupo]
-    rol: String
     amigos: [Usuario]
     publicaciones: [Publicacion]
-    me_gusta: [Publicacion]
+    likes: [Publicacion]
     comentarios: [Publicacion]
 }
+type Token{
+    value: String!
+}
+
+type calendario {
+        id: ID!
+        titulo: String!
+        fecha_inicio: Date!
+        fecha_fin: Date!
+        descripcion: String
+        usuario: [Usuario]!
+    }
 
 type Carrera {
     id: ID!
     nombre: String!
-    acronimo: String!
+    acronimo: String! 
+    alumnos: [Usuario]
 }
 
 type Publicacion {
     id: ID!
-    usuario: [Usuario]!
-    hora: Date!
-    imagen_url: String
+    usuario: Usuario!
+    fecha: Date!
+    imagenes: [String]
     texto: String
-    votaciones: [Votacion]
+    votacion: Votacion
     comentarios: [Publicacion]
+    likes:[Usuario]
 }
 
 type Votacion {
     id: ID!
-    publicacion: [Publicacion]!
-    creador: [Usuario]!
     pregunta: String!
     opciones: [Opcion]!
 }
@@ -48,10 +62,18 @@ type Votacion {
 type Opcion {
     id: ID!
     texto: String!
-    votos: [Usuario]
-    cantVotos: Int!
+    votos: [Usuario]!
 }
 
+input VotacionInput {
+    pregunta: String!
+    opciones: [OpcionInput]!
+}
+
+input OpcionInput {
+    texto: String!
+    votos: [ID!]
+}
 
 type Grupo {
     id: ID!
@@ -59,24 +81,45 @@ type Grupo {
     privacidad: String!
     vencimiento: Date
     descripcion: String
-    chat: [Chat]!
-    admin: [Usuario]!
+    chat: Chat!
+    admins: [Usuario]!
     miembros: [Usuario]!
 }
 
 type Chat {
     id: ID!
+    usuarios: [Usuario]!
+    nombre: String!
     mensajes: [Mensaje]
 }
 
 type Mensaje {
     id: ID!
-    hora: Date!
-    usuario: [Usuario]!
+    fecha: Date!
+    usuario: Usuario!
     texto: String
-    imagen: String
+    imagenes: [String]
     visto: [Usuario]
 }
+
+input MensajeInput { 
+    fecha: Date!
+    usuario: ID!
+    texto: String
+    imagenes: [String]
+    visto: [ID]
+}
+
+type Horario{
+    id: ID!
+    dia: String!
+    hora_inicio: Date!
+    hora_termino: Date!
+    asignatura: String!
+    sala: String!
+    acronimo: String
+    usuario: [Usuario]!
+  }
 
 `
 
