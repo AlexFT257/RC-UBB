@@ -7,7 +7,7 @@ type Mutation {
     crearUsuario(nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!,contrasena:String!,fecha_nacimiento: Date, carrera: ID!, estado: String!, rol: String): Usuario
     login(correo:String!, contrasena:String!):Token
     forgotPassword(correo: String!): ForgotPasswordResponse!
-    verificarClaveTemporal(correo: String!, claveTemporal: String!): Boolean!
+    verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
 
     editarUsuario(id: ID!, nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
     eliminarUsuario(id: ID!): Usuario
