@@ -109,6 +109,37 @@ forgotPassword: async (root, { correo }) => {
   
     return true;
   },
+  actualizarContrasena: async (root, { correo, temporalKey, nuevaClave }) => {
+    // Buscar al usuario por el correo electrónico y la clave temporal
+    console.log("correo:", correo);
+    console.log("temporalKey:", temporalKey);
+    const usuario = await Usuario.findOne({ correo });
+    
+    console.log("correo registrado:", usuario.correo);
+    
+    console.log("clave temporal del usuario:", usuario.temporalKey);
+    
+    if (!usuario) {
+      throw new Error('La clave temporal no es válida o el correo no coincide');
+    }
+  
+    
+    // Verificar si la clave temporal coincide
+    const claveTemporalValida = await bcrypt.compare(temporalKey, usuario.temporalKey);
+  
+    if (!claveTemporalValida) {
+      throw new Error('La clave temporal no es correcta');
+    }
+  
+    // Validar la nueva contraseña y cifrarla
+    const hashedPassword = await bcrypt.hash(nuevaClave, 10);
+  
+    // Actualizar la contraseña del usuario
+    usuario.contrasena = hashedPassword;
+    await usuario.save();
+  
+    return true;
+  },
   login: async (root, { correo, contrasena }, { res }) => {
     const usuario = await Usuario.findOne({ correo });
     if (!usuario) {
