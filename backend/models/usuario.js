@@ -77,7 +77,11 @@ const schema = new mongoose.Schema({
             ref: "Comentario",
             type: mongoose.Schema.Types.ObjectId
         }
-    ]
+    ],
+    temporalKey: {
+        type: String,
+        
+      },
 })
 
 schema.plugin(uniqueValidator)
