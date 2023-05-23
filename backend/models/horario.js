@@ -5,38 +5,47 @@ const schema = new mongoose.Schema({
     dia: {
         type: String,
         required: true,
-        minlength: 3
+        minlength: 5,
+        maxlength: 10,
+        enum: [
+            'Lunes',
+            'Martes',
+            'Miercoles',
+            'Jueves',
+            'Viernes',
+            'Sabado',
+        ]
     },
     hora_inicio: {
-        type: String,
+        type: Date,
         required: true,
         minlength: 3
     },
     hora_termino: {
+        type: Date,
+        required: true,
+        minlength: 3
+    },
+    asignatura: {
         type: String,
         required: true,
         minlength: 3
     },
-    asignatura:{
+    sala: {
         type: String,
         required: true,
         minlength: 3
     },
-    sala:{
+    acronimo: {
         type: String,
-        required: true,
-        minlength: 3
+        minlength: 2
     },
-    acronimo:{
-        type: String,
-        minlength: 1
-    },
-    usuario: [
-        {
+    usuario:
+    {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Usuario'
-        }
-    ]
+    }
+
 });
 
 

@@ -1,34 +1,28 @@
 {
-  "name": "backend",
+  "name": "nodejs-chat-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple chat app using Node.js, Express and Socket.io",
   "main": "index.js",
-  "type": "commonjs",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "json-server": "json-server --watch db.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "@graphql-toolkit/schema-merging": "^0.10.7",
     "apollo-server": "2.24.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "graphql": "15.5.0",
-    "graphql-upload": "^16.0.2",
+    "http": "^0.0.1-security",
     "json-server": "^0.17.3",
-    "jsonwebtoken": "^9.0.0",
     "mongoose": "6.10.4",
     "mongoose-unique-validator": "3.1.0",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.1",
+    "nodemailer": "^6.9.2",
+    "socket.io": "^4.6.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "nodemon": "^1.19.0"
+    "nodemon": "^2.0.12"
   }
 }
