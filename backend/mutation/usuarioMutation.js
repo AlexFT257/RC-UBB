@@ -111,13 +111,13 @@ forgotPassword: async (root, { correo }) => {
   },
   actualizarContrasena: async (root, { correo, temporalKey, nuevaClave }) => {
     // Buscar al usuario por el correo electrónico y la clave temporal
-    console.log("correo:", correo);
-    console.log("temporalKey:", temporalKey);
+    //console.log("correo:", correo);
+    //console.log("temporalKey:", temporalKey);
     const usuario = await Usuario.findOne({ correo });
     
-    console.log("correo registrado:", usuario.correo);
+    //console.log("correo registrado:", usuario.correo);
     
-    console.log("clave temporal del usuario:", usuario.temporalKey);
+    //console.log("clave temporal del usuario:", usuario.temporalKey);
     
     if (!usuario) {
       throw new Error('La clave temporal no es válida o el correo no coincide');
