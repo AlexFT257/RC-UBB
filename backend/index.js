@@ -56,7 +56,6 @@ const { UsuarioNesting, CarreraNesting, MensajeNesting, ChatNesting } = require(
 //se importa el .env
 dotenv.config()
 const JWT_SECRET = process.env.JWT_SECRET //se obtiene el JWT_SECRET del .env
-const JWT_SECRET = process.env.JWT_SECRET //se obtiene el JWT_SECRET del .env
 
 //se crean los resolvers
 //se crean los resolvers
@@ -85,22 +84,14 @@ const resolvers = {
     Carrera: {...CarreraNesting},
     Chat: {...ChatNesting},
     Mensaje: {...MensajeNesting}
-    Usuario: {...UsuarioNesting},
-    Carrera: {...CarreraNesting},
-    Chat: {...ChatNesting},
-    Mensaje: {...MensajeNesting}
 
 }
 
 const apolloServer = new ApolloServer({
     typeDefs: mergeTypeDefs([dbDefinitions, mutationsDefinitions, queriesDefinitions]),
     resolvers
-const apolloServer = new ApolloServer({
-    typeDefs: mergeTypeDefs([dbDefinitions, mutationsDefinitions, queriesDefinitions]),
-    resolvers
 })
 
-apolloServer.listen().then(({ url }) => {
 apolloServer.listen().then(({ url }) => {
     console.log(`Server ready at ${url}`)
 })
