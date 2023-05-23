@@ -12,6 +12,7 @@ type Usuario {
     foto_perfil: String
     username: String!
     correo: String!
+    contrasena:String!
     fecha_nacimiento: Date
     chats:[Chat]
     carrera: Carrera!
@@ -20,6 +21,9 @@ type Usuario {
     publicaciones: [Publicacion]
     likes: [Publicacion]
     comentarios: [Publicacion]
+}
+type Token{
+    value: String!
 }
 
 type calendario {

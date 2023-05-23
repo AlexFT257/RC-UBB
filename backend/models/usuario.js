@@ -21,6 +21,11 @@ const schema = new mongoose.Schema({
     type: String,
     required: true
   },
+  contrasena: {
+    type: String,
+    required: true,
+    minlength: 8
+},
   fecha_nacimiento: {
     type: Date
   },
@@ -64,7 +69,10 @@ const schema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Publicacion'
     }
-  ]
+  ]temporalKey: {
+    type: String,
+    
+  },
 })
 
 schema.plugin(uniqueValidator)

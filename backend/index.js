@@ -4,7 +4,13 @@ require('./SocketServer.js')
 const dotenv = require('dotenv');
 //Nesting
 const { mergeTypeDefs } = require('@graphql-toolkit/schema-merging');
-//Definitions
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const { parseCookies, setCookie } = require('cookie');
+// Se importa la configuración de la base de datos
+require('./db.js');
+
+// Definitions
 const dbDefinitions = require('./gqlDefinitions/dbDefinitions.js');
 const mutationsDefinitions = require('./gqlDefinitions/mutationsDefinition.js');
 const queriesDefinitions = require('./gqlDefinitions/queriesDefinition.js');
@@ -33,9 +39,18 @@ const { horarioQueries } = require('./queries/horarioQueries.js');
 const { UsuarioNesting, CarreraNesting, MensajeNesting, ChatNesting } = require('./nesting/nestings.js')
 
 //se importa el .env
-//se importa el .env
 dotenv.config()
 const JWT_SECRET = process.env.JWT_SECRET //se obtiene el JWT_SECRET del .env
+
+// Función para verificar y decodificar el token
+const verifyToken = (token) => {
+  console.log('token index:', token);
+  try {
+    return jwt.verify(token, 'SUPER_HYPER_MEGA_PALABRA_SECRETA');
+  } catch (error) {
+    return null;
+  }
+};
 
 //se crean los resolvers
 //se crean los resolvers
@@ -64,14 +79,20 @@ const resolvers = {
     Carrera: {...CarreraNesting},
     Chat: {...ChatNesting},
     Mensaje: {...MensajeNesting}
+  }
 
-}
-
+// Crear una instancia de Apollo Server
 const apolloServer = new ApolloServer({
-    typeDefs: mergeTypeDefs([dbDefinitions, mutationsDefinitions, queriesDefinitions]),
-    resolvers
-})
+  typeDefs: mergeTypeDefs([dbDefinitions, mutationsDefinitions, queriesDefinitions]),
+  resolvers,
+  
+  cors: {
+    credentials: true, // Habilitar el envío de cookies
+    origin: '*', // Permitir solicitudes de cualquier origen
+  },
+});
 
+// Iniciar el servidor
 apolloServer.listen().then(({ url }) => {
-    console.log(`Server ready at ${url}`)
-})
+  console.log(`Server ready at ${url}`);
+});

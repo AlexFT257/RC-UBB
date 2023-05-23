@@ -4,8 +4,12 @@ const { gql } = require('apollo-server');
 const typeDefs = gql`
 type Mutation {
     #Usuario
-    crearUsuario(nombre: String!, apellido: String!, foto_perfil: String, username: String!, correo: String!, fecha_nacimiento: Date, chats: [ID], carrera: ID!, grupos: [ID], amigos: [ID], publicaciones: [ID], likes: [ID], comentarios: [ID]): Usuario
-    editarUsuario(id: ID!, nombre: String!, apellido: String!, foto_perfil: String, username: String!, correo: String!, fecha_nacimiento: Date, chats: [ID], carrera: ID!, grupos: [ID], amigos: [ID], publicaciones: [ID], likes: [ID], comentarios: [ID]): Usuario
+    crearUsuario(nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!,contrasena:String!,fecha_nacimiento: Date, carrera: ID!, estado: String!, rol: String): Usuario
+    login(correo:String!, contrasena:String!):Token
+    forgotPassword(correo: String!): ForgotPasswordResponse!
+    verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
+    actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
+    editarUsuario(id: ID!, nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
     eliminarUsuario(id: ID!): Usuario
     #calendario
     crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
@@ -48,5 +52,9 @@ type Mutation {
     editarHorario(id: ID!, dia: String, hora_inicio: Date, hora_termino: Date, asignatura: String, sala: String, acronimo: String, usuario: ID): Horario
     eliminarHorario(id: ID!): Horario
   }
+  
+type ForgotPasswordResponse {
+  success: Boolean!
+}
 `
 module.exports = typeDefs;
