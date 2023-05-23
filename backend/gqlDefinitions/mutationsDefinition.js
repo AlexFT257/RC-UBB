@@ -8,7 +8,7 @@ type Mutation {
     login(correo:String!, contrasena:String!):Token
     forgotPassword(correo: String!): ForgotPasswordResponse!
     verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
-
+    actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
     editarUsuario(id: ID!, nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
     eliminarUsuario(id: ID!): Usuario
     #Carrera
