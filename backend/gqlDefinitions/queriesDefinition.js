@@ -52,6 +52,10 @@ type Query {
     buscarVotacionUsuario(usuario: ID!): [Usuario]
     buscarVotacionPublicacion(publicacion: ID!): [Publicacion]
     #buscarVotacionResultados(id: ID!): [Votacion]
+
+    #BuscarHorario
+    buscarHorarioUsuario(usuario: ID!): [Horario]
+    enviarCorreoUsuario(usuario: ID!): [Horario]
 }
 `
 

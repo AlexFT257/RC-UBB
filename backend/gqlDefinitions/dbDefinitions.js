@@ -106,6 +106,17 @@ input MensajeInput {
     visto: [ID]
 }
 
+type Horario{
+    id: ID!
+    dia: String!
+    hora_inicio: Date!
+    hora_termino: Date!
+    asignatura: String!
+    sala: String!
+    acronimo: String
+    usuario: [Usuario]!
+  }
+
 `
 
 module.exports = typeDefs;

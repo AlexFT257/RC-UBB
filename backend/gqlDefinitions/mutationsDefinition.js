@@ -42,6 +42,11 @@ type Mutation {
     crearMensaje(chat: ID!, usuario: ID!, texto: String, imagenes: [String]): Mensaje
     editarMensaje(id: ID!, usuario: ID!, texto: String, imagenes: [String]): Mensaje
     eliminarMensaje(id: ID!): Mensaje
+
+    # Crear Horario
+    crearHorario(dia: String!, hora_inicio: Date!, hora_termino: Date!, asignatura: String!, sala: String!, acronimo: String, usuario: ID!): Horario
+    editarHorario(id: ID!, dia: String, hora_inicio: Date, hora_termino: Date, asignatura: String, sala: String, acronimo: String, usuario: ID): Horario
+    eliminarHorario(id: ID!): Horario
   }
 `
 module.exports = typeDefs;
