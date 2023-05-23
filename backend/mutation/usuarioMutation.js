@@ -92,6 +92,23 @@ forgotPassword: async (root, { correo }) => {
       success: true,
     };
   },
+  verificarClaveTemporal: async (root, { temporalKey, correo }) => {
+    // Buscar al usuario por el correo electrónico
+    const usuario = await Usuario.findOne({ correo });
+  
+    if (!usuario) {
+      throw new Error('El correo no coincide con ningún usuario');
+    }
+  
+    // Comparar la clave temporal ingresada con la clave temporal cifrada almacenada en el usuario
+    const claveTemporalValida = await bcrypt.compare(temporalKey, usuario.temporalKey);
+  
+    if (!claveTemporalValida) {
+      throw new Error('La clave temporal no es válida');
+    }
+  
+    return true;
+  },
   login: async (root, { correo, contrasena }, { res }) => {
     const usuario = await Usuario.findOne({ correo });
     if (!usuario) {
