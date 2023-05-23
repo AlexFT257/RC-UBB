@@ -68,7 +68,30 @@ forgotPassword: async (root, { correo }) => {
       success: true,
     };
   },
+  forgotPassword: async (root, { correo }) => {
+    const usuario = await Usuario.findOne({ correo: correo });
 
+    if (!usuario) {
+      throw new Error('No existe un usuario con este correo');
+    }
+
+    // Generar una clave temporal
+    const temporalKey = Math.random().toString(36).substring(2, 10);
+
+    // Cifrar la clave temporal utilizando bcrypt
+    const hashedTemporalKey = await bcrypt.hash(temporalKey, 10);
+
+    // Guardar la clave temporal en el documento del usuario
+    usuario.temporalKey = hashedTemporalKey;
+    await usuario.save();
+
+    // Enviar la clave temporal por correo electrónico
+    await sendPasswordResetEmail(usuario.correo, temporalKey);
+
+    return {
+      success: true,
+    };
+  },
   login: async (root, { correo, contrasena }, { res }) => {
     const usuario = await Usuario.findOne({ correo });
     if (!usuario) {
