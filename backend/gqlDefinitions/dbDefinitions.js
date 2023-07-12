@@ -81,9 +81,12 @@ type Grupo {
     privacidad: String!
     vencimiento: Date
     descripcion: String
+    icono: String
+    banner: String
     chat: Chat!
     admins: [Usuario]!
     miembros: [Usuario]!
+    solicitudes: [Usuario]!
 }
 
 type Chat {

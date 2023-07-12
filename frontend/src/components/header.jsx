@@ -1,4 +1,3 @@
-import Profile from "@/pages/profile";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -10,10 +9,11 @@ import {
   AiOutlineUserAdd,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
-// import { SEARCH_USERS } from "@/graphql/queries";
+import { HiOutlineUserGroup } from "react-icons/hi";
 import { useEffect, useState, useRef } from "react";
-// import axios from "axios";
-import { gql, useQuery } from "@apollo/client";
+import { useComponentVisible } from "@/hooks/useComponentVisible";
+import { useSearchUsers, useSearchGroups, useSendJoinRequest } from '../utils/searchUtils';
+import jwtDecode from "jwt-decode";
 
 export default function Header() {
   const [search, setSearch] = useState("");
@@ -27,41 +27,49 @@ export default function Header() {
     setSearchGroup(e.target.value);
   };
 
-  // Las dos siguientes constantes son las consultas a la API de los datos
-  const GET_USER_BY_NAME = gql`
-  query {
-    buscarUsuario(buscar: "${search}") {
-      id
-      nombre
-      apellido
-      correo
+  const { loading: loadingUser, error: errorUser, searchResults: userSearchResults, refetch: refetchUser } = useSearchUsers(search);
+  const { loading: loadingGroup, error: errorGroup, searchResults: groupSearchResults, refetch: refetchGroup } = useSearchGroups(searchGroup);
+  const { loading: loadingJoin, error: errorJoin, sendJoinRequest } = useSendJoinRequest();
+
+  // funcion para actualizar las queries (refetch) cada vez que se hace una busqueda
+  const refecthQueries = () => {
+    refetchUser();
+    refetchGroup();
+  };
+
+  // la funcion handleSubmit se ejecuta cuando se da click en el boton de buscar
+  // o se presiona enter en el input
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // refetch para volver a hacer la consulta
+    refecthQueries();
+    // activa el dropdown
+    if (search !== "") {
+      setShowResults(true);
     }
-  }
-`;
+  };
 
-  const GET_GROUP_BY_NAME = gql`
-  query {
-    buscarGrupo(buscar: "${searchGroup}") {
-      id
-      nombre
-      descripcion
+  // este useEffect se ejecuta cada vez que se cambia el valor del input
+  // y si el valor es vacio cierra el dropdown para no generar otra consulta
+  useEffect(() => {
+    if (search === "") {
+      setShowResults(false);
     }
-  }
-`;
+  }, [search]);
 
-  // el useQuery hace las consultas a la API cada vez que se renderiza el componente
-  // y como es un hook no puede estar dentro de una funcion
-  // por eso se declaran los loading error y data aqui y se pasan como props a la funcion
-  const { loading, error, data } = useQuery(GET_USER_BY_NAME);
-  const { loading2, error2, data: groups } = useQuery(GET_GROUP_BY_NAME);
-
+ 
   // la funcion Groups recibe los datos de la consulta y los muestra en pantalla
-  function Groups({ groups, error2, loading2 }) {
-    if (loading2) return <p>Loading...</p>;
-    if (error2) return <p>Error :</p>;
-    console.log("Grupos", groups?.buscarGrupo);
+  function Groups({ groupSearchResults, errorGroup, loadingGroup }) {
+    if (loadingGroup) return <p>Loading...</p>;
+    if (errorGroup) return <p>Error :</p>;
+    console.log("Grupos", groupSearchResults);
 
-    if (groups?.buscarGrupo?.length === 0) {
+    // sacar el id del usuario logueado del local storage
+    const decodedToken = jwtDecode(localStorage.getItem("token"));
+    const loggedUserId = decodedToken.id;
+    // console.log("ID del usuario logueado", loggedUserId);
+
+    if (groupSearchResults.length === 0) {
       return (
         <div className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2">
           <div className="flex flex-col">
@@ -71,45 +79,79 @@ export default function Header() {
       );
     }
 
-    // funcion que envia la solicitud de unirse al grupo
-    const handleResquestGroup = (e) => {
-      e.preventDefault();
-      console.log("Solicitud enviada");
-    };
+    return groupSearchResults.map(({ id, nombre, descripcion, miembros }) => {
+      // funcion que envia la solicitud de unirse al grupo
+      const handleResquestGroup = () => {
+        // e.preventDefault();
+        console.log("Solicitando unirse al grupo", id);
+        console.log("ID del usuario logueado", loggedUserId);
+        sendJoinRequest(id, loggedUserId);
+        // refetch para que se actualice el icono
+        refecthQueries();
+      };
 
-    return groups?.buscarGrupo?.map(({ id, nombre, descripcion }) => (
-      <div
-          key={id}
-          className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2"
-        >
-          <div className="flex flex-col">
-            {/* TODO: inserte aqui la foto (user no tiene foto) */}
-            <h1>
-              {nombre}
-            </h1>
-            <p className="hidden lg:flex">{descripcion}</p>
-          </div>
-          <div className="m-2 flex">
+      console.log("Miembros", miembros);
+
+      // determina si el usuario es miembro del grupo que busco
+      // para renderizar un boton de unirse o no
+      const checkUserIsMember = () => {
+        // bool que determina si el usuario es miembro del grupo
+        const isMember = miembros.some((miembro) => {
+          return miembro.id === loggedUserId;
+        });
+
+        // si es miembro se retorna el boton de unirse deshabilitado
+        if (isMember) {
+          console.log("Es miembro");
+          return (
+            <>
+              <button
+                className="rounded bg-green-500 px-4 py-2 font-bold text-white"
+                disabled
+              >
+                <HiOutlineUserGroup />
+              </button>
+            </>
+          );
+        }
+
+        return (
+          <>
             <button
               onClick={handleResquestGroup}
               className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
             >
               <AiOutlineUsergroupAdd />
             </button>
+          </>
+        );
+      };
+
+      return (
+        <div
+          key={id}
+          className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2"
+        >
+          <div className="flex flex-col">
+            {/* TODO: inserte aqui la foto (user no tiene foto) */}
+            <h1>{nombre}</h1>
+            <p className="hidden lg:flex">{descripcion}</p>
           </div>
+          <div className="m-2 flex">{checkUserIsMember()}</div>
         </div>
-    ));
+      );
+    });
   }
 
   // la funcion Users recibe los datos de la consulta y los muestra en pantalla
-  function Users({ data, error, loading }) {
+  function Users({ userSearchResults, errorUser, loadingUser }) {
     // checa si hay un error o si esta cargando
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error</p>;
-    console.log("Usuarios", data);
+    if (loadingUser) return <p>Loading...</p>;
+    if (errorUser) return <p>Error</p>;
+    console.log("Usuarios", userSearchResults);
 
     // si no hay usuarios que mostrar, muestra un mensaje
-    if (data?.buscarUsuario?.length === 0) {
+    if (userSearchResults.length === 0) {
       return (
         <div className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2">
           <div className="flex flex-col">
@@ -119,13 +161,34 @@ export default function Header() {
       );
     }
 
-    return data?.buscarUsuario?.map(({ id, nombre, apellido, correo }) => {
+    return userSearchResults.map(({ id, nombre, apellido, correo }) => {
       // funcion que envia la solicitud de amistad
       const handleAddFriend = (e) => {
         e.preventDefault();
         console.log("Agregando amigo", id);
         // TODO: Agregar amigo
+
+        // refetch para actualizar la lista de amigos
+        // refecthQueries();
       };
+
+      // determina si el usuario encontrado es el mismo que esta logueado
+      // para no mostrarlo en la lista de usuarios
+      // sacar el id del usuario logueado del local storage
+      const decodedToken = jwtDecode(localStorage.getItem("token"));
+      const loggedUserId = decodedToken.id;
+      // si el id del usuario logueado es igual al id del usuario que se esta iterando
+      // se retorna null para no mostrarlo en la lista
+      if (loggedUserId === id) {
+        return (
+          <div className="m-2 flex flex-grow justify-between rounded-md bg-bgDarkColorTrasparent p-2">
+            <div className="flex flex-col">
+              <h1>No se encontraron usuarios</h1>
+            </div>
+          </div>
+        );
+      }
+
 
       return (
         <div
@@ -152,78 +215,25 @@ export default function Header() {
     });
   }
 
-  console.log(search);
-
-  // la funcion handleSubmit se ejecuta cuando se da click en el boton de buscar
-  // o se presiona enter en el input
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(search);
-    console.log(data);
-    // activa el dropdown
-    if (search !== "") {
-      setShowResults(true);
-    }
-  };
-
-  // la funcion useComponentVisible es un hook que permite detectar cuando se da click
-  // fuera del dropdown para cerrarlo automaticamente
-  function useComponentVisible(showResults) {
-    // se usa el hook useState para cambiar el estado de isComponentVisible
-    // y asi poder mostrar u ocultar el dropdown
-    const [isComponentVisible, setIsComponentVisible] = useState(showResults);
-    const ref = useRef(null);
-
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) {
-        setIsComponentVisible(false);
-      }
-    };
-
-    // aqui se agrega el evento de escuchar cuando se da click fuera del dropdown
-    // y cuando se presiona escape para cerrarlo
-    useEffect(() => {
-      document.addEventListener("click", handleClickOutside, true);
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" || e.key === "Esc") {
-          setIsComponentVisible(false);
-        }
-      });
-
-      return () => {
-        document.removeEventListener("click", handleClickOutside, true);
-      };
-    });
-
-    return { ref, isComponentVisible, setIsComponentVisible };
-  }
-
-  // este useEffect se ejecuta cada vez que se cambia el valor del input
-  // y si el valor es vacio cierra el dropdown para no generar otra consulta
-  useEffect(() => {
-    if (search === "") {
-      setShowResults(false);
-    }
-  }, [search]);
-
   // la funcion DropDown es el componente que se muestra en pantalla
   // y que contiene los resultados de la busqueda y usa el hook useComponentVisible
   const DropDown = () => {
     const { ref, isComponentVisible, setIsComponentVisible } =
       useComponentVisible(showResults);
+
     return (
       <div ref={ref}>
         {isComponentVisible && (
           // el posicionamiento del dropdown se hace con tailwind y absolute pa que
           // se vea abajo del input y no se mueva con el scroll
-          <div className="absolute left-1/4 top-20 z-50   w-1/2 rounded-lg border  border-textDarkColor bg-accentDarkColor  p-4 shadow-2xl dark:text-[#a9dacb]  ">
+          <div className="absolute left-1/4 top-20 z-50   w-1/2 rounded-lg    bg-accentDarkColor  p-4 shadow-2xl shadow-bgDarkColor dark:text-[#a9dacb]  ">
             <h1 className="text-xl ">Personas</h1>
             <div className="flex flex-col gap-2">
-              <Users data={data} error={error} loading={loading} />
+              <Users userSearchResults={userSearchResults} errorUser={errorUser} loadingUser={loadingUser} />
             </div>
             <h1 className="text-xl ">Grupos</h1>
             <div className="flex flex-col gap-2">
-              <Groups groups={groups} error2={error2} loading2={loading2} />
+              <Groups groupSearchResults={groupSearchResults} errorGroup={errorGroup} loadingGroup={loadingGroup} />
             </div>
           </div>
         )}

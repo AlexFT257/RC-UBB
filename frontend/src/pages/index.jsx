@@ -24,9 +24,16 @@ import {
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 
 
+
+
+
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+
+  
+
+
   const [publications, setPublications] = useState([
     {
       id: 1,

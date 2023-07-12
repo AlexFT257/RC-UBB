@@ -1,13 +1,13 @@
 
 
-export default function GroupHeader() {
+export default function GroupHeader({GroupName}) {
     return (
         <>
         <div className=" dark:text-[#a9dacb] ">
               {/* group banner */}
               <div className="flex  shadow-lg rounded-md overflow-hidden h-40 w-full items-center justify-center bg-[url('/31-minutos-banner.jpg')] bg-cover bg-center">
                 <h1 className="flex h-full w-full items-center justify-center text-6xl font-semibold text- drop-shadow-lg backdrop-blur-sm">
-                  Group Name
+                  {GroupName}
                 </h1>
               </div>
               {/* Group options */}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Head from 'next/head';
+import Head from "next/head";
 import { gql, useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 
@@ -7,23 +7,32 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
   const GET_TOKEN = gql`
-  
   mutation {
     login(correo:"${email}", contrasena:"${password}"){
       value
-    }
-  }`
+  }
+  }`;
+
   // const [login, { data, loading, error, reset }] = useMutation(GET_TOKEN)
   //const data = await response.json();
-  const [login, { error, reset }] = useMutation(GET_TOKEN)
+  const [login, { error, reset }] = useMutation(GET_TOKEN);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(login, "hola")
-    login({ variables: { email, password } }).then(response => {
-      console.log(response.data, "holahola")
-    }).catch(error => { console.log(error) })
+    console.log(login, "hola");
+    login({ variables: { email, password } })
+      .then((response) => {
+        console.log("Login", response.data);
+        // el token se guarda en el local storage y esta encriptado con jwt
+        // para desenciptarlo se usa la libreria jwt-decode
+        // ej: const decodedToken = jwt_decode(localStorage.getItem("token"));
+        localStorage.setItem("token", response.data.login.value);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   const handleForgotPassword = () => {
     // Redirigir al usuario a la página de recuperar contraseña

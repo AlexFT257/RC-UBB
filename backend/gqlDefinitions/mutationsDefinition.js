@@ -4,8 +4,8 @@ const { gql } = require('apollo-server');
 const typeDefs = gql`
 type Mutation {
     #Usuario
-    crearUsuario(nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!,contrasena:String!,fecha_nacimiento: Date, carrera: ID!, estado: String!, rol: String): Usuario
-    login(correo:String!, contrasena:String!):Token
+    crearUsuario(nombre: String!, apellido: String!, username: String!, correo: String!,contrasena:String!,fecha_nacimiento: Date, carrera: ID!): Usuario
+    login(correo:String!, contrasena:String!): Token
     forgotPassword(correo: String!): ForgotPasswordResponse!
     verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
     actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
@@ -35,6 +35,12 @@ type Mutation {
     crearGrupo(nombre: String!, privacidad: String!, vencimiento: Date, descripcion: String, admins: [ID]!, miembros: [ID]): Grupo
     editarGrupo(id: ID!, nombre: String, privacidad: String, vencimiento: Date, descripcion: String, admins: [ID], miembros: [ID]): Grupo
     eliminarGrupo(id: ID!): Grupo
+    solicitarUnirse(idGrupo: ID!, idUsuario: ID!): Grupo
+    agregarAdmins(idGrupo: ID!, admins: [ID]!): Grupo
+    agregarMiembros(idGrupo: ID!, miembros: [ID]!): Grupo
+    eliminarAdmins(idGrupo: ID!, admins: [ID]!): Grupo
+    eliminarMiembros(idGrupo: ID!, miembros: [ID]!): Grupo
+    
   
     # Crear Chat
     crearChat(usuarios: [ID]!, nombre: String!, mensajes: [ID]): Chat

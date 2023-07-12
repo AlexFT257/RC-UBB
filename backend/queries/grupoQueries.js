@@ -14,7 +14,7 @@ const grupoQueries = {
         return grupo;
     },
     buscarGrupoUsuario: async (root, args) => {
-        const grupo = await Grupo.find({ usuario: args.usuario });
+        const grupo = await Grupo.find({ miembros: args.usuario });
         return grupo;
     },
     buscarGrupoAdmin: async (root, args) => {
