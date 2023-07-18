@@ -127,7 +127,7 @@ function GroupPage() {
                       </div>
                       {/* Agrega un botón o enlace para redirigir a la página del grupo */}
                       <div className="flex items-center m-2 justify-center">
-                        <Link href={`/groups/${group.id}`} className="text-xl font-semibold">
+                        <Link href={`/${group.id}/home`} className="text-xl font-semibold">
                           Ir al grupo
                         </Link>
                       </div>

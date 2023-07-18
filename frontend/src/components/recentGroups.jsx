@@ -44,19 +44,17 @@ export default function RecentGroups() {
       if(icon.icono === null){
         return <HiOutlineUserGroup className="text-2xl" />;
       }
-      
-      
       // return <GrGroup className="text-3xl" />;
       // console.log("icon", toString(icon.icono));
-  
       return <Image src={icon.icono}  width={40} height={40} className="rounded-full" />;
     }
+    
     return (
       <>
         {data.buscarGrupoUsuario.map((grupo) => {
           return (
             <Link
-              href={`/groups/${grupo.id}`}
+              href={`/${grupo.id}/home`}
               key={grupo.id}
               className="rounded-md transition-all  duration-200  ease-in-out hover:bg-[#D3D3D3] dark:hover:bg-textDarkColor dark:hover:text-bgDarkColor dark:active:bg-activeDarkColor"
             >

@@ -62,7 +62,7 @@ export default function Header() {
   function Groups({ groupSearchResults, errorGroup, loadingGroup }) {
     if (loadingGroup) return <p>Loading...</p>;
     if (errorGroup) return <p>Error :</p>;
-    console.log("Grupos", groupSearchResults);
+    // console.log("Grupos", groupSearchResults);
 
     // sacar el id del usuario logueado del local storage
     const decodedToken = jwtDecode(localStorage.getItem("token"));
