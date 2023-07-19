@@ -124,6 +124,13 @@ type Horario{
     usuario: [Usuario]!
   }
 
+type Archivo {
+    id: ID!
+    url: String!
+    filename: String!
+    mimetype: String!
+}
+
 `
 
 module.exports = typeDefs;

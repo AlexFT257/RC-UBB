@@ -22,6 +22,7 @@ const publicacionMutation = require("./mutation/publicacionMutation.js");
 const usuarioMutation = require("./mutation/usuarioMutation.js");
 const votacionMutation = require("./mutation/votacionMutation.js");
 const horarioMutation = require("./mutation/horarioMutation.js");
+// const ArchivoMutation = require("./mutation/archivoMutation.js");
 
 //Queries
 const { carreraQueries } = require("./queries/carreraQueries.js");
@@ -78,6 +79,7 @@ const resolvers = {
     ...usuarioMutation,
     ...votacionMutation,
     ...horarioMutation,
+    // ...ArchivoMutation,
   },
   Usuario: { ...UsuarioNesting },
   Grupo: { ...GrupoNesting },

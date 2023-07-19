@@ -56,6 +56,10 @@ type Query {
     #BuscarHorario
     buscarHorarioUsuario(usuario: ID!): [Horario]
     enviarCorreoUsuario(usuario: ID!): [Horario]
+
+    #archivos
+    all_archivos: [Archivo]!
+    buscarArchivoId(id: ID!): Archivo
 }
 `
 

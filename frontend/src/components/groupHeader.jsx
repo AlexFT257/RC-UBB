@@ -31,7 +31,7 @@ function GroupHeader({isAdmin,GroupId, GroupName, GroupBanner }) {
           className="flex h-40 w-full items-center justify-center overflow-hidden rounded-md shadow-lg"
           style={backgroundStyle}
         >
-          <h1 className="text-center text-6xl font-semibold backdrop-blur-sm">
+          <h1 className="text-center text-6xl font-semibold ">
             {GroupName}
           </h1>
         </div>

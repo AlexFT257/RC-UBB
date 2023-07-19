@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use } from "react";
 import GroupHeader from "../../components/groupHeader";
 import { useEffect, useState } from "react";
 import Head from "next/head";
@@ -8,13 +8,14 @@ import RecentGroups from "../../components/recentGroups";
 import FriendList from "../../components/friendList";
 import EventList from "@/components/eventList";
 import { useRouter } from "next/router";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery,useMutation } from "@apollo/client";
 import { getItem } from "@/utils/localStorage";
 import jwt from "jsonwebtoken";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import BannerPreview from "@/components/bannerPreview";
 import IconPreview from "@/components/iconPreview";
-import {hasForbiddenWords} from "@/utils/validationUtils";
+import { hasForbiddenWords } from "@/utils/validationUtils";
+
 
 export default function GroupPage() {
   // obtener el id del grupo desde la url
@@ -71,6 +72,50 @@ export default function GroupPage() {
     banner: "",
   });
 
+  const [selectedIcon, setSelectedIcon] = useState(null);
+  const [selectedBanner, setSelectedBanner] = useState(null);
+
+  const SUBIR_ICONO_MUTATION = gql`
+  mutation SubirIcono($file: Upload!) {
+    subirIcono(file: $file) {
+      id
+      url
+      filename
+      mimetype
+    }
+  }
+`;
+
+  const handleIconChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setSelectedIcon(reader.result);
+      }
+    };
+
+    if (file) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
+  const handleBannerChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setSelectedBanner(reader.result);
+      }
+    };
+
+    if (file) {
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
   const specialCharsRegex = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/;
 
   const hasSpecialChars = (input) => {
@@ -90,25 +135,50 @@ export default function GroupPage() {
     }
   }, [dataGroupInfo]);
 
-  const handleSubmit = (e) => {
+  
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("groupInfo", groupInfo);
-    if(hasForbiddenWords(groupInfo.nombre)){
+    if (hasForbiddenWords(groupInfo.nombre)) {
       alert("El nombre del grupo no puede contener palabras prohibidas");
       return;
     }
-    if(hasForbiddenWords(groupInfo.descripcion)){
+    if (hasForbiddenWords(groupInfo.descripcion)) {
       alert("La descripción del grupo no puede contener palabras prohibidas");
       return;
     }
-    if(hasSpecialChars(groupInfo.nombre)){
+    if (hasSpecialChars(groupInfo.nombre)) {
       alert("El nombre del grupo no puede contener caracteres especiales");
       return;
     }
-    if(hasSpecialChars(groupInfo.descripcion)){
+    if (hasSpecialChars(groupInfo.descripcion)) {
       alert("La descripción del grupo no puede contener caracteres especiales");
       return;
     }
+
+    // primero subir el icono y el banner
+    // luego actualizar la info del grupo
+    
+      try{
+        const {data} = await subirIcono({
+          variables: {
+            file: selectedIcon,
+          },
+        });
+        console.log("data", data);
+        if (data) {
+          setGroupInfo({
+            ...groupInfo,
+            icono: data.subirIcono.url,
+          });
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+
+
   };
 
   return (
@@ -225,12 +295,7 @@ export default function GroupPage() {
                       id="icono"
                       className="w-2/3 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none"
                       value={groupInfo.icono}
-                      onChange={(e) =>
-                        setGroupInfo({
-                          ...groupInfo,
-                          icono: e.target.value,
-                        })
-                      }
+                      onChange={handleIconChange}
                     />
                   </div>
                   <div className="flex flex-col">
@@ -243,12 +308,7 @@ export default function GroupPage() {
                       id="banner"
                       className="rounded-md p-2"
                       value={groupInfo.banner}
-                      onChange={(e) =>
-                        setGroupInfo({
-                          ...groupInfo,
-                          banner: e.target.value,
-                        })
-                      }
+                      onChange={handleBannerChange}
                     />
                   </div>
                   <div className="flex w-full justify-center">
@@ -265,7 +325,7 @@ export default function GroupPage() {
                   <div className="flex flex-col gap-2">
                     <h1 className="border-b text-2xl font-semibold">Icono</h1>
                     <IconPreview
-                      icon={groupInfo.icono}
+                      icon={selectedIcon ? selectedIcon : groupInfo.icono}
                       name={groupInfo.nombre}
                       descripcion={groupInfo.descripcion}
                     />
@@ -274,7 +334,7 @@ export default function GroupPage() {
                     <h1 className="border-b text-2xl  font-semibold">Banner</h1>
                     <BannerPreview
                       name={groupInfo.nombre}
-                      banner={groupInfo.banner}
+                      banner={selectedBanner ? selectedBanner : groupInfo.banner}
                     />
                   </div>
                 </div>

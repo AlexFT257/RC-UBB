@@ -57,6 +57,12 @@ type Mutation {
     crearHorario(dia: String!, hora_inicio: Date!, hora_termino: Date!, asignatura: String!, sala: String!, acronimo: String, usuario: ID!): Horario
     editarHorario(id: ID!, dia: String, hora_inicio: Date, hora_termino: Date, asignatura: String, sala: String, acronimo: String, usuario: ID): Horario
     eliminarHorario(id: ID!): Horario
+
+    # Archivos
+    # subirArchivo(file: Upload!): Archivo!
+    # subirIcono(file: Upload!): Archivo!
+    # subirBanner(file: Upload!): ID!
+
   }
   
 type ForgotPasswordResponse {
