@@ -46,7 +46,7 @@ export default function RecentGroups() {
       }
       // return <GrGroup className="text-3xl" />;
       // console.log("icon", toString(icon.icono));
-      return <Image src={icon.icono}  width={40} height={40} className="rounded-full" />;
+      return <img src={icon.icono}  width={40} height={40} className="rounded-full max-h-10" />;
     }
     
     return (

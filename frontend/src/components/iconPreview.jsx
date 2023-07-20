@@ -2,14 +2,14 @@ import React from "react";
 import { HiOutlineUserGroup } from "react-icons/hi";
 
 
-function IconPreview({ icon, name,descripcion  }) {
+function IconPreview({ icon, name, descripcion  }) {
     function iconRender(icon) {
       if (icon === null) {
         return <HiOutlineUserGroup className="text-2xl" />;
       }
       // return <GrGroup className="text-3xl" />;
       // console.log("icon", toString(icon.icono));
-      return <img src={icon} width={40} height={40} className="rounded-full" />;
+      return <img src={icon} width={40} height={40} className="rounded-full max-h-10" />;
     }
 
     function iconRenderGroup(icon) {
@@ -18,7 +18,7 @@ function IconPreview({ icon, name,descripcion  }) {
       }
       // return <GrGroup className="text-3xl" />;
       // console.log("icon", toString(icon.icono));
-      return <img src={icon} width={40} height={40} className="rounded-full" />;
+      return <img src={icon} width={40} height={40}  className="rounded-full max-h-10" />;
     }
 
     return (

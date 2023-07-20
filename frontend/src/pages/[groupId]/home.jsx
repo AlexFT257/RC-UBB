@@ -105,6 +105,7 @@ export default function GroupPage() {
                 GroupName={dataGroupInfo?.buscarGrupoId?.nombre}
                 GroupId={groupId}
                 isAdmin={isAdmin()}
+                GroupBanner={dataGroupInfo?.buscarGrupoId?.banner}
               />
               {/* Input para publicar */}
               <PublicationInput />

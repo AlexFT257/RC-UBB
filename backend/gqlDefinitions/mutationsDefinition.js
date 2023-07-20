@@ -33,7 +33,7 @@ type Mutation {
   
     # Crear Grupo
     crearGrupo(nombre: String!, privacidad: String!, vencimiento: Date, descripcion: String, admins: [ID]!, miembros: [ID]): Grupo
-    editarGrupo(id: ID!, nombre: String, privacidad: String, vencimiento: Date, descripcion: String, admins: [ID], miembros: [ID]): Grupo
+    editarGrupo(id: ID!, nombre: String, privacidad: String, vencimiento: Date, descripcion: String, admins: [ID], miembros: [ID], icono: String, banner: String): Grupo
     eliminarGrupo(id: ID!): Grupo
     solicitarUnirse(idGrupo: ID!, idUsuario: ID!): Grupo
     agregarAdmins(idGrupo: ID!, admins: [ID]!): Grupo

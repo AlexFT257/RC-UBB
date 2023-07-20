@@ -242,6 +242,7 @@ export default function Members() {
                 GroupName={dataGroupInfo?.buscarGrupoId?.nombre}
                 GroupId={groupId}
                 isAdmin={isAdmin()}
+                GroupBanner={dataGroupInfo?.buscarGrupoId?.banner}
               />
 
               {/* listas container */}

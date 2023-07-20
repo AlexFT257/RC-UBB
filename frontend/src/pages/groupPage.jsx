@@ -185,7 +185,7 @@ function GroupPage() {
     // return <GrGroup className="text-3xl" />;
     // console.log("icon", toString(icon.icono));
     return (
-      <Image src={icon.icono} width={40} height={40} className="rounded-full" />
+      <img src={icon.icono} width={40} height={40} className="rounded-full max-h-10" />
     );
   }
 

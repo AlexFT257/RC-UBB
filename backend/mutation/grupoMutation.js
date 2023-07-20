@@ -18,11 +18,19 @@ const mutations = {
         if (!grupo) {
             return null;
         }
-        grupo = new Grupo({ ...args });
-        try {
+        try{
+            grupo.nombre = args.nombre || grupo.nombre;
+            grupo.privacidad = args.privacidad || grupo.privacidad;
+            grupo.vencimiento = args.vencimiento || grupo.vencimiento;
+            grupo.descripcion = args.descripcion || grupo.descripcion;
+            grupo.admins = args.admins || grupo.admins;
+            grupo.miembros = args.miembros || grupo.miembros;
+            grupo.icono = args.icono || grupo.icono;
+            grupo.banner = args.banner || grupo.banner;
             await grupo.save();
             return grupo;
-        } catch (error) {
+        }
+        catch (error) {
             throw new UserInputError(error.message, {
                 invalidArgs: args,
             });

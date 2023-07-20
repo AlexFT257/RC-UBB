@@ -8,14 +8,14 @@ import RecentGroups from "../../components/recentGroups";
 import FriendList from "../../components/friendList";
 import EventList from "@/components/eventList";
 import { useRouter } from "next/router";
-import { gql, useQuery,useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { getItem } from "@/utils/localStorage";
 import jwt from "jsonwebtoken";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import BannerPreview from "@/components/bannerPreview";
 import IconPreview from "@/components/iconPreview";
 import { hasForbiddenWords } from "@/utils/validationUtils";
-
+import { base64ToImage, imageToBase64 } from "@/utils/imageUtils";
 
 export default function GroupPage() {
   // obtener el id del grupo desde la url
@@ -75,17 +75,7 @@ export default function GroupPage() {
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [selectedBanner, setSelectedBanner] = useState(null);
 
-  const SUBIR_ICONO_MUTATION = gql`
-  mutation SubirIcono($file: Upload!) {
-    subirIcono(file: $file) {
-      id
-      url
-      filename
-      mimetype
-    }
-  }
-`;
-
+  //las imagenes se guardan como base64
   const handleIconChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -99,6 +89,7 @@ export default function GroupPage() {
     if (file) {
       reader.readAsDataURL(e.target.files[0]);
     }
+    console.log("selectedIcon", selectedIcon);
   };
 
   const handleBannerChange = (e) => {
@@ -135,8 +126,55 @@ export default function GroupPage() {
     }
   }, [dataGroupInfo]);
 
-  
+  //editarGrupo(id: ID!, nombre: String, privacidad: String, vencimiento: Date, descripcion: String, admins: [ID], miembros: [ID], icono: String, banner: String): Grupo
 
+  const EDITAR_GRUPO_MUTATION = gql`
+    mutation editarGrupo(
+      $id: ID!
+      $nombre: String
+      $privacidad: String
+      $descripcion: String
+      $icono: String
+      $banner: String
+    ) {
+      editarGrupo(
+        id: $id
+        nombre: $nombre
+        privacidad: $privacidad
+        descripcion: $descripcion
+        icono: $icono
+        banner: $banner
+      ) {
+        id
+        nombre
+        descripcion
+        privacidad
+        icono
+        banner
+      }
+    }
+  `;
+
+  const [editarGrupo, { loading: loadingEdit, error: errorEdit }] = useMutation(
+    EDITAR_GRUPO_MUTATION,
+    {
+      variables: {
+        id: groupInfo.id,
+        nombre: groupInfo.nombre,
+        privacidad: groupInfo.privacidad,
+        descripcion: groupInfo.descripcion,
+        icono: selectedIcon,
+        banner: selectedBanner,
+      },
+      onCompleted: () => {
+        alert("Grupo editado correctamente");
+        router.push(`/${groupId}/options`);
+      },
+      onError: (error) => {
+        alert(error.message);
+      },
+    }
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -158,27 +196,12 @@ export default function GroupPage() {
       return;
     }
 
-    // primero subir el icono y el banner
-    // luego actualizar la info del grupo
-    
-      try{
-        const {data} = await subirIcono({
-          variables: {
-            file: selectedIcon,
-          },
-        });
-        console.log("data", data);
-        if (data) {
-          setGroupInfo({
-            ...groupInfo,
-            icono: data.subirIcono.url,
-          });
-        }
-      } catch (error) {
-        console.log("error", error);
-      }
+    // las imagenes ya estan en base 64
+    // por lo que se puede subir directamente
+    // console.log("selectedIcon", selectedIcon);
+    // console.log("selectedBanner", selectedBanner);
 
-
+    editarGrupo();
   };
 
   return (
@@ -214,6 +237,7 @@ export default function GroupPage() {
                 GroupName={dataGroupInfo?.buscarGrupoId?.nombre}
                 GroupId={groupId}
                 isAdmin={isAdmin()}
+                GroupBanner={dataGroupInfo?.buscarGrupoId?.banner}
               />
 
               {/* Opciones container */}
@@ -294,7 +318,6 @@ export default function GroupPage() {
                       name="icono"
                       id="icono"
                       className="w-2/3 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none"
-                      value={groupInfo.icono}
                       onChange={handleIconChange}
                     />
                   </div>
@@ -307,7 +330,6 @@ export default function GroupPage() {
                       name="banner"
                       id="banner"
                       className="rounded-md p-2"
-                      value={groupInfo.banner}
                       onChange={handleBannerChange}
                     />
                   </div>
@@ -334,7 +356,9 @@ export default function GroupPage() {
                     <h1 className="border-b text-2xl  font-semibold">Banner</h1>
                     <BannerPreview
                       name={groupInfo.nombre}
-                      banner={selectedBanner ? selectedBanner : groupInfo.banner}
+                      banner={
+                        selectedBanner ? selectedBanner : groupInfo.banner
+                      }
                     />
                   </div>
                 </div>
