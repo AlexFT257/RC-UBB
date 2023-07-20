@@ -11,8 +11,23 @@ const usuarioQueries = {
                 { nombre: { $regex: args.buscar, $options: 'i' } },
                 { apellido: { $regex: args.buscar, $options: 'i' } },
                 { nombre_usuario: { $regex: args.buscar, $options: 'i' } },
+                { correo: { $regex: args.buscar, $options: 'i' }},
             ]
         });
+        return usuario;
+    },
+    buscarUsuarioActual: async (root, args, { usuarioActual }) => {
+        if (!usuarioActual) {
+          throw new Error('Usuario no autenticado');
+        }
+    
+        // Realiza la búsqueda del usuario actual en la base de datos
+        const usuario = await Usuario.findById(usuarioActual.id);
+    
+        if (!usuario) {
+          throw new Error('No se encontró el usuario actual');
+        }
+    
         return usuario;
     },
     buscarUsuarioId: async (root, args) => {
@@ -23,6 +38,7 @@ const usuarioQueries = {
         const usuario = await Usuario.find({ correo: args.correo });
         return usuario;
     },
+    
     buscarUsuarioFechaNacimiento: async (root, args) => {
         const usuario = await Usuario.find({ fecha_nacimiento: args.fecha_nacimiento });
         return usuario;

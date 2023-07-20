@@ -6,12 +6,16 @@ import {
   ApolloProvider,
 } from "@apollo/client";
 
+import Cookies from "js-cookie";
 
 export default function App({ Component, pageProps }) {
-
+  const token = Cookies.get("token"); // Obtén el token almacenado en la cookie
   const client = new ApolloClient({
     uri: "http://localhost:4000/graphql", // TODO: Cambiar a la URL del .env
     cache: new InMemoryCache(),
+    headers: {
+      authorization: token ? ` ${token}` : '',
+    },
   });
 
   return (
@@ -22,3 +26,5 @@ export default function App({ Component, pageProps }) {
     </ApolloProvider>
   );
 }
+
+

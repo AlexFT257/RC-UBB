@@ -6,25 +6,22 @@ import { useRouter } from "next/router";
 export default function crearUsuario() {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
-  const [nombre_usuario, setNombreUsuario] = useState("");
+  const [username, setNombreUsuario] = useState("");
   const [correo, setEmail] = useState("");
   const [contrasena, setPassword] = useState("");
   const [fecha_nacimiento, setFechaNacimiento] = useState("");
   const [carrera, setCarrera] = useState([]);
-  const [estado, setEstado] = useState("");
-  const [rol, setRol] = useState("");
+
   const router = useRouter();
   const CREATE_USER = gql`
-    mutation{crearUsuario(nombre: "${nombre}",apellido: "${apellido}",nombre_usuario:"${nombre_usuario}",correo: "${correo}", contrasena:"${contrasena}", fecha_nacimiento: "${fecha_nacimiento}", carrera: "${carrera}", estado: "${estado}", rol: "${rol}"){
+    mutation{crearUsuario(nombre: "${nombre}",apellido: "${apellido}",username:"${username}",correo: "${correo}", contrasena:"${contrasena}", fecha_nacimiento: "${fecha_nacimiento}", carrera: "${carrera}"){
     id
     nombre
     apellido
-    nombre_usuario
+    username
     correo
     contrasena
     fecha_nacimiento
-    estado
-    rol
   
       }
     }`;
@@ -42,19 +39,18 @@ query {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     console.log(crearUsuario, "hola")
     crearUsuario({ variables: { nombre,
         apellido,
-        nombre_usuario,
+        username,
         correo,
         contrasena,
         fecha_nacimiento,
-        estado,
-        rol } }).then(response => {
+        } }).then(response => {
       console.log(response.data, "holahola")
       router.push("/login");
-      
+
     }).catch(error => { console.log(error) })
   };
 
@@ -64,114 +60,122 @@ query {
 
   const carreras = carrerasData ? carrerasData.all_carreras : [];
   return (
-    <>
-      <Head>
-        <title>Crear Usuario</title>
-      </Head>
-      <h1>Crear Usuario</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="nombre">Nombre:</label>
-          <input
-            type="text"
-            id="nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="apellido">Apellido:</label>
-          <input
-            type="text"
-            id="apellido"
-            value={apellido}
-            onChange={(e) => setApellido(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="nombre_usuario">Nombre de Usuario:</label>
-          <input
-            type="text"
-            id="nombre_usuario"
-            value={nombre_usuario}
-            onChange={(e) => setNombreUsuario(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="correo">Correo:</label>
-          <input
-            type="email"
-            id="correo"
-            value={correo}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="contrasena">Contraseña:</label>
-          <input
-            type="password"
-            id="contrasena"
-            value={contrasena}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="fecha_nacimiento">Fecha de Nacimiento:</label>
-          <input
-            type="date"
-            id="fecha_nacimiento"
-            value={fecha_nacimiento}
-            onChange={(e) => setFechaNacimiento(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="carrera">Carrera:</label>
-          <select
-            id="carrera"
-            value={carrera}
-            onChange={(e) => setCarrera(e.target.value)}
-            required
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <Head>
+          <title>Crear Usuario</title>
+        </Head>
+        <h1 className="text-2xl font-bold mb-4">Crear Usuario</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="nombre" className="block font-medium">
+              Nombre:
+            </label>
+            <input
+              type="text"
+              id="nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              required
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="apellido" className="block font-medium">
+              Apellido:
+            </label>
+            <input
+              type="text"
+              id="apellido"
+              value={apellido}
+              onChange={(e) => setApellido(e.target.value)}
+              required
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="username" className="block font-medium">
+              Nombre de Usuario:
+            </label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setNombreUsuario(e.target.value)}
+              required
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="correo" className="block font-medium">
+              Correo:
+            </label>
+            <input
+              type="email"
+              id="correo"
+              value={correo}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="contrasena" className="block font-medium">
+              Contraseña:
+            </label>
+            <input
+              type="password"
+              id="contrasena"
+              value={contrasena}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="fecha_nacimiento" className="block font-medium">
+              Fecha de Nacimiento:
+            </label>
+            <input
+              type="date"
+              id="fecha_nacimiento"
+              value={fecha_nacimiento}
+              onChange={(e) => setFechaNacimiento(e.target.value)}
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+            />
+          </div>
+          <div>
+            <label htmlFor="carrera" className="block font-medium">
+              Carrera:
+            </label>
+            <select
+              id="carrera"
+              value={carrera}
+              onChange={(e) => setCarrera(e.target.value)}
+              required
+              className="border border-gray-300 rounded px-3 py-2 w-full"
+            >
+              <option value="">Selecciona una carrera</option>
+              {carreras.map(carrera => (
+                <option key={carrera.id} value={carrera.id}>
+                  {carrera.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded"
           >
-            <option value="">Selecciona una carrera</option>
-            {carreras.map(carrera => (
-              <option key={carrera.id} value={carrera.id}>
-                {carrera.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="estado">Estado:</label>
-          <select
-            id="estado"
-            value={estado}
-            onChange={(e) => setEstado(e.target.value)}
-            required
-          >
-            <option value="">Selecciona un estado</option>
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="rol">Rol:</label>
-          <input
-            type="text"
-            id="rol"
-            value={rol}
-            onChange={(e) => setRol(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Crear usuario</button>
-      </form>
-      <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
-    </>
-  );
- 
+            Crear usuario
+          </button>
+        </form>
+        <p>
+          ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+        </p>
+      </div>
+    </div>
+);
+
 }
