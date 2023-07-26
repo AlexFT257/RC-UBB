@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Head from 'next/head';
+import Head from "next/head";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 
@@ -28,34 +28,42 @@ export default function crearUsuario() {
   
       }
     }`;
-const GET_CARRERAS = gql`
-query {
-  all_carreras {
-    id
-    nombre
-  }
-}
-`;
+  const GET_CARRERAS = gql`
+    query {
+      all_carreras {
+        id
+        nombre
+      }
+    }
+  `;
 
   const [crearUsuario, { error, reset }] = useMutation(CREATE_USER);
-  const { data: carrerasData, loading: carrerasLoading } = useQuery(GET_CARRERAS);
+  const { data: carrerasData, loading: carrerasLoading } =
+    useQuery(GET_CARRERAS);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    console.log(crearUsuario, "hola")
-    crearUsuario({ variables: { nombre,
+
+    console.log(crearUsuario, "hola");
+    crearUsuario({
+      variables: {
+        nombre,
         apellido,
         nombre_usuario,
         correo,
         contrasena,
         fecha_nacimiento,
         estado,
-        rol } }).then(response => {
-      console.log(response.data, "holahola")
-      router.push("/login");
-      
-    }).catch(error => { console.log(error) })
+        rol,
+      },
+    })
+      .then((response) => {
+        console.log(response.data, "holahola");
+        router.push("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   if (carrerasLoading) {
@@ -138,7 +146,7 @@ query {
             required
           >
             <option value="">Selecciona una carrera</option>
-            {carreras.map(carrera => (
+            {carreras.map((carrera) => (
               <option key={carrera.id} value={carrera.id}>
                 {carrera.nombre}
               </option>
@@ -170,8 +178,9 @@ query {
         </div>
         <button type="submit">Crear usuario</button>
       </form>
-      <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+      <p>
+        ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+      </p>
     </>
   );
- 
 }
