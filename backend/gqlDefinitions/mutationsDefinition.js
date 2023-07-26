@@ -22,10 +22,12 @@ type Mutation {
 
     #Publicación
     
-    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: VotacionInput, comentarios:[ID], likes: [ID]): Publicacion
+    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID): Publicacion
+    crearComentario(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID, esComentario: ID!): Publicacion
     editarPublicacion(id: ID!, usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: VotacionInput, comentarios:[ID], likes: [ID]): Publicacion
     eliminarPublicacion(id: ID!): Publicacion
-  
+    likePublicacion(id: ID!, usuario: ID!): Publicacion
+
     # Crear Votación
     crearVotacion(pregunta: String!, opciones: [OpcionInput]!): Votacion
     editarVotacion(id: ID!, pregunta: String, opciones: [OpcionInput]): Votacion
@@ -43,13 +45,13 @@ type Mutation {
     
   
     # Crear Chat
-    crearChat(usuarios: [ID]!, nombre: String!, mensajes: [ID]): Chat
+    crearChat(usuarios: [ID]!, nombre: String!, mensaje: MensajeInput): Chat
     eliminarChat(id: ID!): Chat
-    addMensaje(id: ID!, mensaje: MensajeInput!): Chat
     addUsuariosToChat(id: ID!, usuarios: [ID!]): Chat
+    openChat(id: ID!, usuario: ID!): Chat
 
     # Crear Mensaje
-    crearMensaje(chat: ID!, usuario: ID!, texto: String, imagenes: [String]): Mensaje
+    addMensaje(id: ID!, mensaje: MensajeInput!): Mensaje
     editarMensaje(id: ID!, usuario: ID!, texto: String, imagenes: [String]): Mensaje
     eliminarMensaje(id: ID!): Mensaje
 
@@ -67,6 +69,9 @@ type Mutation {
   
 type ForgotPasswordResponse {
   success: Boolean!
+    markRead(id: ID!, usuario: ID!): Mensaje
+    markRecived(id: ID!, usuario: ID!): Mensaje
+    markReciveds(id: ID!, usuarios: [ID!]!): Mensaje
 }
 `
 module.exports = typeDefs;

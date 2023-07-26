@@ -34,6 +34,7 @@ const { usuarioQueries } = require("./queries/usuarioQueries.js");
 const { votacionQueries } = require("./queries/votacionQueries.js");
 const { horarioQueries } = require("./queries/horarioQueries.js");
 
+const { tagQueries } = require('./queries/tagQueries.js');
 //Nesting
 const {
   UsuarioNesting,
@@ -68,7 +69,8 @@ const resolvers = {
     ...publicacionQueries,
     ...usuarioQueries,
     ...votacionQueries,
-    ...horarioQueries,
+    ...horarioQueries,,
+        ...tagQueries
   },
   Mutation: {
     ...carreraMutation,
@@ -86,8 +88,11 @@ const resolvers = {
   Carrera: { ...CarreraNesting },
   Chat: { ...ChatNesting },
   Mensaje: { ...MensajeNesting },
+  Publicacion: {...PublicacionNesting},
+    Tag: {...TagNesting},
+    TagInfo:{...TagInfoNesting},
 };
-
+    
 // Crear una instancia de Apollo Server
 const apolloServer = new ApolloServer({
   typeDefs: mergeTypeDefs([
