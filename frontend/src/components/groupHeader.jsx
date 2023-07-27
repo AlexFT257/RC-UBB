@@ -36,7 +36,7 @@ function GroupHeader({isAdmin,GroupId, GroupName, GroupBanner }) {
           </h1>
         </div>
         {/* Group options */}
-        <div className="my-2 flex dark:text-textDarkColor flex-row justify-evenly rounded-md bg-white p-2 font-semibold text-black shadow-md dark:bg-accentDarkColor">
+        <div className="my-2 flex dark:text-primary flex-row justify-evenly rounded-md bg-foreground p-2 font-semibold text-black shadow-md dark:bg-accentDarkColor">
           <Link href={`/${GroupId}/home`}>Inicio</Link>
           <Link href={`/${GroupId}/calendar`}>Calendario</Link>
           <Link href={`/${GroupId}/members`}>Miembros</Link>

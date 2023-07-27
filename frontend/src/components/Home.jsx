@@ -8,10 +8,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../utils/userContext';
 
 
-import Header from "@/components/Header"
-import Chat from "@/components/Chat";
-import FriendsList from "@/components/FriendList";
-import EventList from "@/components/EventList";
+import Header from "../components/Header"
+import Chat from "../components/Chat";
+import FriendsList from "../components/FriendList";
+import EventList from "../components/EventList";
 
 
 export default function Home({ screenWidth, children }) {
@@ -67,7 +67,27 @@ export default function Home({ screenWidth, children }) {
             document.title = 'Cargando...'; // Set the title to show the spinner
 
             navigationTimeout = setTimeout(() => {
-                const href = actPage == 0 ? '/Feed' : '/Friends';
+                let href = actPage == 0 ? '/Feed' : '/Friends';
+                switch (actPage) {
+                    case 0:
+                        href = '/Feed';
+                        break;
+                    case 1:
+                        href = '/Friends';
+                        break;
+                    case 2:
+                        href = '/Events';
+                        break;
+                    case 3:
+                        href = '/GroupPage';
+                        break;
+                    case 4:
+                        href = '/Settings';
+                        break;
+                    default:
+                        href = '/Feed';
+                        break;
+                }
                 router.push(href);
             }, 200);
         } else {
@@ -166,6 +186,9 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
         }
     }
 
+    const router = useRouter();
+    
+
     return (
         <>
             <button className={buttStyle} {...actButtonStyle(0)} onClick={() => handleMenuTransitions(0)}>
@@ -177,7 +200,7 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
             <button className={buttStyle} {...actButtonStyle(2)} onClick={() => handleMenuTransitions(2)}>
                 <AiOutlineCalendar className="w-[25px] h-[25px] mr-[3vw]" /> Eventos </button>
 
-            <button className={buttStyle} {...actButtonStyle(3)} onClick={() => handleMenuTransitions(3)}>
+            <button className={buttStyle} {...actButtonStyle(3)} onClick={()=>handleMenuTransitions(3)}>
                 <AiOutlineApartment className="w-[25px] h-[25px] mr-[3vw]" /> Comunidades </button>
 
             <button className={buttStyle} {...actButtonStyle(4)} onClick={() => handleMenuTransitions(4)}>

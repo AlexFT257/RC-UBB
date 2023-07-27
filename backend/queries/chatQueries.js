@@ -15,7 +15,7 @@ const chatQueries = {
     buscarFriendChat: async (root, args) => {
         const chat = await Chat.findOne({
             $and: [
-                { name: '' },
+                { name: '*' },
                 { users: { $eq: args.users } }
             ]
         });

@@ -1,12 +1,8 @@
 const { ApolloServer } = require("apollo-server");
-require("./SocketServer.js");
-//Nesting
-const { mergeTypeDefs } = require("@graphql-toolkit/schema-merging");
-const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-const { parseCookies, setCookie } = require("cookie");
-// Se importa la configuración de la base de datos
 require("./db.js");
+require("./SocketServer.js");
+const dotenv = require("dotenv");
+const { mergeTypeDefs } = require("@graphql-toolkit/schema-merging");
 
 // Definitions
 const dbDefinitions = require("./gqlDefinitions/dbDefinitions.js");
@@ -22,7 +18,6 @@ const publicacionMutation = require("./mutation/publicacionMutation.js");
 const usuarioMutation = require("./mutation/usuarioMutation.js");
 const votacionMutation = require("./mutation/votacionMutation.js");
 const horarioMutation = require("./mutation/horarioMutation.js");
-// const ArchivoMutation = require("./mutation/archivoMutation.js");
 
 //Queries
 const { carreraQueries } = require("./queries/carreraQueries.js");
@@ -34,7 +29,7 @@ const { usuarioQueries } = require("./queries/usuarioQueries.js");
 const { votacionQueries } = require("./queries/votacionQueries.js");
 const { horarioQueries } = require("./queries/horarioQueries.js");
 
-const { tagQueries } = require('./queries/tagQueries.js');
+const { tagQueries } = require("./queries/tagQueries.js");
 //Nesting
 const {
   UsuarioNesting,
@@ -42,23 +37,14 @@ const {
   MensajeNesting,
   ChatNesting,
   GrupoNesting,
+  PublicacionNesting,
+  TagNesting,
+  TagInfoNesting,
 } = require("./nesting/nestings.js");
 
 //se importa el .env
 dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET; //se obtiene el JWT_SECRET del .env
 
-// Función para verificar y decodificar el token
-const verifyToken = (token) => {
-  console.log("token index:", token);
-  try {
-    return jwt.verify(token, "SUPER_HYPER_MEGA_PALABRA_SECRETA");
-  } catch (error) {
-    return null;
-  }
-};
-
-//se crean los resolvers
 //se crean los resolvers
 const resolvers = {
   Query: {
@@ -69,8 +55,8 @@ const resolvers = {
     ...publicacionQueries,
     ...usuarioQueries,
     ...votacionQueries,
-    ...horarioQueries,,
-        ...tagQueries
+    ...horarioQueries,
+    ...tagQueries,
   },
   Mutation: {
     ...carreraMutation,
@@ -81,6 +67,7 @@ const resolvers = {
     ...usuarioMutation,
     ...votacionMutation,
     ...horarioMutation,
+    ...calendarioMutation,
     // ...ArchivoMutation,
   },
   Usuario: { ...UsuarioNesting },
@@ -88,11 +75,11 @@ const resolvers = {
   Carrera: { ...CarreraNesting },
   Chat: { ...ChatNesting },
   Mensaje: { ...MensajeNesting },
-  Publicacion: {...PublicacionNesting},
-    Tag: {...TagNesting},
-    TagInfo:{...TagInfoNesting},
+  Publicacion: { ...PublicacionNesting },
+  Tag: { ...TagNesting },
+  TagInfo: { ...TagInfoNesting },
 };
-    
+
 // Crear una instancia de Apollo Server
 const apolloServer = new ApolloServer({
   typeDefs: mergeTypeDefs([
@@ -101,10 +88,9 @@ const apolloServer = new ApolloServer({
     queriesDefinitions,
   ]),
   resolvers,
-
   cors: {
-    credentials: true, // Habilitar el envío de cookies
-    origin: "*", // Permitir solicitudes de cualquier origen
+    origin: "*",
+    credentials: true,
   },
 });
 

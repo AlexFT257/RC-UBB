@@ -400,19 +400,20 @@ export const UserProvider = ({ children }) => {
             } else {
                 if (!buscarChat) {
                     console.log("Error al buscar amigo");
-                    return
+                    console.log("No se encontro el chat", buscarChat);
+                    // return
                 }
-                const nChat = {
-                    usuarios: [user.amigos.find((friend) => friend.id === friendID),
-                    { id: user.id, foto_perfil: user.foto_perfil, username: user.username }],
-                    nombre: '*',
-                    mensajes: [],
-                    active: true
-                }
+                // const nChat = {
+                //     usuarios: [user.amigos.find((friend) => friend.id === friendID),
+                //     { id: user.id, foto_perfil: user.foto_perfil, username: user.username }],
+                //     nombre: '*',
+                //     mensajes: [],
+                //     active: true
+                // }
 
-                setChats((prevChats) => [...prevChats, nChat]);
+                // setChats((prevChats) => [...prevChats, nChat]);
 
-                addChat([friendID, user.id], '', undefined);
+                addChat([friendID, user.id], '*', undefined);
             }
         }
     }

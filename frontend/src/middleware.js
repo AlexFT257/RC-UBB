@@ -10,7 +10,7 @@ export async function middleware(req) {
         return NextResponse.redirect(new URL('/Login', req.url))
     } else {
         if (cookie && page == '/Login') {
-            return NextResponse.redirect(new URL('/Home', req.url))
+            return NextResponse.redirect(new URL('/Feed', req.url))
         } else {
             const regex = /^[A-Z][a-z]+$/
             if (page != '/' && !regex.test(page.slice(1))) {

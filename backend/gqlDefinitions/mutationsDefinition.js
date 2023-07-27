@@ -9,7 +9,7 @@ type Mutation {
     forgotPassword(correo: String!): ForgotPasswordResponse!
     verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
     actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
-    editarUsuario(id: ID!, nombre: String!, apellido: String!, nombre_usuario: String!, correo: String!, carrera: String!, estado: String!, rol: String): Usuario
+    editarUsuario(id: ID!, nombre: String!, apellido: String!, username: String!, correo: String!, carrera: ID!, contrasena:String!,amigos:[ID]): Usuario
     eliminarUsuario(id: ID!): Usuario
     #calendario
     crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
@@ -21,7 +21,6 @@ type Mutation {
     eliminarCarrera(id: ID!): Carrera
 
     #Publicación
-    
     crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID): Publicacion
     crearComentario(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID, esComentario: ID!): Publicacion
     editarPublicacion(id: ID!, usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: VotacionInput, comentarios:[ID], likes: [ID]): Publicacion
@@ -43,32 +42,28 @@ type Mutation {
     eliminarAdmins(idGrupo: ID!, admins: [ID]!): Grupo
     eliminarMiembros(idGrupo: ID!, miembros: [ID]!): Grupo
     
-  
     # Crear Chat
     crearChat(usuarios: [ID]!, nombre: String!, mensaje: MensajeInput): Chat
     eliminarChat(id: ID!): Chat
     addUsuariosToChat(id: ID!, usuarios: [ID!]): Chat
     openChat(id: ID!, usuario: ID!): Chat
-
+    
     # Crear Mensaje
     addMensaje(id: ID!, mensaje: MensajeInput!): Mensaje
     editarMensaje(id: ID!, usuario: ID!, texto: String, imagenes: [String]): Mensaje
     eliminarMensaje(id: ID!): Mensaje
+    markRead(id: ID!, usuario: ID!): Mensaje
+    markRecived(id: ID!, usuario: ID!): Mensaje
+    markReciveds(id: ID!, usuarios: [ID!]!): Mensaje
 
     # Crear Horario
     crearHorario(dia: String!, hora_inicio: Date!, hora_termino: Date!, asignatura: String!, sala: String!, acronimo: String, usuario: ID!): Horario
     editarHorario(id: ID!, dia: String, hora_inicio: Date, hora_termino: Date, asignatura: String, sala: String, acronimo: String, usuario: ID): Horario
     eliminarHorario(id: ID!): Horario
-
-    # Archivos
-    # subirArchivo(file: Upload!): Archivo!
-    # subirIcono(file: Upload!): Archivo!
-    # subirBanner(file: Upload!): ID!
-
   }
   
 type ForgotPasswordResponse {
-  success: Boolean!
+    success: Boolean!
     markRead(id: ID!, usuario: ID!): Mensaje
     markRecived(id: ID!, usuario: ID!): Mensaje
     markReciveds(id: ID!, usuarios: [ID!]!): Mensaje

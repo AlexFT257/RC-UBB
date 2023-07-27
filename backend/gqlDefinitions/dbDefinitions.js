@@ -23,6 +23,7 @@ type Usuario {
     comentarios: [Publicacion]
     intereses:[TagInfo]
 }
+
 type Token{
     value: String!
 }

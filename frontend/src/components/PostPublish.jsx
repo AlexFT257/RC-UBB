@@ -1,4 +1,4 @@
-import { AiOutlineSend, AiOutlinePicture } from "react-icons/ai";
+import { AiOutlineSend, AiOutlinePicture,AiOutlineUser } from "react-icons/ai";
 import React, { useState, useContext } from 'react';
 
 
@@ -26,16 +26,24 @@ export default function PostPublish({ user, addPost }) {
 
     };
 
+    const profilePicRender = () => {
+        if (!user.foto_perfil) {
+            return <AiOutlineUser className="h-[30px] w-[30px] fill-current opacity-80" />
+        } 
+        return <img className="w-[50px] h-[50px] rounded-[6px] mr-4 ml-4" src={user.foto_perfil} alt={`${user.username}'s profile picture`} />
+    }
+
+
     const handlePostChange = (event) => {
         setNewPost({ ...newPost, texto: event.target.value });
     };
 
     return (
-        <div className="flex w-full  items-center border-[2px] border-dotted border-background  px-[10px] mt-[20px] mb-[20px] bg-foreground rounded-[10px] shadow-2xl" >
+        <div className="flex w-full  items-center justify-evenly border-[2px] border-dotted border-background  px-[10px] mt-[20px] mb-[20px] bg-foreground rounded-[10px] shadow-2xl" >
 
-            <img className="w-[50px] h-[50px] rounded-[6px] mr-4 ml-4" src={user.foto_perfil} alt={`${user.username}'s profile picture`} />
+            {profilePicRender()}
 
-            <form className="w-[86%] mx-auto py-[20px] flex flex-row" onSubmit={handlePostSubmit}>
+            <form className="w-[86%]  py-[20px] flex flex-row" onSubmit={handlePostSubmit}>
 
                 <button className="flex items-center pl-[20px] bg-background rounded-tl-lg rounded-bl-lg ml-[2px] hover:text-accent">
                     <AiOutlinePicture className="h-[1.3rem] w-[1.3rem] fill-current opacity-80" />

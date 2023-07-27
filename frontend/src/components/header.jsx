@@ -1,157 +1,510 @@
 import {
-    AiOutlineComment, AiOutlineSearch, AiOutlineBell, AiOutlineBulb, AiFillCaretLeft, AiOutlineMenu
+  AiOutlineComment,
+  AiOutlineSearch,
+  AiOutlineBell,
+  AiOutlineBulb,
+  AiFillCaretLeft,
+  AiOutlineMenu, 
+  AiOutlineCalendar,
+  AiOutlineGroup,
+  AiOutlineIdcard,
+  AiOutlineUserAdd,
+  AiOutlineHome,
+  AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 
-import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../utils/userContext';
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../utils/userContext";
 import { useTheme } from "next-themes";
+import { useSearchUsers, useSearchGroups, useSendJoinRequest } from '../utils/searchUtils';
+import { useComponentVisible } from "@/hooks/useComponentVisible";
+import { HiOutlineUserGroup } from "react-icons/hi";
 
 
-export default function Header({ headerVisible, screenWidth, user, menuElements }) {
+export default function Header({
+  headerVisible,
+  screenWidth,
+  user,
+  menuElements,
+}) {
+  const { resolvedTheme, setTheme } = useTheme();
+  const {
+    lastMsgChats,
+    getLastMsgChats,
+    changeChatState,
+    isNewMsgs,
+    setIsNewMsgs,
+  } = useContext(UserContext);
 
-    const { resolvedTheme, setTheme } = useTheme();
-    const { lastMsgChats, getLastMsgChats, changeChatState, isNewMsgs, setIsNewMsgs } = useContext(UserContext);
+  const [chatsMenuOpen, setChatsMenuOpen] = useState(false);
+  const [sideMenuOpen, setSideMenuOpen] = useState(false);
+  const [onHoverLi, setOnHoverLi] = useState(-1);
 
-    const [chatsMenuOpen, setChatsMenuOpen] = useState(false);
-    const [sideMenuOpen, setSideMenuOpen] = useState(false)
-    const [onHoverLi, setOnHoverLi] = useState(-1);
+  const [search, setSearch] = useState("");
+  const [showResults, setShowResults] = useState(false);
 
+  const {
+    loading: loadingUser,
+    error: errorUser,
+    searchResults: userSearchResults,
+    refetch: refetchUser,
+  } = useSearchUsers(search);
+  const {
+    loading: loadingGroup,
+    error: errorGroup,
+    searchResults: groupSearchResults,
+    refetch: refetchGroup,
+  } = useSearchGroups(search);
+  const {
+    loading: loadingJoin,
+    error: errorJoin,
+    sendJoinRequest,
+  } = useSendJoinRequest();
 
-    useEffect(()=>{
-        if (!lastMsgChats || lastMsgChats.length == 0) {
-            getLastMsgChats();
-        }
-    }, [])
+  // funcion para actualizar las queries (refetch) cada vez que se hace una busqueda
+  const refecthQueries = () => {
+    refetchUser();
+    refetchGroup();
+  };
 
-    const handleLastMsgs = () => {
-        setChatsMenuOpen(!chatsMenuOpen)
-        
+  // la funcion handleSubmit se ejecuta cuando se da click en el boton de buscar
+  // o se presiona enter en el input
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // refetch para volver a hacer la consulta
+    refecthQueries();
+    // activa el dropdown
+    if (search !== "") {
+      setShowResults(true);
+    }
+  };
+
+  // este useEffect se ejecuta cada vez que se cambia el valor del input
+  // y si el valor es vacio cierra el dropdown para no generar otra consulta
+  useEffect(() => {
+    if (search === "") {
+      setShowResults(false);
+    }
+  }, [search]);
+
+  useEffect(() => {
+    if (!lastMsgChats || lastMsgChats.length == 0) {
+      getLastMsgChats();
+    }
+  }, []);
+
+  const handleLastMsgs = () => {
+    setChatsMenuOpen(!chatsMenuOpen);
+  };
+
+  // la funcion Groups recibe los datos de la consulta y los muestra en pantalla
+  function Groups({ groupSearchResults, errorGroup, loadingGroup }) {
+    if (loadingGroup) return <p>Loading...</p>;
+    if (errorGroup) return <p>Error :</p>;
+    // console.log("Grupos", groupSearchResults);
+
+    // sacar el id del usuario logueado del local storage
+    // console.log("ID del usuario logueado", loggedUserId);
+    if (groupSearchResults.length === 0) {
+      return (
+        <div className="m-2 flex flex-grow justify-between rounded-md bg-background p-2">
+          <div className="flex flex-col">
+            <h1>No se encontraron grupos</h1>
+          </div>
+        </div>
+      );
     }
 
+    return groupSearchResults.map(({ id, nombre, descripcion, miembros }) => {
+      // funcion que envia la solicitud de unirse al grupo
+      const handleResquestGroup = () => {
+        // e.preventDefault();
+        console.log("Solicitando unirse al grupo", id);
+        console.log("ID del usuario logueado", user.id);
+        sendJoinRequest(id, user.id);
+        // refetch para que se actualice el icono
+        refecthQueries();
+      };
+
+      console.log("Miembros", miembros);
+
+      // determina si el usuario es miembro del grupo que busco
+      // para renderizar un boton de unirse o no
+      const checkUserIsMember = () => {
+        // bool que determina si el usuario es miembro del grupo
+        const isMember = miembros.some((miembro) => {
+          return miembro.id === user.id;
+        });
+
+        // si es miembro se retorna el boton de unirse deshabilitado
+        if (isMember) {
+          console.log("Es miembro");
+          return (
+            <>
+              <button
+                className="rounded bg-green-500 px-4 py-2 font-bold text-white"
+                disabled
+              >
+                <HiOutlineUserGroup />
+              </button>
+            </>
+          );
+        }
+
+        return (
+          <>
+            <button
+              onClick={handleResquestGroup}
+              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            >
+              <AiOutlineUsergroupAdd />
+            </button>
+          </>
+        );
+      };
+
+      return (
+        <div
+          key={id}
+          className="m-2 flex flex-grow justify-between rounded-md bg-background p-2"
+        >
+          <div className="flex flex-col">
+            {/* TODO: inserte aqui la foto (user no tiene foto) */}
+            <h1>{nombre}</h1>
+            <p className="hidden lg:flex">{descripcion}</p>
+          </div>
+          <div className="m-2 flex">{checkUserIsMember()}</div>
+        </div>
+      );
+    });
+  }
+
+  // la funcion Users recibe los datos de la consulta y los muestra en pantalla
+  function Users({ userSearchResults, errorUser, loadingUser }) {
+    // checa si hay un error o si esta cargando
+    if (loadingUser) return <p>Loading...</p>;
+    if (errorUser) return <p>Error</p>;
+    console.log("Usuarios", userSearchResults);
+
+    // si no hay usuarios que mostrar, muestra un mensaje
+    if (userSearchResults.length === 0) {
+      return (
+        <div className="m-2 flex flex-grow justify-between rounded-md bg-background p-2">
+          <div className="flex flex-col">
+            <h1>No se encontraron usuarios</h1>
+          </div>
+        </div>
+      );
+    }
+
+    return userSearchResults.map(({ id, nombre, apellido, correo }) => {
+      // funcion que envia la solicitud de amistad
+      const handleAddFriend = (e) => {
+        e.preventDefault();
+        console.log("Agregando amigo", id);
+        // TODO: Agregar amigo
+
+        // refetch para actualizar la lista de amigos
+        // refecthQueries();
+      };
+
+      // determina si el usuario encontrado es el mismo que esta logueado
+      // para no mostrarlo en la lista de usuarios
+      // sacar el id del usuario logueado del user context
+      // si el id del usuario logueado es igual al id del usuario que se esta iterando
+      // se retorna null para no mostrarlo en la lista
+      if (user.id === id) {
+        return (
+          <div className="m-2 flex flex-grow justify-between rounded-md bg-background p-2">
+            <div className="flex flex-col">
+              <h1>No se encontraron usuarios</h1>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div
+          key={id}
+          className="m-2 flex flex-grow justify-between rounded-md bg-background p-2"
+        >
+          <div className="flex flex-col">
+            {/* TODO: inserte aqui la foto (user no tiene foto) */}
+            <h1>
+              {nombre} {apellido}
+            </h1>
+            <p className="hidden lg:flex">{correo}</p>
+          </div>
+          <div className="m-2 flex">
+            <button
+              onClick={handleAddFriend}
+              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            >
+              <AiOutlineUserAdd />
+            </button>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  // la funcion DropDown es el componente que se muestra en pantalla
+  // y que contiene los resultados de la busqueda y usa el hook useComponentVisible
+  const DropDown = () => {
+    const { ref, isComponentVisible, setIsComponentVisible } =
+      useComponentVisible(showResults);
+
     return (
-        <>
-            <header className={`fixed flex items-center z-99 h-[70px] w-screen bg-foreground shadow-md ${headerVisible ? 'transform -translate-y-0 transition-transform duration-100 ease-in-out' : 'transform -translate-y-[70px] transition-transform duration-100 ease-in-out'}`}>
-
-                {(screenWidth >= 1024 &&
-                    <div className="flex items-center w-200">
-                        <img className="relative mt-[7px] ml-[7vw] w-[140px] h-[50px]" src="/LogoUchat.png" alt="Your Logo" />
-                        {/* <img className="mask" /></div> */}
-                    </div>)
-                    ||
-                    <button onClick={() => setSideMenuOpen(true)} className="ml-[10vw] my-[14px]">
-                        <img className=" w-[4vw] h-[4vw] min-w-[40px] min-h-[40px] rounded-[6px] " src={user.foto_perfil} alt={`${user.username}'s profile picture`} />
-                        {/* <AiOutlineMenu className="text-secondary w-[2rem] h-[2rem] hover:text-accent" /> */}
-                    </button>
-                }
-
-                <div className={"absolute flex-grow flex justify-center left-1/2 items-center w-0 " + (screenWidth < 768 ? "ml-[8vw]" : "")}>
-                    <form className="flex items-center min-w-[60vw] md:min-w-[30vw] w-[30vw] bg-background rounded-[10px] m-[30px]" action="#">
-                        <input className="flex-grow border-none bg-background text-base rounded-[10px]  p-[10px] pl-[20px] w-[92%] max-[w-100%] placeholder-secondary focus:outline-none" type="text" placeholder="Buscar" />
-                        {<button className="border-none bg-transparent text-base text-inherit w-[8%] min-w-[30px]" type="submit">
-                            <AiOutlineSearch className="w-[1.5rem] h-[1.5rem]" />
-                        </button>}
-                    </form>
-                </div>
-
-                {(screenWidth > 768 && <div className="flex justify-between items-center lg:w-[15vw] w-[18vw] min-w-[150px] ml-auto mr-[5vw]">
-                    <button className="relative inline-block min-w-[45px] w-[45px] h-[45px] rounded-[10px] bg-primary text-background hover:bg-background hover:text-primary"
-                        onClick={() => {handleLastMsgs(); setIsNewMsgs(false); }}>
-                        <AiOutlineComment className="ml-[11px] w-[1.5rem] h-[1.5rem] " />
-                        {isNewMsgs &&
-                            <div className="absolute top-[3px] right-[3px]  w-3 h-3 bg-accent rounded-full">
-                                <div className=" animate-ping absolute  w-3 h-3 bg-accent rounded-full" /> 
-                            </div>}
-                    </button>
-                    <button className="relative inline-block min-w-[45px] w-[45px] h-[45px] rounded-[10px] bg-primary text-background hover:bg-background hover:text-primary">
-                        <AiOutlineBell className="ml-[11px] w-[1.5rem] h-[1.5rem] " />
-                        {false && //Reemplazar por la condicion de nueva notificacion
-                            <div className="absolute top-[3px] right-[3px] w-3 h-3 bg-accent rounded-full">
-                                <div className="animate-ping absolute w-3 h-3 bg-accent rounded-full" />
-                            </div>}
-                    </button>
-                    <button className="relative inline-block min-w-[45px] w-[45px] h-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
-                        onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}>
-                        <AiOutlineBulb className="ml-[11px] w-[1.5rem] h-[1.5rem] " />
-                    </button>
-
-                </div>)}
-
-                <div className="absolute left-0 mb-[-90px] h-[20px] w-full bg-gradient-to-t from-transparent to-background" />
-                {chatsMenuOpen && PrevChats(lastMsgChats, setOnHoverLi, onHoverLi, changeChatState)}
-
-            </header>
-
-            {screenWidth < 1024 && <SideMenu user={user} sideMenuOpen={sideMenuOpen} setSideMenuOpen={setSideMenuOpen} menuElements={menuElements} setTheme={setTheme} handleLastMsgs={handleLastMsgs} />}
-
-        </>
+      <div ref={ref}>
+        {isComponentVisible && (
+          // el posicionamiento del dropdown se hace con tailwind y absolute pa que
+          // se vea abajo del input y no se mueva con el scroll
+          <div className="absolute left-1/4 top-20 z-50   w-1/2 rounded-lg bg-foreground  p-4 shadow-2xl shadow-background dark:text-[#a9dacb]  ">
+            <h1 className="text-xl ">Personas</h1>
+            <div className="flex flex-col gap-2">
+              <Users userSearchResults={userSearchResults} errorUser={errorUser} loadingUser={loadingUser} />
+            </div>
+            <h1 className="text-xl ">Grupos</h1>
+            <div className="flex flex-col gap-2">
+              <Groups groupSearchResults={groupSearchResults} errorGroup={errorGroup} loadingGroup={loadingGroup} />
+            </div>
+          </div>
+        )}
+      </div>
     );
+  };
+  
+
+  return (
+    <>
+      <header
+        className={`z-45 fixed flex h-[70px] w-screen items-center bg-foreground shadow-md ${
+          headerVisible
+            ? "-translate-y-0 transform transition-transform duration-100 ease-in-out"
+            : "-translate-y-[70px] transform transition-transform duration-100 ease-in-out"
+        }`}
+      >
+        {(screenWidth >= 1024 && (
+          <div className="w-200 flex items-center">
+            <img
+              className="relative ml-[7vw] mt-[7px] h-[50px] w-[140px]"
+              src="/LogoUchat.png"
+              alt="Your Logo"
+            />
+            {/* <img className="mask" /></div> */}
+          </div>
+        )) || (
+          <button
+            onClick={() => setSideMenuOpen(true)}
+            className="my-[14px] ml-[10vw]"
+          >
+            <img
+              className=" h-[4vw] min-h-[40px] w-[4vw] min-w-[40px] rounded-[6px] "
+              src={user?.foto_perfil}
+              alt={`${user.username}'s profile picture`}
+            />
+            {/* <AiOutlineMenu className="text-secondary w-[2rem] h-[2rem] hover:text-accent" /> */}
+          </button>
+        )}
+
+        <div
+          className={
+            " left-1/2 flex w-0 flex-grow items-center justify-center " +
+            (screenWidth < 768 ? "ml-[8vw]" : "")
+          }
+        >
+          <form
+            className="m-[30px] flex w-[30vw] min-w-[60vw] items-center rounded-[10px] bg-background md:min-w-[30vw]"
+            action="#"
+            onSubmit={handleSubmit}
+          >
+            <input
+              className="max-[w-100%] w-[92%] flex-grow rounded-[10px] border-none  bg-background p-[10px] pl-[20px] text-base placeholder-secondary focus:outline-none"
+              type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar"
+            />
+            {
+              <button
+                className="text-inherit w-[8%] min-w-[30px] border-none bg-transparent text-base"
+                type="submit"
+              >
+                <AiOutlineSearch className="h-[1.5rem] w-[1.5rem]" />
+              </button>
+            }
+          </form>
+            <DropDown />
+        </div>
+
+        {screenWidth > 768 && (
+          <div className="ml-auto mr-[5vw] flex w-[18vw] min-w-[150px] items-center justify-between lg:w-[15vw]">
+            <button
+              className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-primary text-background hover:bg-background hover:text-primary"
+              onClick={() => {
+                handleLastMsgs();
+                setIsNewMsgs(false);
+              }}
+            >
+              <AiOutlineComment className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
+              {isNewMsgs && (
+                <div className="absolute right-[3px] top-[3px]  h-3 w-3 rounded-full bg-accent">
+                  <div className=" absolute h-3  w-3 animate-ping rounded-full bg-accent" />
+                </div>
+              )}
+            </button>
+            <button className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-primary text-background hover:bg-background hover:text-primary">
+              <AiOutlineBell className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
+              {false && ( //Reemplazar por la condicion de nueva notificacion
+                <div className="absolute right-[3px] top-[3px] h-3 w-3 rounded-full bg-accent">
+                  <div className="absolute h-3 w-3 animate-ping rounded-full bg-accent" />
+                </div>
+              )}
+            </button>
+            <button
+              className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
+              onClick={() =>
+                setTheme(resolvedTheme === "dark" ? "light" : "dark")
+              }
+            >
+              <AiOutlineBulb className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
+            </button>
+          </div>
+        )}
+
+        <div className="absolute left-0 mb-[-90px] h-[20px] w-full bg-gradient-to-t from-transparent to-background" />
+        {chatsMenuOpen &&
+          PrevChats(lastMsgChats, setOnHoverLi, onHoverLi, changeChatState)}
+      </header>
+
+      {screenWidth < 1024 && (
+        <SideMenu
+          user={user}
+          sideMenuOpen={sideMenuOpen}
+          setSideMenuOpen={setSideMenuOpen}
+          menuElements={menuElements}
+          setTheme={setTheme}
+          handleLastMsgs={handleLastMsgs}
+        />
+      )}
+    </>
+  );
 }
 
 const PrevChats = (lastMsgChats, setOnHoverLi, onHoverLi, changeChatState) => {
-
-    return (
-        <ul className="list-container shadow-2xl bg-background fixed top-[76px] sm:right-0 md:right-[5vw] xl:right-[8vw]
-        md:max-w-[300px] max-w-[100vw] h-[400px] rounded-[10px]  border-[1px] border-foreground" onMouseOut={() => setOnHoverLi(-1)}>
-
-            {lastMsgChats.map((chat, index) => (
-                <li key={chat.id} className="flex flex-row cursor-pointer border-b h-[60px] items-center snap-start border-secondary border-dotted p-2 hover:bg-primary hover:text-background "
-                    onMouseOver={() => setOnHoverLi(index)} onClick={() => changeChatState(chat.id, true)}>
-                    <img src={chat.mensajes[0].usuario.foto_perfil} className='w-[40px] h-[40px] rounded-[10px] md:mr-[0.5rem] mr-[1rem] ml-[1rem]' alt={`${chat.mensajes[0].usuario.username}'s profile picture`} />
-                    <h1 className={`text-[16px] font-bold ${index == onHoverLi ? "text-background" : "text-secondary"} mr-[10px]`}> {chat.mensajes[0].usuario.username.charAt(0).toUpperCase() + chat.mensajes[0].usuario.username.slice(1) + ":   "} </h1>
-                    <h1 className='text-[16px] font-thin truncate'> {chat.mensajes[0].texto} </h1>
-                    {chat.newMsg && <div className="absolute right-3 w-3 h-3 bg-accent rounded-full">
-                        <div className="animate-ping absolute w-3 h-3 bg-accent rounded-full" /></div>}
-                </li>
-            ))}
-        </ul>
-    )
-}
-
-
-const SideMenu = ({ user, sideMenuOpen, setSideMenuOpen, menuElements, setTheme, handleLastMsgs }) => {
-    const buttStyle = "flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold text-secondary transition-colors hover:bg-primary hover:text-foreground"
-
-    return (
-        <div className="relative">
-            <div className={`fixed top-0 left-0 w-64 shadow-2xl bg-background h-full overflow-hidden transition-transform duration-300 ease-in-out transform ${sideMenuOpen ? 'translate-x-0' : '-translate-x-full'}`} >
-
-                <div className="flex justify-start items-center w-full h-[100px] overflow-hidden cursor-pointer hover:bg-primary hover:text-foreground shadow-md">
-                    <img className="object-cover w-[60px] h-[60px] rounded-[6px] mr-4 ml-4" src={user.foto_perfil} alt={`${user.username}'s profile picture`} />
-
-                    <div className="flex flex-col ml-1 mt-3 mb-3 mr-[20px]  w-[calc(100%-150px)]">
-                        <h2 className="text-[18px] font-bold whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[100%]">{user.username}</h2>
-                        <p className="mt-1 text-base whitespace-nowrap overflow-hidden overflow-ellipsis max-w-[100%]">{user.correo}</p>
-                    </div>
-                    <AiOutlineMenu className="w-[1.5rem] h-[1.5rem] mr-[15px]" />
-
-                </div>
-
-                <button className="z-10 p-2 w-full hover:bg-primary hover:text-background" onClick={() => setSideMenuOpen(false)} >
-                    <AiFillCaretLeft className="w-[2rem] h-[2rem] ml-auto mr-0" />
-                </button>
-
-
-                <ul className="py-[1vh]">
-                    <button className={buttStyle} onClick={() => handleLastMsgs()}>
-                        <AiOutlineComment className="w-[25px] h-[25px] mr-[3vw]" /> Chats
-                    </button>
-                    <button className={buttStyle}>
-                        <AiOutlineBell className="w-[25px] h-[25px] mr-[3vw]" /> Notificaciones
-                    </button>
-                </ul>
-
-                <div className='w-[90%] h-[1px] mt-[5px] mb-[10px]  mx-auto bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent to-105%' />
-
-                <ul className="py-[1vh]">
-                    {menuElements}
-                </ul>
-
-                <div className='w-[90%] h-[1px] mt-[5px] mb-[10px]  mx-auto bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent to-105%' />
-
-                <button className={"flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold transition-colors  py-[1vh] hover:bg-background hover:text-primary bg-primary text-background"} onClick={() => setTheme((prevTheme) => prevTheme === 'dark' ? 'light' : 'dark')}>
-                    <AiOutlineBulb className="w-[25px] h-[25px] mr-[3vw]" /> Cambiar tema
-                </button>
+  return (
+    <ul
+      className="list-container fixed top-[76px] h-[400px] max-w-[100vw] rounded-[10px] border-[1px] border-foreground
+        bg-background shadow-2xl sm:right-0 md:right-[5vw]  md:max-w-[300px] xl:right-[8vw]"
+      onMouseOut={() => setOnHoverLi(-1)}
+    >
+      {lastMsgChats.map((chat, index) => (
+        <li
+          key={chat.id}
+          className="flex h-[60px] cursor-pointer snap-start flex-row items-center border-b border-dotted border-secondary p-2 hover:bg-primary hover:text-background "
+          onMouseOver={() => setOnHoverLi(index)}
+          onClick={() => changeChatState(chat.id, true)}
+        >
+          <img
+            src={chat.mensajes[0].usuario.foto_perfil}
+            className="ml-[1rem] mr-[1rem] h-[40px] w-[40px] rounded-[10px] md:mr-[0.5rem]"
+            alt={`${chat.mensajes[0].usuario.username}'s profile picture`}
+          />
+          <h1
+            className={`text-[16px] font-bold ${
+              index == onHoverLi ? "text-background" : "text-secondary"
+            } mr-[10px]`}
+          >
+            {" "}
+            {chat.mensajes[0].usuario.username.charAt(0).toUpperCase() +
+              chat.mensajes[0].usuario.username.slice(1) +
+              ":   "}{" "}
+          </h1>
+          <h1 className="truncate text-[16px] font-thin">
+            {" "}
+            {chat.mensajes[0].texto}{" "}
+          </h1>
+          {chat.newMsg && (
+            <div className="absolute right-3 h-3 w-3 rounded-full bg-accent">
+              <div className="absolute h-3 w-3 animate-ping rounded-full bg-accent" />
             </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+const SideMenu = ({
+  user,
+  sideMenuOpen,
+  setSideMenuOpen,
+  menuElements,
+  setTheme,
+  handleLastMsgs,
+}) => {
+  const buttStyle =
+    "flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold text-secondary transition-colors hover:bg-primary hover:text-foreground";
+
+  return (
+    <div className="relative">
+      <div
+        className={`fixed left-0 top-0 h-full w-64 transform overflow-hidden bg-background shadow-2xl transition-transform duration-300 ease-in-out ${
+          sideMenuOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex h-[100px] w-full cursor-pointer items-center justify-start overflow-hidden shadow-md hover:bg-primary hover:text-foreground">
+          <img
+            className="ml-4 mr-4 h-[60px] w-[60px] rounded-[6px] object-cover"
+            src={user?.foto_perfil}
+            alt={`${user.username}'s profile picture`}
+          />
+
+          <div className="mb-3 ml-1 mr-[20px] mt-3 flex w-[calc(100%-150px)]  flex-col">
+            <h2 className="max-w-[100%] overflow-hidden overflow-ellipsis whitespace-nowrap text-[18px] font-bold">
+              {user.username}
+            </h2>
+            <p className="mt-1 max-w-[100%] overflow-hidden overflow-ellipsis whitespace-nowrap text-base">
+              {user.correo}
+            </p>
+          </div>
+          <AiOutlineMenu className="mr-[15px] h-[1.5rem] w-[1.5rem]" />
         </div>
-    );
+
+        <button
+          className="z-10 w-full p-2 hover:bg-primary hover:text-background"
+          onClick={() => setSideMenuOpen(false)}
+        >
+          <AiFillCaretLeft className="ml-auto mr-0 h-[2rem] w-[2rem]" />
+        </button>
+
+        <ul className="py-[1vh]">
+          <button className={buttStyle} onClick={() => handleLastMsgs()}>
+            <AiOutlineComment className="mr-[3vw] h-[25px] w-[25px]" /> Chats
+          </button>
+          <button className={buttStyle}>
+            <AiOutlineBell className="mr-[3vw] h-[25px] w-[25px]" />{" "}
+            Notificaciones
+          </button>
+        </ul>
+
+        <div className="to-105% mx-auto mb-[10px] mt-[5px]  h-[1px] w-[90%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
+
+        <ul className="py-[1vh]">{menuElements}</ul>
+
+        <div className="to-105% mx-auto mb-[10px] mt-[5px]  h-[1px] w-[90%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
+
+        <button
+          className={
+            "flex h-[60px] w-full items-center justify-start bg-primary p-[20px] py-[1vh] pl-[30px] text-lg  font-bold text-background transition-colors hover:bg-background hover:text-primary"
+          }
+          onClick={() =>
+            setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"))
+          }
+        >
+          <AiOutlineBulb className="mr-[3vw] h-[25px] w-[25px]" /> Cambiar tema
+        </button>
+      </div>
+    </div>
+  );
 };
