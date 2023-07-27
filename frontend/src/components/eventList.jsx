@@ -3,66 +3,27 @@ import { useState, useEffect } from "react";
 import {AiOutlineCalendar} from "react-icons/ai";
 
 export default function EventList() {
-  const [events, setEvents] = useState([]);
-
-  // dummy data de eventos
-  const dummyEvents = [
-    {
-      id: 0,
-      nombre: "Evento 1",
-      descripcion: "Descripcion del evento 1",
-      fechaInicio: "2021-10-10",
-      fechaFin: "2021-10-10",
-      horaInicio: "10:00",
-      horaFin: "12:00",
-      lugar: "Lugar 1",
-    },
-    {
-      id: 1,
-      nombre: "Evento 2",
-      descripcion: "Descripcion del evento 2",
-      fechaInicio: "2021-10-10",
-      fechaFin: "2021-10-10",
-      horaInicio: "10:00",
-      horaFin: "12:00",
-      lugar: "Lugar 2",
-    },
-    {
-      id: 2,
-      nombre: "Evento 3",
-      descripcion: "Descripcion del evento 3",
-      fechaInicio: "2021-10-10",
-      fechaFin: "2021-10-10",
-      horaInicio: "10:00",
-      horaFin: "12:00",
-      lugar: "Lugar 3",
-    },
-  ];
-
-  // TODO: cambiar por datos de la base de datos
-  useEffect(() => {
-    setEvents(dummyEvents);
-  }, []);
+    const events = [{ nombre: "Party", fecha: "10/1", descripcion: "Descripcion del evento que sucedera en la fecha x", id:0 },
+    { nombre: "Party", fecha: "10/3", descripcion: "Descripcion del evento que sucedera  en la fecha x", id:1 },
+    { nombre: "Party", fecha: "4/12", descripcion: "Descripcion del evento que sucedera  en la fecha x", id:2 },
+    { nombre: "Party", fecha: "31/12", descripcion: "Descripcion del evento que sucedera  en la fecha x y blablabasl como si fuera esta la ultina", id:3 }]
 
   // map de eventos
   const eventList = events.map((event) => {
-    const fecha = event.fechaInicio.split("-");
 
     return (
-      <li
-        key={event.id}
-        className="flex flex-row border-b  snap-start border-gray-200 xl:p-4  dark:border-gray-700"
-      >
+      <li key={event.id} className="flex flex-row border-b snap-start border-background border-dotted p-2 hover:bg-primary hover:text-background ">
         {/* imagen del calendario con la fecha*/}
-        <div className="flex  relative">
-            <AiOutlineCalendar className="text-8xl dark:text-textDarkColor text-gray-400 "/>
-            <h1 className="absolute left-6 bottom-6 font-bold">{fecha[1]}/{fecha[2]}</h1>
+        <div className="flex relative mt-[5px]">
+            <AiOutlineCalendar className="text-8xl text-secondary"/>
+            <h1 className="absolute text-secondary text-[18px] text-center w-[55px] left-[20px] bottom-6 font-bold">{event.fecha}</h1>
         </div>
-        <div className="m-2 flex flex-col justify-between">
-          <h1 className="text-xl font-semibold dark:text-textDarkColor">
+        
+        <div className="m-2 flex-wrap overflow-hidden text-ellipsis flex-col h-[85px] max-w-[60%] grow">
+          <h1 className="text-xl font-bold">
             {event.nombre}
           </h1>
-          <h1 className="text-lg  dark:text-textDarkColor">
+          <h1 className="text-sm line-clamp-3 text-justify w-[100%] max-w-[100%] ">
             {event.descripcion}
           </h1>
         </div>
@@ -73,15 +34,11 @@ export default function EventList() {
   return (
     <>
       {/* contenedor */}
-      <div className="mb-2">
+      <div className="mb-2 w-[100%]">
         {/* titulo */}
-        <div className="flex">
-          <h1 className="mb-2 text-2xl font-semibold dark:text-textDarkColor">
-            Eventos
-          </h1>
-        </div>
+        <h2 className="flex font-bold justify-self-center mr-auto ml-[10px] mb-[10px] text-secondary opacity-80 "> EVENTOS </h2>
         {/* lista de eventos */}
-        <ul className="flex flex-col snap-y max-h-64 overflow-hidden overflow-y-scroll rounded-md bg-white dark:bg-accentDarkColor dark:text-textDarkColor">
+        <ul className="list-container flex flex-col snap-y max-h-64 overflow-hidden overflow-y-scroll rounded-md bg-foreground ">
           {eventList}
         </ul>
       </div>

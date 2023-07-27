@@ -1,111 +1,56 @@
-// obteniendo los amigos del usuario actual con graphql
-import { gql, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { AiOutlineComment } from "react-icons/ai";
+import { AiOutlineComment, AiOutlineSearch } from "react-icons/ai";
+import React, { useState, useContext } from 'react';
+import { UserContext } from '../utils/userContext';
 
-export default function FriendList() {
-  const [friends, setFriends] = useState([]);
 
-  // dummy data de amigos
-  // TODO: cambiar por datos de la base de datos
-  const dummyFriends = [
-    {
-      nombre: "Juan Carlos",
-      apellido: "Bodoque",
-      foto: "/bodoque.jpeg",
-      status: "online",
-    },
-    {
-      nombre: "Tulio",
-      apellido: "Triviño",
-      foto: "/tulio.png",
-      status: "online",
-    },
-    {
-      nombre: "Juanin Juan",
-      apellido: "Harry",
-      foto: "/juanin.png",
-      status: "offline",
-    },
-    {
-      nombre: "Juan Carlos",
-      apellido: "Bodoque",
-      foto: "/bodoque.jpeg",
-      status: "online",
-    },
-    {
-      nombre: "Tulio",
-      apellido: "Triviño",
-      foto: "/tulio.png",
-      status: "online",
-    },
-  ];
+export default function FriendsList({ friends, hide }) {
 
-  // estilos para el estado de conexion 
-  // q: como se usa esto?
-  // a: se usa en el className de la etiqueta <div> que contiene el estado de conexion
-  // a: ejemplo: <AiOutlineComment className={`text-2xl ${statusStyle.online}`}  />
-  // a: cualquier modificacion que se quiera hacer al estilo del icono se hace en el objeto statusStyle
-  const statusStyle = {
-    online: "dark:text-textDarkColor text-green-500",
-    offline: "dark:primaryDarkColor text-red-500",
-  };
+    const { changeFriendChatState } = useContext(UserContext);
+    const [animationEnded, setAnimationEnded] = useState(false);
+    const [chatSearch, setChatSearch] = useState("");
 
-  const statusChecker = (status) => {
-    if (status === "online") {
-      return (
-        <AiOutlineComment className={`text-2xl ${statusStyle.online}`}  />
-      )
-    } else {
-      return (
-        <AiOutlineComment className={`text-2xl ${statusStyle.offline}`}  />
-      )
+    const handleAnimationEnd = () => {
+        setAnimationEnded(true);
+    };
+
+    const openChat = async (friendID) => {
+        await changeFriendChatState(friendID, true)
     }
-  }
 
-  // consulta a la base de datos
-  useEffect(() => {
-    setFriends(dummyFriends);
-  }, []);
+    return (
+        <div className={`w-[100%] ${!hide ? 'grow-animation' : 'shrink-animation'}`} onAnimationEnd={handleAnimationEnd}>
 
-  // funcion para renderizar los amigos
-  const renderFriends = () => {
-    return friends.map((friend) => {
-      return (
-        <li className="p-2 border-b border-gray-200  dark:border-gray-700  flex snap-center cursor-pointer flex-row items-center justify- gap-2 hover:opacity-80 active:opacity-60">
-          <div className="flex ">
-            <Image
-              src={friend.foto}
-              alt="Foto Perfil"
-              className="rounded"
-              height={50}
-              width={50}
-            />
-          </div>
-          <div className="flex flex-row items-center gap-2">
-            <h1 className="flex grow">{friend.nombre} {friend.apellido}</h1>
-          </div>
-          {/* opcion de chat */}
-          <button className="flex  ml-auto justify-end">
-            {statusChecker(friend.status)}
-          </button>
-        </li>
-      );
-    });
-  };
+            <h2 className="flex font-bold justify-self-center mr-auto ml-[10px] mb-[10px] text-secondary opacity-80 "> AMIGOS
+                <div className="flex items-center self-center me-auto px-[10px] rounded-[10px] ml-[10px] bg-secondary text-background opacity-80">
+                    {friends.filter(friend => friend.active).length + "/" + friends.length}
+                </div>
+            </h2>
+            <div className="list-container bg-foreground shadow-md" style={{ height: '340px' }}>
 
-  return (
-    <>
-      {/* container */}
-      <div className="mb-2">
-        <h1 className="mb-2 text-2xl font-semibold text-textDarkColor">
-          Amigos
-        </h1>
-        <ul className="flex snap-y  flex-col max-h-64 overflow-y-scroll scroll-smooth   gap-2 rounded-md bg-white dark:bg-[#231842] dark:text-[#a9dacb]">
-          {renderFriends()}
-        </ul>
-      </div>
-    </>
-  );
-}
+                <div className=" my-[10px] mx-[5px] flex flex-row">
+
+                    <input className="p-[10px] ml-[5px] pl-[20px] rounded-l-[10px] bg-background text-base w-[93%] h-[45px] placeholder-secondary outline-none focus:outline-none"
+
+                        type="text"
+                        placeholder="Buscar amigo"
+                        value={chatSearch}
+                        onChange={(e)=>{ setChatSearch(e.target.value) }}
+                    />
+                    <button className="bg-background flex items-center pr-[20px] rounded-r-[10px] hover:text-accent" type="submit">
+                        <AiOutlineSearch />
+                        </button>
+                </div>
+
+                {(chatSearch === "" ? friends : friends.filter(friend => friend.username.includes(chatSearch))).map((friend, index) => (
+                    <button key={index} className="flex items-start border-b border-dotted border-background py-[20px] px-[10px]  hover:bg-primary hover:text-foreground" onClick={() => openChat(friend.id)}>
+
+                        <img className="ml-[6px] mr-[20px] w-[50px] h-[50px] rounded-lg" src={friend.foto_perfil} alt={`${friend.username}'s profile`} />
+                        <h2 className="mt-[13px] mr-[10px] font-bold truncate">{friend.username.charAt(0).toUpperCase() + friend.username.slice(1)}</h2>
+                        <div className="flex items-center self-center ml-auto mr-[10px]"> <AiOutlineComment className={`w-[1.5rem] h-[1.5rem] ${!friend.active ? 'text-accent' : "inherit"} `} /></div>
+
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
