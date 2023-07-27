@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { UserContext } from "@/utils/userContext";
-import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
 import Home from "@/components/Home";
 import { useContext } from "react";
@@ -9,6 +8,7 @@ import { VscLoading, VscError } from "react-icons/vsc";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { CgEnter } from "react-icons/cg";
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
+import Link from "next/link";
 
 const GET_USER_GROUPS = gql`
   query buscarGrupoUsuario($usuario: ID!) {
@@ -34,25 +34,38 @@ function GroupPage() {
     }
   }, [error]);
 
+  useEffect(() => {
+    console.log("tiempo cargando", Date.now().toString() );
+    console.log("loading", loading);
+    if(!loading){
+      console.log("tiempo cargando", Date.now().toString() );
+    }
+  }, [loading]);
+
   if (loading) {
     return (
       <>
-        {/* Publicaciones / feed */}
-        <div className="bg-slate- col-span-5 p-2 transition-all delay-75 duration-300  ease-in-out lg:col-span-3">
-          {/* groups Cards*/}
-          <div className="grid grid-cols-1 gap-2 p-2">
-            <div className="bg-accentDarkColor  col-span-1 flex-col rounded-md p-2  text-black shadow-xl lg:flex">
-              <div className="rounded-md  p-2 text-[#a9dacb]">
-                <h1 className="text-3xl font-semibold">Grupos</h1>
-              </div>
-              <div className="grid grid-cols-1 gap-2 p-2">
+        <div className="z-10 mt-[80px]   w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
+        <div className="mt-4 flex-col items-center justify-between  m-4 rounded-lg  bg-foreground text-[5vw] font-bold sm:text-[18px] ">
+          <div
+            className="
+            flex flex-row items-center  justify-between  rounded-md p-2 "
+          >
+            <h1 className="text-xl font-bold text-secondary ">Grupos</h1>
+            <button className=" flex gap-2  hover:bg-background rounded-lg p-2">
+              <p
+              className=" font-semibold text-primary max-md:hidden text-lg  "
+              >Crear Grupo</p>
+              <AiOutlineUsergroupAdd className="text-3xl font-semibold text-primary" />
+            </button>
+          </div>
+              <div className="flex  flex-col p-2 gap-2">
                 <div className="bg-bgDarkColorTrasparent flex flex-row justify-center  rounded-md p-2 dark:text-[#a9dacb]">
                   <VscLoading className="animate-spin text-3xl" />
                 </div>
               </div>
             </div>
           </div>
-        </div>
       </>
     );
   }
@@ -61,11 +74,20 @@ function GroupPage() {
     return (
       <>
         {/* groups Cards*/}
-        <div className="grid grid-cols-1 gap-2 p-2">
-          <div className="bg-accentDarkColor  col-span-1 flex-col rounded-md p-2  text-black shadow-xl lg:flex">
-            <div className="rounded-md  p-2 text-[#a9dacb]">
-              <h1 className="text-3xl font-semibold">Grupos</h1>
-            </div>
+        <div className="z-10 mt-[80px]   w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
+        <div className="mt-4 flex-col items-center justify-between  m-4 rounded-lg  bg-foreground text-[5vw] font-bold sm:text-[18px] ">
+          <div
+            className="
+            flex flex-row items-center  justify-between  rounded-md p-2 "
+          >
+            <h1 className="text-xl font-bold text-secondary ">Grupos</h1>
+            <button className=" flex gap-2  hover:bg-background rounded-lg p-2">
+              <p
+              className=" font-semibold text-primary max-md:hidden text-lg  "
+              >Crear Grupo</p>
+              <AiOutlineUsergroupAdd className="text-3xl font-semibold text-primary" />
+            </button>
+          </div>
             <div className="grid grid-cols-1 gap-2 p-2">
               <div className="bg-bgDarkColorTrasparent flex flex-row justify-center gap-2  rounded-md p-2 dark:text-[#a9dacb]">
                 <VscError className="animate-bounce text-3xl" />
@@ -112,7 +134,7 @@ function GroupPage() {
             </button>
           </div>
           {/* groups Cards*/}
-          <div className="grid grid-cols-1 gap-2 p-2">
+          <div className="flex  flex-col p-2 gap-2">
             {data?.buscarGrupoUsuario.map((group) => (
               <div
                 className="flex flex-row justify-between rounded-md bg-background  p-2 text-primary"
@@ -130,7 +152,7 @@ function GroupPage() {
                 </div>
                 {/* Agrega un botón o enlace para redirigir a la página del grupo */}
                 <div className="m-2 flex items-center justify-center">
-                  <a
+                  <Link
                     href={`/${group.id}/home`}
                     className="text-xl font-semibold"
                   >
@@ -138,7 +160,7 @@ function GroupPage() {
                       className="
                     text-3xl font-semibold text-primary"
                     />
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}

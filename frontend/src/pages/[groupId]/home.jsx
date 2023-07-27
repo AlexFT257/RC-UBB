@@ -1,60 +1,27 @@
 import React from "react";
 import GroupHeader from "../../components/groupHeader";
-import PublicationInput from "../../components/publicationInput";
-import { useEffect, useState, useContext } from "react";
-import Head from "next/head";
-import Header from "../../components/header";
-import ProfileDisplay from "../../components/profileDisplay";
-import RecentGroups from "../../components/recentGroups";
-import FriendList from "../../components/friendList";
-import EventList from "@/components/eventList";
+import { useContext } from "react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
-import { data } from "autoprefixer";
-import { getItem } from "@/utils/localStorage";
-import jwt from "jsonwebtoken";
 import Home from "@/components/home";
 import { UserContext } from "@/utils/userContext";
 import PostPublish from "@/components/PostPublish";
+import { GroupContext } from "@/utils/groupContext";
 
 export default function GroupHome() {
   const { user } = useContext(UserContext);
+  const { group } = useContext(GroupContext);
+
+  // console.log("user", user);
+  // console.log("GroupHome", group);
   // obtener el id del grupo desde la url
   const router = useRouter();
   const { groupId } = router.query;
-  console.log("groupId", groupId);
-
-  // fetch de la info del grupo
-  const GET_GROUP_INFO = gql`
-    query buscarGrupoId($id: ID!) {
-      buscarGrupoId(id: $id) {
-        id
-        nombre
-        descripcion
-        privacidad
-        icono
-        banner
-        admins {
-          id
-          nombre
-          apellido
-          username
-        }
-      }
-    }
-  `;
-
-  const {
-    loading: loadingGroupInfo,
-    error: errorGroupInfo,
-    data: dataGroupInfo,
-  } = useQuery(GET_GROUP_INFO, {
-    variables: { id: groupId },
-  });
+  // console.log("groupId", groupId);
 
   const isAdmin = () => {
     if (
-      dataGroupInfo?.buscarGrupoId?.admins?.some(
+      group.admins?.some(
         (admin) => admin.id === user.id
       )
     ) {
@@ -64,25 +31,17 @@ export default function GroupHome() {
     }
   };
 
-  console.log("isAdmin?", isAdmin());
-
-  const [date, setDate] = useState("");
-  useEffect(() => {
-    const date = new Date();
-    setDate(date);
-  }, []);
-
-  //
+  // console.log("isAdmin?", isAdmin());
 
   return (
     <>
       <div className="z-10 mt-[80px]  w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
         <div className="mt-4 flex-col items-center  justify-between text-[5vw] font-bold sm:text-[18px] ">
             <GroupHeader
-              GroupName={dataGroupInfo?.buscarGrupoId?.nombre}
+              GroupName={group.nombre}
               GroupId={groupId}
               isAdmin={isAdmin()}
-              GroupBanner={dataGroupInfo?.buscarGrupoId?.banner}
+              GroupBanner={group.banner}
             />
             {/* Input para publicar */}
             <PostPublish user={user} />

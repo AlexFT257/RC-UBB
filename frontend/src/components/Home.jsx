@@ -185,8 +185,6 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
             return ({})
         }
     }
-
-    const router = useRouter();
     
 
     return (

@@ -1,62 +1,28 @@
 import React from "react";
 import GroupHeader from "../../components/groupHeader";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useContext } from "react";
 import { useRouter } from "next/router";
 import { gql, useQuery, useMutation } from "@apollo/client";
-import { getItem } from "@/utils/localStorage";
-import jwt from "jsonwebtoken";
 import BannerPreview from "@/components/bannerPreview";
 import IconPreview from "@/components/iconPreview";
 import { hasForbiddenWords } from "@/utils/validationUtils";
-import { base64ToImage, imageToBase64 } from "@/utils/imageUtils";
 import Home from "@/components/home";
 import { UserContext } from "@/utils/userContext";
-import { useContext } from "react";
+import { GroupContext } from "@/utils/groupContext";
 
 export default function Options() {
   const { user } = useContext(UserContext);
+  const { group, updateGroupContext } = useContext(GroupContext);
   
   // obtener el id del grupo desde la url
   const router = useRouter();
   const { groupId } = router.query;
-  console.log("groupId", groupId);
-
-  // fetch de la info del grupo
-  const GET_GROUP_INFO = gql`
-    query buscarGrupoId($id: ID!) {
-      buscarGrupoId(id: $id) {
-        id
-        nombre
-        descripcion
-        privacidad
-        icono
-        banner
-        admins {
-          id
-          nombre
-          apellido
-          username
-        }
-      }
-    }
-  `;
-
-  const {
-    loading: loadingGroupInfo,
-    error: errorGroupInfo,
-    data: dataGroupInfo,
-  } = useQuery(GET_GROUP_INFO, {
-    variables: { id: groupId },
-  });
-
 
   const isAdmin = () => {
-    return dataGroupInfo?.buscarGrupoId?.admins?.some(
+    return group?.admins?.some(
       (admin) => admin.id === user.id
     );
   };
-
-  console.log("isAdmin?", isAdmin());
 
   const [groupInfo, setGroupInfo] = useState({
     id: "",
@@ -109,17 +75,17 @@ export default function Options() {
   };
 
   useEffect(() => {
-    if (dataGroupInfo && dataGroupInfo.buscarGrupoId) {
+    if (group) {
       setGroupInfo({
-        id: dataGroupInfo.buscarGrupoId.id,
-        nombre: dataGroupInfo.buscarGrupoId.nombre,
-        descripcion: dataGroupInfo.buscarGrupoId.descripcion,
-        privacidad: dataGroupInfo.buscarGrupoId.privacidad,
-        icono: dataGroupInfo.buscarGrupoId.icono,
-        banner: dataGroupInfo.buscarGrupoId.banner,
+        id: group?.id,
+        nombre: group?.nombre,
+        descripcion: group?.descripcion,
+        privacidad: group?.privacidad,
+        icono: group?.icono,
+        banner: group?.banner,
       });
     }
-  }, [dataGroupInfo]);
+  }, [group]);
 
   //editarGrupo(id: ID!, nombre: String, privacidad: String, vencimiento: Date, descripcion: String, admins: [ID], miembros: [ID], icono: String, banner: String): Grupo
 
@@ -163,6 +129,8 @@ export default function Options() {
       },
       onCompleted: () => {
         alert("Grupo editado correctamente");
+        // requestGroup();
+        updateGroupContext();
         router.push(`/${groupId}/options`);
       },
       onError: (error) => {
@@ -191,23 +159,18 @@ export default function Options() {
       return;
     }
 
-    // las imagenes ya estan en base 64
-    // por lo que se puede subir directamente
-    // console.log("selectedIcon", selectedIcon);
-    // console.log("selectedBanner", selectedBanner);
-
     editarGrupo();
   };
 
   return (
     <>
-      <div className="z-10 mt-[80px]  w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
-        <div className="mt-4 flex-col items-center  justify-between text-[5vw] font-bold sm:text-[18px] ">
+      <div className="z-10 mt-[80px]   w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
+        <div className="mt-4 flex-col items-center m-4   justify-between text-[5vw] font-bold sm:text-[18px] ">
           <GroupHeader
-            GroupName={dataGroupInfo?.buscarGrupoId?.nombre}
+            GroupName={group?.nombre}
             GroupId={groupId}
             isAdmin={isAdmin()}
-            GroupBanner={dataGroupInfo?.buscarGrupoId?.banner}
+            GroupBanner={group?.banner}
           />
           {/* listas container */}
           {/* Opciones container */}
@@ -215,7 +178,7 @@ export default function Options() {
             <form
               action=""
               onSubmit={handleSubmit}
-              className="flex w-full flex-col justify-between"
+              className="flex  flex-col justify-between"
             >
               <div className="flex flex-col">
                 <label htmlFor="nombre" className="text-xl font-semibold">
@@ -225,7 +188,7 @@ export default function Options() {
                   type="text"
                   name="nombre"
                   id="nombre"
-                  className="rounded-md p-2"
+                  className="rounded-md p-2 "
                   value={groupInfo.nombre}
                   onChange={(e) =>
                     setGroupInfo({
@@ -243,7 +206,7 @@ export default function Options() {
                   type="text"
                   name="descripcion"
                   id="descripcion"
-                  className="rounded-md p-2"
+                  className="rounded-md p-2 "
                   value={groupInfo.descripcion}
                   onChange={(e) =>
                     setGroupInfo({
@@ -260,7 +223,7 @@ export default function Options() {
                 <select
                   name="privacidad"
                   id="privacidad"
-                  className="rounded-md p-2"
+                  className="rounded-md p-2 "
                   value={groupInfo.privacidad}
                   onChange={(e) =>
                     setGroupInfo({
@@ -281,7 +244,7 @@ export default function Options() {
                   type="file"
                   name="icono"
                   id="icono"
-                  className="w-2/3 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none"
+                  className="max-sm:w-4/5 w-full rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none"
                   onChange={handleIconChange}
                 />
               </div>
@@ -293,14 +256,14 @@ export default function Options() {
                   type="file"
                   name="banner"
                   id="banner"
-                  className="rounded-md p-2"
+                  className="rounded-md p-2 max-sm:w-4/5 w-full"
                   onChange={handleBannerChange}
                 />
               </div>
               <div className="flex w-full justify-center">
                 <button
                   type="submit"
-                  className="bg-bgDarkColorTrasparent hover:bg-bgDarkColor m-2 w-1/3 rounded-md p-2 text-xl font-bold"
+                  className="bg-background hover:bg-primary hover:text-background transition-all ease-in-out duration-200 m-2 w-1/3 rounded-md p-2 text-xl font-bold"
                 >
                   Guardar
                 </button>
