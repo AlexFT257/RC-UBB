@@ -1,3 +1,4 @@
+
 const { ApolloClient, gql, InMemoryCache } = require('@apollo/client');
 
 const endPoint = new ApolloClient({
@@ -44,3 +45,4 @@ export default function handler(req, res) {
     }
 
 }
+

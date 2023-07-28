@@ -1,3 +1,4 @@
+
 export function clientRequester(query, variables, updateCache) {
 
     return fetch('/api/graphql', {

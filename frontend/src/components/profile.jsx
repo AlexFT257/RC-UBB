@@ -1,9 +1,12 @@
 import Image from "next/image";
 
 export default function Profile() {
+
+  
+
   return (
     <>
-      <div className="m-2 flex flex-row items-center gap-2">
+      <div className="m-2  flex flex-row items-center gap-2">
         <Image
           src="/bodoque.jpeg"
           alt="Foto Perfil"

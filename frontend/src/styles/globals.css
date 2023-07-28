@@ -147,5 +147,3 @@ body::-webkit-scrollbar-thumb {
 .mod-scroll::-webkit-scrollbar-thumb:hover {
     background-color: var(--text-color);
 }
-
-

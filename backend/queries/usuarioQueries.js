@@ -1,32 +1,36 @@
 const Usuario = require('../models/usuario.js');
+const { io } = require('socket.io-client');
+
+const socket = io('http://localhost:3001/', { transports: ['websocket'] });
 
 const usuarioQueries = {
     all_usuarios: async () => {
         const usuarios = await Usuario.find({});
         return usuarios;
     },
-    
+    logOut: async (root, args) => {
+        const usuario = await Usuario.findById(args.id);
+        socket.emit('disconnect friend', usuario.id, usuario.amigos.map((friend)=> friend.toString() ));
+        return usuario;
+    },
     buscarUsuario: async (root, args) => {
         const usuario = await Usuario.find({
             $or: [
                 { nombre: { $regex: args.buscar, $options: 'i' } },
                 { apellido: { $regex: args.buscar, $options: 'i' } },
                 { nombre_usuario: { $regex: args.buscar, $options: 'i' } },
+                { correo: { $regex: args.buscar, $options: 'i' }},
             ]
         });
         return usuario;
     },
     buscarUsuarioId: async (root, args) => {
         const usuario = await Usuario.findById(args.id);
-        console.log(usuario);
+        console.log("BUSCANDO USUARIO",usuario);
         return usuario;
-    },
-    buscarUsuarioCorreo: async (root, args) => {
+    }
+    ,buscarUsuarioCorreo: async (root, args) => {
         const usuario = await Usuario.find({ correo: args.correo });
-        return usuario;
-    },
-    buscarUsuarioFechaNacimiento: async (root, args) => {
-        const usuario = await Usuario.find({ fecha_nacimiento: args.fecha_nacimiento });
         return usuario;
     },
     buscarUsuarioCarrera: async (root, args) => {
@@ -36,30 +40,6 @@ const usuarioQueries = {
         }
         const usuario = await Usuario.find({ carrera: args.carrera });
         return usuario;
-    },
-    buscarUsuarioEstado: async (root, args) => {
-        const usuario = await Usuario.find({ estado: args.estado });
-        return usuario;
-    },
-    buscarUsuarioRol: async (root, args) => {
-        const usuario = await Usuario.find({ rol: args.rol });
-        return usuario;
-    },
-    cantidadAmigosUsuario: async (root, args) => {
-        const usuario = await Usuario.findById(args.id);
-        return usuario.amigos.length;
-    },
-    cantidadPublicacionesUsuario: async (root, args) => {
-        const usuario = await Usuario.findById(args.id);
-        return usuario.publicaciones.length;
-    },
-    cantidadComentariosUsuario: async (root, args) => {
-        const usuario = await Usuario.findById(args.id);
-        return usuario.comentarios.length;
-    },
-    cantidadMeGustaUsuario: async (root, args) => {
-        const usuario = await Usuario.findById(args.id);
-        return usuario.me_gusta.length;
     }
 }
 
