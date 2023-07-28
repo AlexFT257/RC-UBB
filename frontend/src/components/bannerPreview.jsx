@@ -23,7 +23,7 @@ function BannerPreview({ banner, name}) {
 
     return (
       <>
-        <div className="text-bgDarkColor">
+        <div className="text-primary">
           {/* group banner */}
           <div
             className="flex h-40 w-full items-center justify-center overflow-hidden rounded-md shadow-lg"

@@ -31,7 +31,7 @@ function IconPreview({ icon, name, descripcion  }) {
           </div>
         </button>
         <div
-          className="flex flex-row justify-between rounded-md  bg-background p-2 dark:text-[#a9dacb]"
+          className="flex flex-row justify-between rounded-md  bg-background p-2 text-primary"
         >
           {/* icono del grupo */}
           <div className="flex ">
