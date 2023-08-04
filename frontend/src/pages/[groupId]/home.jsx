@@ -23,7 +23,10 @@ export default function GroupHome() {
     if(!group){
       updateGroupContext();
     }
-  }, [group]);
+    if(group && group.id !== groupId){
+      updateGroupContext();
+    }
+  }, [group,groupId]);
 
   const isAdmin = () => {
     if (
