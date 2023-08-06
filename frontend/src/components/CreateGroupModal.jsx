@@ -6,6 +6,7 @@ export default function CreateGroupModal({
   isOpen,
   setModalOpen,
   onConfirm,
+  refetch,
   userId,
 }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -102,6 +103,7 @@ export default function CreateGroupModal({
 
     setIsLoading(false);
     onConfirm();
+    refetch();
     setModalOpen(!isOpen);
   };
 

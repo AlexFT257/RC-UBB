@@ -12,13 +12,12 @@ import Link from "next/link";
 import CreateGroupModal from "@/components/CreateGroupModal";
 
 const GET_USER_GROUPS = gql`
-  query buscarGrupoUsuario($usuario: ID!) {
+  query gruposUsuario($usuario: ID!) {
     buscarGrupoUsuario(usuario: $usuario) {
       id
       nombre
       descripcion
       icono
-      banner
     }
   }
 `;
@@ -30,10 +29,7 @@ function GroupPage() {
   const { loading, error, data, refetch } = useQuery(GET_USER_GROUPS, {
     variables: { usuario: user.id },
     notifyOnNetworkStatusChange: true,
-    
   });
-
-  
 
   useEffect(() => {
     if (error) {
@@ -41,11 +37,17 @@ function GroupPage() {
     }
   }, [error]);
 
+  console.log("data", modalComplete);
   useEffect(() => {
     if (modalComplete) {
-      refetch();
+      setTimeout(() => {
+        refetch();
+      }, 5000);
+      
+      console.log("refetch", data);
       setModalComplete(false);
     }
+
   }, [modalComplete]);
 
   if (loading) {
@@ -130,9 +132,10 @@ function GroupPage() {
           <CreateGroupModal
             isOpen={modalOpen}
             setModalOpen={setModalOpen}
-            onConfirm={()=>{
+            onConfirm={() => {
               setModalComplete(!modalComplete);
             }}
+            refetch={refetch}
             userId={user.id}
           />
         </div>

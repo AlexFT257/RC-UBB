@@ -55,6 +55,8 @@ type Query {
     logOut(id: ID!): Usuario
     buscarUsuarioCorreo(correo: String!): [Usuario]
     buscarUsuarioCarrera(carrera: ID!): [Usuario]
+    gruposUsuario(id: ID!): [Grupo]
+
 
     #Votacion
     all_votaciones: [Votacion]!

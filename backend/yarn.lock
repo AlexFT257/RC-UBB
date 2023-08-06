@@ -1169,9 +1169,9 @@
     "@types/koa" "*"
 
 "@types/koa@*":
-  version "2.13.7"
-  resolved "https://registry.npmjs.org/@types/koa/-/koa-2.13.7.tgz"
-  integrity sha512-Xd9xiGmTDv57y86kQYnBZZcE9H8cJhv+aL0YH+hZIa3rbUDNdk+EY6wcJC3xCyfrVIC+vjhtNENFwisF+E8Zhg==
+  version "2.13.8"
+  resolved "https://registry.npmjs.org/@types/koa/-/koa-2.13.8.tgz"
+  integrity sha512-Ugmxmgk/yPRW3ptBTh9VjOLwsKWJuGbymo1uGX0qdaqqL18uJiiG1ZoV0rxCOYSaDGhvEp5Ece02Amx0iwaxQQ==
   dependencies:
     "@types/accepts" "*"
     "@types/content-disposition" "*"
@@ -1646,25 +1646,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.2.0.tgz"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-body-parser@^1.18.3, body-parser@^1.19.0:
-  version "1.20.1"
-  resolved "https://registry.npmjs.org/body-parser/-/body-parser-1.20.1.tgz"
-  integrity sha512-jWi7abTbYwajOytWCQc37VulmWiRae5RyTpaCyDcS5/lMdtwSz5lOpDE67srw/HYe35f1z3fDQw+3txg7gNtWw==
-  dependencies:
-    bytes "3.1.2"
-    content-type "~1.0.4"
-    debug "2.6.9"
-    depd "2.0.0"
-    destroy "1.2.0"
-    http-errors "2.0.0"
-    iconv-lite "0.4.24"
-    on-finished "2.4.1"
-    qs "6.11.0"
-    raw-body "2.5.1"
-    type-is "~1.6.18"
-    unpipe "1.0.0"
-
-body-parser@1.20.1:
+body-parser@^1.18.3, body-parser@^1.19.0, body-parser@1.20.1:
   version "1.20.1"
   resolved "https://registry.npmjs.org/body-parser/-/body-parser-1.20.1.tgz"
   integrity sha512-jWi7abTbYwajOytWCQc37VulmWiRae5RyTpaCyDcS5/lMdtwSz5lOpDE67srw/HYe35f1z3fDQw+3txg7gNtWw==
@@ -1914,9 +1896,9 @@ cookie@0.4.1:
   integrity sha512-ZwrFkGJxUR3EIoXtO+yVE69Eb7KlixbaeAWfBQB9vVsNn/o+Yw69gBWSSDK825hQNdN+wF8zELf3dFNl/kxkUA==
 
 core-js-pure@^3.10.2:
-  version "3.31.1"
-  resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.31.1.tgz"
-  integrity sha512-w+C62kvWti0EPs4KPMCMVv9DriHSXfQOCQ94bGGBiEW5rrbtt/Rz8n5Krhfw9cpFyzXBjf3DB3QnPdEzGDY4Fw==
+  version "3.32.0"
+  resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.32.0.tgz"
+  integrity sha512-qsev1H+dTNYpDUEURRuOXMvpdtAnNEvQWS/FMJ2Vb5AY8ZP4rAPQldkE27joykZPJTe0+IVgHZYh1P5Xu1/i1g==
 
 cors@^2.8.5, cors@~2.8.5:
   version "2.8.5"

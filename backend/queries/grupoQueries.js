@@ -17,7 +17,7 @@ const grupoQueries = {
         const grupoAdmin = await Grupo.find({ admins: args.usuario });
         const grupoMiembro = await Grupo.find({ miembros: args.usuario });
         const grupo = grupoAdmin.concat(grupoMiembro);
-        console.log(grupo);
+        // console.log(grupo);
         // const grupo = await Grupo.find({ miembros: args.usuario, admins: args.usuario });
         return grupo;
     },
