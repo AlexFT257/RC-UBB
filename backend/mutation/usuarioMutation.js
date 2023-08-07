@@ -155,6 +155,18 @@ const mutations = {
       });
     }
   },
+  agregarAmigo: async (root, args) => {
+    const { amigo } = args;
+    const usuario = await Usuario.findById(args.id);
+    try {
+      usuario.amigos.push(amigo);
+      return usuario.save();
+    } catch (error) {
+      throw new UserInputError(error.message, {
+        invalidArgs: args,
+      });
+    }
+  },
 };
 
 module.exports = mutations;

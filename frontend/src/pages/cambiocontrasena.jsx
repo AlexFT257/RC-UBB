@@ -169,7 +169,7 @@ const CambioContrasena = ({ screenWidth }) => {
                     className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     placeholder="correo"
                     value={correo}
-                    onChange={(e) => setEmail(e.target.value)} required
+                    onChange={(e) => setCorreo(e.target.value)} required
                   />
                 </div>
                 {correoError && <div className="text-red-500">{correoError}</div>}

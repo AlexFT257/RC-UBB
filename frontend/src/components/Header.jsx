@@ -5,11 +5,8 @@ import {
   AiOutlineBulb,
   AiFillCaretLeft,
   AiOutlineMenu,
-  AiOutlineCalendar,
-  AiOutlineGroup,
-  AiOutlineIdcard,
   AiOutlineUserAdd,
-  AiOutlineHome,
+  AiOutlineExport,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 
@@ -23,13 +20,18 @@ import {
 } from "../utils/searchUtils";
 import { useComponentVisible } from "@/hooks/useComponentVisible";
 import { HiOutlineUserGroup } from "react-icons/hi";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import { gql, useMutation } from "@apollo/client";
 
 export default function Header({
+  handleMenuTransitions,
   headerVisible,
   screenWidth,
   user,
   menuElements,
 }) {
+  const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const {
     lastMsgChats,
@@ -38,6 +40,11 @@ export default function Header({
     isNewMsgs,
     setIsNewMsgs,
   } = useContext(UserContext);
+
+  const handleCerrarSesion = () => {
+    Cookies.remove("user");
+    router.push("/login");
+  };
 
   const [chatsMenuOpen, setChatsMenuOpen] = useState(false);
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
@@ -182,6 +189,14 @@ export default function Header({
     });
   }
 
+  const AGREGAR_AMIGO = gql`
+    mutation agregarAmigo($id: ID!, $amigo: ID!) {
+      agregarAmigo(id: $id, amigo: $amigo) {
+        id
+      }
+    }
+  `;
+
   // la funcion Users recibe los datos de la consulta y los muestra en pantalla
   function Users({ userSearchResults, errorUser, loadingUser }) {
     // checa si hay un error o si esta cargando
@@ -200,15 +215,29 @@ export default function Header({
       );
     }
 
+     // mutation para agregar un amigo
+     const [agregarAmigo, { loading: agregarLoading, error: errorAgregar, refetch: refetchAgregar }] = useMutation(AGREGAR_AMIGO, {
+
+      onCompleted: () => {
+        console.log("Amigo agregado");
+      },
+    });
+
     return userSearchResults.map(({ id, nombre, apellido, correo }) => {
       // funcion que envia la solicitud de amistad
       const handleAddFriend = (e) => {
         e.preventDefault();
         console.log("Agregando amigo", id);
+        agregarAmigo({ variables: { id: user.id, amigo: id } });
+        if (errorAgregar) {
+          console.log(errorAgregar);
+        }
+
+        console.log("Agregando amigo", id);
         // TODO: Agregar amigo
 
         // refetch para actualizar la lista de amigos
-        // refecthQueries();
+        refecthQueries();
       };
 
       // determina si el usuario encontrado es el mismo que esta logueado
@@ -373,6 +402,12 @@ export default function Header({
             </button>
             <button
               className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
+              onClick={handleCerrarSesion}
+            >
+              <AiOutlineExport className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
+            </button>
+            <button
+              className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
               onClick={() =>
                 setTheme(resolvedTheme === "dark" ? "light" : "dark")
               }
@@ -390,6 +425,7 @@ export default function Header({
       {screenWidth < 1024 && (
         <SideMenu
           user={user}
+          handleMenuTransitions={handleMenuTransitions}
           sideMenuOpen={sideMenuOpen}
           setSideMenuOpen={setSideMenuOpen}
           menuElements={menuElements}
@@ -446,6 +482,7 @@ const PrevChats = (lastMsgChats, setOnHoverLi, onHoverLi, changeChatState) => {
 };
 
 const SideMenu = ({
+  handleMenuTransitions,
   user,
   sideMenuOpen,
   setSideMenuOpen,
@@ -463,7 +500,12 @@ const SideMenu = ({
           sideMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-[100px] w-full cursor-pointer items-center justify-start overflow-hidden shadow-md hover:bg-primary hover:text-foreground">
+        <div
+          onClick={() => {
+            handleMenuTransitions(5);
+          }}
+          className="flex h-[100px] w-full cursor-pointer items-center justify-start overflow-hidden shadow-md hover:bg-primary hover:text-foreground"
+        >
           <img
             className="ml-4 mr-4 h-[60px] w-[60px] rounded-[6px] object-cover"
             src={user?.foto_perfil}

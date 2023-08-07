@@ -10,6 +10,7 @@ type Mutation {
     verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
     actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
     editarUsuario(id: ID, nombre: String, apellido: String, correo: String, contrasena:String, carrera: ID): Usuario
+    agregarAmigo(id: ID!, amigo: ID!): Usuario
     eliminarUsuario(id: ID): Usuario
     #calendario
     crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario

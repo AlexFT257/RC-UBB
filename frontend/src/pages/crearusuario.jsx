@@ -35,7 +35,7 @@ export default function crearUsuario(screenWidth) {
   
       }
     }`;
-const GET_CARRERAS = gql`
+  const GET_CARRERAS = gql`
 query {
   all_carreras {
     id
@@ -46,6 +46,33 @@ query {
 
   const [crearUsuario, { error, reset }] = useMutation(CREATE_USER);
   const { data: carrerasData, loading: carrerasLoading } = useQuery(GET_CARRERAS);
+  const validateForm = () => {
+    const nameRegex = /\d/;
+    if (nameRegex.test(nombre)) {
+      setNombreError("El nombre no debe contener números");
+      return false;
+    }
+    if (nameRegex.test(apellido)) {
+      setApellidoError("El apellido no debe contener números");
+      return false;
+    }
+
+    // Verificar si el correo es válido
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@alumnos\.ubiobio\.cl$/i;
+    if (!emailRegex.test(correo)) {
+      setCorreoError("El correo ingresado no es válido");
+      return false;
+    }
+
+    // Verificar si la contraseña tiene al menos 8 caracteres y una letra mayúscula
+    if (contrasena.length < 8 || !/[A-Z]/.test(contrasena)) {
+      setContrasenaError("La contraseña debe tener al menos 8 caracteres y una letra mayúscula");
+      return false;
+    }
+
+    // Si todas las validaciones pasan, el formulario es válido
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -179,7 +206,7 @@ query {
                     className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     id="fecha_nacimiento"
                     placeholder="fecha_nacimiento"
-                    value={username}
+                    value={fecha_nacimiento}
                     onChange={(e) => setFechaNacimiento(e.target.value)}
                   />
 
