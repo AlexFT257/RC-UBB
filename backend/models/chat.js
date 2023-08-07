@@ -1,15 +1,22 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-    imagen_url:{
-        type: String
+    usuarios: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Usuario'
+        }
+    ],
+    nombre: {
+        type: String,
+        required: true
     },
     mensajes: [
         {
-            ref: "Mensaje",
-            type: mongoose.Schema.Types.ObjectId
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Mensaje'
         }
     ]
 })
 
-module.exports = mongoose.model("Chat", schema);
+module.exports = mongoose.model('Chat', schema)

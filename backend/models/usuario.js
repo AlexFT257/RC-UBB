@@ -1,80 +1,92 @@
 const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
-
 const schema = new mongoose.Schema({
-    nombre: {
-        type: String,
-        required: true,
-        minlength: 3
+  nombre: {
+    type: String,
+    required: true,
+  },
+  apellido: {
+    type: String,
+    required: true,
+  },
+  foto_perfil: {
+        default:"/iconoDefault.png",
+    type: String,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  correo: {
+    type: String,
+    required: true,
+  },
+  contrasena: {
+    type: String,
+    required: true,
+    minlength: 8,
+  },
+  fecha_nacimiento: {
+    type: Date,
+  },
+  chats: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Chat",
     },
-    apellido: {
-        type: String,
-        required: true,
-        minlength: 3
+  ],
+  carrera: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Carrera",
+    required: true,
+  },
+  grupos: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Grupo",
     },
-    nombre_usuario: {
-        type: String,
-        required: true,
-        unique: true,
-        minlength: 3
+  ],
+  amigos: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Usuario",
     },
-    correo: {
-        type: String,
-        required: true,
-        unique: true,
-        minlength: 7
+  ],
+  publicaciones: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Publicacion",
     },
-    fecha_nacimiento: {
-        type: Date,
-        min: "1970-01-01"
+  ],
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Publicacion",
     },
-    carrera: [
-        {
-            ref: "Carrera",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    estado: {
-        type: String,
-        required: true
+  ],
+  comentarios: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Publicacion",
     },
-    grupos: {
-        type: Array,
-        required: true
+  ],
+  intereses: [
+    {
+      tag: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+      valor: {
+        type: Number,
+        default: 0.0,
+      },
     },
-    rol: {
-        type: String,
-        required: true
-    },
-    amigos: [
-        {
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    publicaciones: [
-        {
-            ref: "Publicacion",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    me_gusta: [
-        {
-            ref: "Publicacion",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    comentarios: [
-        {
-            ref: "Comentario",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    imagen:{
-        type: String
-    }
-})
+  ],
+  temporalKey: {
+    type: String,
+  },
+});
 
-schema.plugin(uniqueValidator)
+schema.plugin(uniqueValidator);
 module.exports = mongoose.model("Usuario", schema);

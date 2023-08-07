@@ -1,31 +1,26 @@
-const mongoose = require("mongoose");
-const uniqueValidator = require("mongoose-unique-validator");
-
+const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const schema = new mongoose.Schema({
-    publicacion: [
-        {
-            ref: "Publicacion",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    creador: [
-        {
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    pregunta: {
+  pregunta: {
+    type: String,
+    required: true
+  },
+  opciones: [
+    {
+      texto: {
         type: String,
         required: true
-    },
-    opciones: [
+      },
+      votos: [
         {
-            ref: "Opcion",
-            type: mongoose.Schema.Types.ObjectId
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Usuario'
         }
-    ]
+      ]
+    }
+  ]
 })
 
 schema.plugin(uniqueValidator)
-module.exports = mongoose.model("Votacion", schema);
+module.exports = mongoose.model('Votacion', schema)

@@ -1,40 +1,50 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
-    usuario: [
-        {
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
-    hora: {
+    usuario: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Usuario',
+        required: true
+    },
+    fecha: {
         type: Date,
         required: true
     },
-    imagen_url : {
-        type: String
+    imagenes: [String],
+    texto: String,
+    votacion: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Votacion'
     },
-    texto : {
-        type: String
-    },
-    votaciones: [
-        {
-            ref: "Votacion",
-            type: mongoose.Schema.Types.ObjectId
-        }
-    ],
     comentarios: [
         {
-            ref: "Comentario",
-            type: mongoose.Schema.Types.ObjectId
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Publicacion'
         }
     ],
-    me_gusta: [
+    likes: [
         {
-            ref: "Usuario",
-            type: mongoose.Schema.Types.ObjectId
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Usuario'
         }
-    ]
+    ],
+    tagInfo: [
+        {
+            tag: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Tag'
+            },
+            valor: Number
+        }
+    ],
+    enGrupo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Grupo'
+    },
+    esComentario: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Publicacion'
+    }
 })
 
-module.exports = mongoose.model("Publicacion", schema);
+module.exports = mongoose.model('Publicacion', schema)
