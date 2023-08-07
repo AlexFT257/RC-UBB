@@ -260,29 +260,31 @@ query {
           </button>
           <div className="max-w-md mx-auto mt-20 bg-foreground p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-4 flex items-center justify-center">Editar Usuario</h2>
-            <div className="m-2 flex items-center justify-center gap-2">
-      {nuevaFoto && ( // Muestra la imagen solo si nuevaFoto tiene un valor
-        <img
-          src={nuevaFoto}
-          alt="Foto Perfil"
-          className="rounded-full border shadow-xl"
-          height={200}
-          width={200}
-        />
-      )}
-      <div className="flex flex-col items-center justify-center">
-        <label htmlFor="imageUpload" className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg">
-          Subir Foto
-        </label>
-        <input
-          type="file"
-          id="imageUpload"
-          accept="image/*"
-          style={{ display: 'none' }}
-          onChange={handleImageChange}
-        />
-      </div>
-    </div>
+            <div className="m-2 flex flex-col items-center justify-center gap-2">
+              <div>
+              {nuevaFoto && ( 
+                <img
+                  src={nuevaFoto}
+                  alt="Foto Perfil"
+                  className="rounded-lg border shadow-lg"
+                  height={200}
+                  width={200}
+                />
+              )}
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <label htmlFor="imageUpload" className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-lg">
+                  Subir Foto
+                </label>
+                <input
+                  type="file"
+                  id="imageUpload"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleImageChange}
+                />
+              </div>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4 bg-foreground">
               <div>
                 <label htmlFor="nombre" className="block font-medium">

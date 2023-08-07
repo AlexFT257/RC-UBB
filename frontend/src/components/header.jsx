@@ -1,10 +1,26 @@
 import {
-    AiOutlineComment, AiOutlineSearch, AiOutlineBell, AiOutlineBulb, AiFillCaretLeft, AiOutlineMenu
+  AiOutlineComment,
+  AiOutlineSearch,
+  AiOutlineBell,
+  AiOutlineBulb,
+  AiFillCaretLeft,
+  AiOutlineMenu,
+  AiOutlineCalendar,
+  AiOutlineGroup,
+  AiOutlineIdcard,
+  AiOutlineUserAdd,
+  AiOutlineHome,
+  AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 
-import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../utils/userContext';
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../utils/userContext";
 import { useTheme } from "next-themes";
+import { useSearchUsers, useSearchGroups, useSendJoinRequest } from '../utils/searchUtils';
+import { useComponentVisible } from "@/hooks/useComponentVisible";
+import { HiOutlineUserGroup } from "react-icons/hi";
+import { gql, useLazyQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 
 
 export default function Header({
@@ -13,7 +29,7 @@ export default function Header({
   user,
   menuElements,
 }) {
-    const { resolvedTheme, setTheme } = useTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   const {
     lastMsgChats,
     getLastMsgChats,
@@ -22,10 +38,12 @@ export default function Header({
     setIsNewMsgs,
   } = useContext(UserContext);
 
-    const [chatsMenuOpen, setChatsMenuOpen] = useState(false);
-    const [sideMenuOpen, setSideMenuOpen] = useState(false)
-    const [onHoverLi, setOnHoverLi] = useState(-1);
+  const [chatsMenuOpen, setChatsMenuOpen] = useState(false);
+  const [sideMenuOpen, setSideMenuOpen] = useState(false);
+  const [onHoverLi, setOnHoverLi] = useState(-1);
 
+  const [search, setSearch] = useState("");
+  const [showResults, setShowResults] = useState(false);
 
   const {
     loading: loadingUser,
@@ -72,12 +90,12 @@ export default function Header({
   }, [search]);
 
   useEffect(() => {
-        if (!lastMsgChats || lastMsgChats.length == 0) {
-            getLastMsgChats();
-        }
+    if (!lastMsgChats || lastMsgChats.length == 0) {
+      getLastMsgChats();
+    }
   }, []);
 
-    const handleLastMsgs = () => {
+  const handleLastMsgs = () => {
     setChatsMenuOpen(!chatsMenuOpen);
   };
 
@@ -163,13 +181,23 @@ export default function Header({
     });
   }
 
+  const AGREGAR_AMIGO = gql`
+    mutation agregarAmigo($id: ID!, $amigo: ID!) {
+      agregarAmigo(id: $id, amigo: $amigo) {
+        id
+      }
+    }
+  `;
+
+
+
   // la funcion Users recibe los datos de la consulta y los muestra en pantalla
   function Users({ userSearchResults, errorUser, loadingUser }) {
     // checa si hay un error o si esta cargando
     if (loadingUser) return <p>Loading...</p>;
     if (errorUser) return <p>Error</p>;
     console.log("Usuarios", userSearchResults);
-        
+
     // si no hay usuarios que mostrar, muestra un mensaje
     if (userSearchResults.length === 0) {
       return (
@@ -180,6 +208,80 @@ export default function Header({
         </div>
       );
     }
+
+    // mutation para agregar un amigo
+    const [agregarAmigo, { loading: agregarLoading, error: errorAgregar, refetch: refetchAgregar }] = useMutation(AGREGAR_AMIGO, {
+
+      onCompleted: () => {
+        console.log("Amigo agregado");
+      },
+    });
+
+
+
+
+    return userSearchResults.map(({ id, nombre, apellido, correo }) => {
+      // funcion que envia la solicitud de amistad
+      const handleAddFriend = (e) => {
+        e.preventDefault();
+        agregarAmigo({ variables: { id: user.id, amigo: id } });
+        if (errorAgregar) {
+          console.log(errorAgregar);
+        }
+
+        console.log("Agregando amigo", id);
+        // TODO: Agregar amigo
+
+        // refetch para actualizar la lista de amigos
+        refecthQueries();
+
+      };
+
+      // determina si el usuario encontrado es el mismo que esta logueado
+      // para no mostrarlo en la lista de usuarios
+      // sacar el id del usuario logueado del user context
+      // si el id del usuario logueado es igual al id del usuario que se esta iterando
+      // se retorna null para no mostrarlo en la lista
+      if (user.id === id) {
+        return (
+          <div className="m-2 flex flex-grow justify-between rounded-md bg-background p-2">
+            <div className="flex flex-col">
+              <h1>No se encontraron usuarios</h1>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div
+          key={id}
+          className="m-2 flex flex-grow justify-between rounded-md bg-background p-2"
+        >
+          <div className="flex flex-col">
+            {/* TODO: inserte aqui la foto (user no tiene foto) */}
+            <h1>
+              {nombre} {apellido}
+            </h1>
+            <p className="hidden lg:flex">{correo}</p>
+          </div>
+          <div className="m-2 flex">
+            <button
+              onClick={handleAddFriend}
+              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            >
+              <AiOutlineUserAdd />
+            </button>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  // la funcion DropDown es el componente que se muestra en pantalla
+  // y que contiene los resultados de la busqueda y usa el hook useComponentVisible
+  const DropDown = () => {
+    const { ref, isComponentVisible, setIsComponentVisible } =
+      useComponentVisible(showResults);
 
     return (
       <div ref={ref}>
@@ -205,11 +307,10 @@ export default function Header({
   return (
     <>
       <header
-        className={`z-45 fixed flex h-[70px] w-screen items-center bg-foreground shadow-md ${
-          headerVisible
-            ? "-translate-y-0 transform transition-transform duration-100 ease-in-out"
-            : "-translate-y-[70px] transform transition-transform duration-100 ease-in-out"
-        }`}
+        className={`z-45 fixed flex h-[70px] w-screen items-center bg-foreground shadow-md ${headerVisible
+          ? "-translate-y-0 transform transition-transform duration-100 ease-in-out"
+          : "-translate-y-[70px] transform transition-transform duration-100 ease-in-out"
+          }`}
       >
         {(screenWidth >= 1024 && (
           <div className="w-200 flex items-center">
@@ -218,27 +319,27 @@ export default function Header({
               src="/LogoUchat.png"
               alt="Your Logo"
             />
-                        {/* <img className="mask" /></div> */}
+            {/* <img className="mask" /></div> */}
           </div>
         )) || (
-          <button
-            onClick={() => setSideMenuOpen(true)}
-            className="my-[14px] ml-[10vw]"
-          >
-            <img
-              className=" h-[4vw] min-h-[40px] w-[4vw] min-w-[40px] rounded-[6px] "
-              src={user?.foto_perfil}
-              alt={`${user.username}'s profile picture`}
-            />
-                        {/* <AiOutlineMenu className="text-secondary w-[2rem] h-[2rem] hover:text-accent" /> */}
-                    </button>
-        )}
+            <button
+              onClick={() => setSideMenuOpen(true)}
+              className="my-[14px] ml-[10vw]"
+            >
+              <img
+                className=" h-[4vw] min-h-[40px] w-[4vw] min-w-[40px] rounded-[6px] "
+                src={user?.foto_perfil}
+                alt={`${user.username}'s profile picture`}
+              />
+              {/* <AiOutlineMenu className="text-secondary w-[2rem] h-[2rem] hover:text-accent" /> */}
+            </button>
+          )}
 
         <div
           className={
             " left-1/2 flex w-0 flex-grow items-center justify-center " +
             (screenWidth < 768 ? "ml-[8vw]" : "")
-                }
+          }
         >
           <form
             className="m-[30px] flex w-[30vw] min-w-[60vw] items-center rounded-[10px] bg-background md:min-w-[30vw]"
@@ -248,8 +349,8 @@ export default function Header({
             <input
               className="max-[w-100%] w-[92%] flex-grow rounded-[10px] border-none  bg-background p-[10px] pl-[20px] text-base placeholder-secondary focus:outline-none"
               type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar"
             />
             {
@@ -260,8 +361,8 @@ export default function Header({
                 <AiOutlineSearch className="h-[1.5rem] w-[1.5rem]" />
               </button>
             }
-                    </form>
-            <DropDown />
+          </form>
+          <DropDown />
         </div>
 
         {screenWidth > 768 && (
@@ -279,7 +380,7 @@ export default function Header({
                   <div className=" absolute h-3  w-3 animate-ping rounded-full bg-accent" />
                 </div>
               )}
-                    </button>
+            </button>
             <button className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-primary text-background hover:bg-background hover:text-primary">
               <AiOutlineBell className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
               {false && ( //Reemplazar por la condicion de nueva notificacion
@@ -287,7 +388,7 @@ export default function Header({
                   <div className="absolute h-3 w-3 animate-ping rounded-full bg-accent" />
                 </div>
               )}
-                    </button>
+            </button>
             <button
               className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
               onClick={() =>
@@ -295,14 +396,14 @@ export default function Header({
               }
             >
               <AiOutlineBulb className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
-                    </button>
+            </button>
           </div>
         )}
 
-                <div className="absolute left-0 mb-[-90px] h-[20px] w-full bg-gradient-to-t from-transparent to-background" />
+        <div className="absolute left-0 mb-[-90px] h-[20px] w-full bg-gradient-to-t from-transparent to-background" />
         {chatsMenuOpen &&
           PrevChats(lastMsgChats, setOnHoverLi, onHoverLi, changeChatState)}
-            </header>
+      </header>
 
       {screenWidth < 1024 && (
         <SideMenu
@@ -314,18 +415,18 @@ export default function Header({
           handleLastMsgs={handleLastMsgs}
         />
       )}
-        </>
-    );
+    </>
+  );
 }
 
 const PrevChats = (lastMsgChats, setOnHoverLi, onHoverLi, changeChatState) => {
-    return (
+  return (
     <ul
       className="list-container fixed top-[76px] h-[400px] max-w-[100vw] rounded-[10px] border-[1px] border-foreground
         bg-background shadow-2xl sm:right-0 md:right-[5vw]  md:max-w-[300px] xl:right-[8vw]"
       onMouseOut={() => setOnHoverLi(-1)}
     >
-            {lastMsgChats.map((chat, index) => (
+      {lastMsgChats.map((chat, index) => (
         <li
           key={chat.id}
           className="flex h-[60px] cursor-pointer snap-start flex-row items-center border-b border-dotted border-secondary p-2 hover:bg-primary hover:text-background "
@@ -338,9 +439,8 @@ const PrevChats = (lastMsgChats, setOnHoverLi, onHoverLi, changeChatState) => {
             alt={`${chat.mensajes[0].usuario.username}'s profile picture`}
           />
           <h1
-            className={`text-[16px] font-bold ${
-              index == onHoverLi ? "text-background" : "text-secondary"
-            } mr-[10px]`}
+            className={`text-[16px] font-bold ${index == onHoverLi ? "text-background" : "text-secondary"
+              } mr-[10px]`}
           >
             {" "}
             {chat.mensajes[0].usuario.username.charAt(0).toUpperCase() +
@@ -356,21 +456,28 @@ const PrevChats = (lastMsgChats, setOnHoverLi, onHoverLi, changeChatState) => {
               <div className="absolute h-3 w-3 animate-ping rounded-full bg-accent" />
             </div>
           )}
-                </li>
-            ))}
-        </ul>
+        </li>
+      ))}
+    </ul>
   );
 };
 
-const SideMenu = ({ user, sideMenuOpen, setSideMenuOpen, menuElements, setTheme, handleLastMsgs }) => {
-    const buttStyle = "flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold text-secondary transition-colors hover:bg-primary hover:text-foreground"
+const SideMenu = ({
+  user,
+  sideMenuOpen,
+  setSideMenuOpen,
+  menuElements,
+  setTheme,
+  handleLastMsgs,
+}) => {
+  const buttStyle =
+    "flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold text-secondary transition-colors hover:bg-primary hover:text-foreground";
 
-    return (
-        <div className="relative">
+  return (
+    <div className="relative">
       <div
-        className={`fixed left-0 top-0 h-full w-64 transform overflow-hidden bg-background shadow-2xl transition-transform duration-300 ease-in-out ${
-          sideMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed left-0 top-0 h-full w-64 transform overflow-hidden bg-background shadow-2xl transition-transform duration-300 ease-in-out ${sideMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex h-[100px] w-full cursor-pointer items-center justify-start overflow-hidden shadow-md hover:bg-primary hover:text-foreground">
           <img
@@ -386,34 +493,32 @@ const SideMenu = ({ user, sideMenuOpen, setSideMenuOpen, menuElements, setTheme,
             <p className="mt-1 max-w-[100%] overflow-hidden overflow-ellipsis whitespace-nowrap text-base">
               {user.correo}
             </p>
-                    </div>
+          </div>
           <AiOutlineMenu className="mr-[15px] h-[1.5rem] w-[1.5rem]" />
-                </div>
+        </div>
 
         <button
           className="z-10 w-full p-2 hover:bg-primary hover:text-background"
           onClick={() => setSideMenuOpen(false)}
         >
           <AiFillCaretLeft className="ml-auto mr-0 h-[2rem] w-[2rem]" />
-                </button>
+        </button>
 
-                <ul className="py-[1vh]">
-                    <button className={buttStyle} onClick={() => handleLastMsgs()}>
+        <ul className="py-[1vh]">
+          <button className={buttStyle} onClick={() => handleLastMsgs()}>
             <AiOutlineComment className="mr-[3vw] h-[25px] w-[25px]" /> Chats
-                    </button>
-                    <button className={buttStyle}>
+          </button>
+          <button className={buttStyle}>
             <AiOutlineBell className="mr-[3vw] h-[25px] w-[25px]" />{" "}
             Notificaciones
-                    </button>
-                </ul>
+          </button>
+        </ul>
 
-                <div className='w-[90%] h-[1px] mt-[5px] mb-[10px]  mx-auto bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent to-105%' />
+        <div className="to-105% mx-auto mb-[10px] mt-[5px]  h-[1px] w-[90%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
 
-                <ul className="py-[1vh]">
-                    {menuElements}
-                </ul>
+        <ul className="py-[1vh]">{menuElements}</ul>
 
-                <div className='w-[90%] h-[1px] mt-[5px] mb-[10px]  mx-auto bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent to-105%' />
+        <div className="to-105% mx-auto mb-[10px] mt-[5px]  h-[1px] w-[90%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
 
         <button
           className={
@@ -424,8 +529,8 @@ const SideMenu = ({ user, sideMenuOpen, setSideMenuOpen, menuElements, setTheme,
           }
         >
           <AiOutlineBulb className="mr-[3vw] h-[25px] w-[25px]" /> Cambiar tema
-                </button>
-            </div>
-        </div>
-    );
+        </button>
+      </div>
+    </div>
+  );
 };

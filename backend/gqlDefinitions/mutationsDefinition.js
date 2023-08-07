@@ -11,6 +11,7 @@ type Mutation {
     actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
     editarUsuario(id: ID, nombre: String, apellido: String, correo: String, contrasena:String, carrera: ID,foto_perfil:String): Usuario
     eliminarUsuario(id: ID!): Usuario
+    agregarAmigo(id: ID!, amigo: ID!): Usuario
     #calendario
     crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
     editarEvento(id: ID!, titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario

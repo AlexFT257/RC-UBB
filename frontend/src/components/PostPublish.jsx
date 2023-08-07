@@ -122,15 +122,15 @@ export default function PostPublish({ user, addPost, groupId }) {
 
 
             </div>
-            <div className="flex  justify-evenly w-full ">
+            <div className="flex  justify-evenly w-full p-2 ">
                 {newPost.imagenes.map((base64Image, index) => (
                     <div key={index} className="relative">
                         <img src={base64Image} alt={`Imagen ${index + 1}`} className="w-40 h-40 rounded-md" />
                         <button
-                            className="absolute top-0 right"
+                            className="absolute top-0 right text-white rounded-full p-1 hover:bg-primary"
                             onClick={() => handleRemoveImage(index)}
                         >
-                            <AiOutlineClose className="h-4 w-4" />
+                            <AiOutlineClose className="h-6 w-6 text-black  " />
                         </button>
                     </div>
                 ))}

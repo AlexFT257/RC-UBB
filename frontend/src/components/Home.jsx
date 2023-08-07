@@ -12,7 +12,7 @@ import { useMutation } from "@apollo/client";
 
 
 
-import Header from "../components/Header"
+import Header from "./Header"
 import Chat from "../components/Chat";
 import FriendsList from "../components/FriendList";
 import EventList from "../components/EventList";

@@ -94,9 +94,8 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
     const handleImageChange = (event) => {
         const files = event.target.files;
         if (files.length > 0) {
-            const selectedImages = Array.from(files).slice(0, 4); // Limitar a 4 imágenes seleccionadas
+            const selectedImages = Array.from(files).slice(0, 4); 
 
-            // Convertir las imágenes a base64
             const imagePromises = selectedImages.map((image) => {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
@@ -110,7 +109,7 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
                 });
             });
 
-            // Esperar a que todas las conversiones de base64 se completen
+          
             Promise.all(imagePromises).then((base64Images) => {
                 setNewComment({ ...newComment, imagenes: base64Images });
             });
@@ -251,10 +250,10 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
                     <div key={index} className="relative max-w-[20%]">
                         <img src={base64Image} alt={`Imagen ${index + 1}`} className="w-20 h-20 rounded-md" />
                         <button
-                            className="absolute top-0 right-0 text-white bg-red-500 rounded-full p-1 hover:bg-red-600"
+                            className="absolute top-0 right text-white rounded-full p-1 hover:bg-primary"
                             onClick={() => handleRemoveImage(index)}
                         >
-                            <AiOutlineClose className="h-4 w-4" />
+                            <AiOutlineClose className="h-4 w-4 text-black" />
                         </button>
                     </div>
                 ))}
