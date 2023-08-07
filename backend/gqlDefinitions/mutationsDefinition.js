@@ -21,7 +21,7 @@ type Mutation {
     eliminarCarrera(id: ID!): Carrera
 
     #Publicación
-    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID): Publicacion
+    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID,): Publicacion
     crearComentario(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID, esComentario: ID!): Publicacion
     editarPublicacion(id: ID!, usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: VotacionInput, comentarios:[ID], likes: [ID]): Publicacion
     eliminarPublicacion(id: ID!): Publicacion

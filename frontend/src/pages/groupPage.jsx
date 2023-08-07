@@ -43,12 +43,22 @@ function GroupPage() {
       setTimeout(() => {
         refetch();
       }, 5000);
-      
+
       console.log("refetch", data);
       setModalComplete(false);
     }
 
   }, [modalComplete]);
+
+  // para que compruebe cada [] segundo si hay cambios en la base de datos
+  const interval = 60000;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      refetch();
+    }, interval);
+    return () => clearTimeout(timer);
+  }, []);
+
 
   if (loading) {
     return (

@@ -1,16 +1,26 @@
-import React, { useEffect } from "react";
+import React, { use, useEffect } from "react";
 import GroupHeader from "../../components/groupHeader";
-import { useContext } from "react";
+import { useContext,useState } from "react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
 import Home from "@/components/home";
 import { UserContext } from "@/utils/userContext";
-import PostPublish from "@/components/PostPublish";
+import PostPublishGroup from "@/components/PostPublishGroup";
 import { GroupContext } from "@/utils/groupContext";
 
 export default function GroupHome() {
-  const { user } = useContext(UserContext);
-  const { group,updateGroupContext } = useContext(GroupContext);
+  const { user,removePost,addComment,likePost } = useContext(UserContext);
+  const { group, updateGroupContext, requestGroupPost, addGroupPost} = useContext(GroupContext);
+  const [posts, setPosts] = useState([]);
+  const [skip, setSkip] = useState(0);
+
+  useEffect(() => {
+    if (group) {
+      requestGroupPost(group.id, skip).then((res) => {
+        setPosts(res);
+      });
+    }
+  }, [group, skip]);
 
   // console.log("user", user);
   // console.log("GroupHome", group);
@@ -20,20 +30,16 @@ export default function GroupHome() {
   // console.log("groupId", groupId);
 
   useEffect(() => {
-    if(!group){
+    if (!group) {
       updateGroupContext();
     }
-    if(group && group.id !== groupId){
+    if (group && group.id !== groupId) {
       updateGroupContext();
     }
-  }, [group,groupId]);
+  }, [group, groupId]);
 
   const isAdmin = () => {
-    if (
-      group?.admins?.some(
-        (admin) => admin.id === user.id
-      )
-    ) {
+    if (group?.admins?.some((admin) => admin.id === user.id)) {
       return true;
     } else {
       return false;
@@ -46,17 +52,29 @@ export default function GroupHome() {
     <>
       <div className="z-10 mt-[80px]  w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
         <div className="mt-4 flex-col items-center  justify-between text-[5vw] font-bold sm:text-[18px] ">
-            <GroupHeader
-              GroupName={group?.nombre}
-              GroupId={groupId}
-              isAdmin={isAdmin()}
-              GroupBanner={group?.banner}
-            />
-            {/* Input para publicar */}
-            <PostPublish user={user} />
+          <GroupHeader
+            GroupName={group?.nombre}
+            GroupId={groupId}
+            isAdmin={isAdmin()}
+            GroupBanner={group?.banner}
+          />
+          {/* Input para publicar */}
+          <PostPublishGroup user={user} addPost={addGroupPost} enGrupo={groupId}/>
 
-            {/* Publicaciones container */}
-            <div className=""></div>
+          {/* Publicaciones container */}
+          <div className="">
+            {posts?.map((post) => (
+              <Post
+                key={post.id}
+                post={post}
+                user={user}
+                removePost={removePost}
+                addComment={addComment}
+                likePost={likePost}
+              />
+            ))}
+
+          </div>
         </div>
       </div>
     </>

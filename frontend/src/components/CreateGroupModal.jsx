@@ -114,6 +114,7 @@ export default function CreateGroupModal({
 
   //las imagenes se guardan como base64
   const handleIconChange = (e) => {
+    e.preventDefault();
     const file = e.target.files[0];
     const reader = new FileReader();
 
@@ -129,6 +130,7 @@ export default function CreateGroupModal({
   };
 
   const handleBannerChange = (e) => {
+    e.preventDefault();
     const file = e.target.files[0];
     const reader = new FileReader();
 
