@@ -1,5 +1,4 @@
 // middleware to get user data from database using GraphQL
-
 const { ApolloClient, InMemoryCache, gql } = require("@apollo/client");
 
 // TODO: modificar para hacer el request a la API

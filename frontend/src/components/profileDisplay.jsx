@@ -1,5 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
+
 import { AiOutlineMenu } from "react-icons/ai";
 
 export default function ProfileDisplay() {
@@ -7,8 +6,8 @@ export default function ProfileDisplay() {
     <>
       <div className="m-2 flex flex-row items-center justify-between gap-2 rounded p-2 text-white dark:bg-[#231842] dark:text-textDarkColor">
         {/* nombre y correo container */}
-        <Image
-          src="/bodoque.jpeg"
+        <img
+          src="/img1.jpg"
           alt="Foto Perfil"
           className="rounded "
           height={50}
@@ -22,7 +21,7 @@ export default function ProfileDisplay() {
         <button
           id="dropdownMenuIconButton"
           data-dropdown-toggle="dropdownDots"
-          class="inline-flex  items-center rounded-lg bg-white p-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-50 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          className="inline-flex  items-center rounded-lg bg-white p-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-50 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-600"
           type="button"
         >
           <AiOutlineMenu className="w-5 h-5" />
