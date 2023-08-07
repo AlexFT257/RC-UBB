@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const schema = new mongoose.Schema({
   nombre: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   privacidad: {
     type: String,
@@ -11,10 +12,12 @@ const schema = new mongoose.Schema({
   },
   vencimiento: Date,
   descripcion: String,
+  icono: String,
+  banner: String,
   chat: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Chat',
-    required: true
+    required: false
   },
   admins: [
     {
@@ -27,7 +30,13 @@ const schema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Usuario'
     }
-  ]
+  ],
+  solicitudes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario'
+    }
+  ],
 })
 
 module.exports = mongoose.model('Grupo', schema)

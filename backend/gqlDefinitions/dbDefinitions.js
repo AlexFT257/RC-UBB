@@ -21,7 +21,9 @@ type Usuario {
     publicaciones: [Publicacion]
     likes: [Publicacion]
     comentarios: [Publicacion]
+    intereses:[TagInfo]
 }
+
 type Token{
     value: String!
 }
@@ -51,6 +53,27 @@ type Publicacion {
     votacion: Votacion
     comentarios: [Publicacion]
     likes:[Usuario]
+    tagInfo: [TagInfo]
+    enGrupo: Grupo
+    esComentario: Publicacion
+}
+
+type TagInfo{
+    tag: Tag!
+    valor: Float!
+}
+
+type Tag {
+    id: ID!
+    nombre: String!
+    publicaciones: [Publicacion]
+    categoria: [Category]
+}
+
+type Category {
+    id: ID!
+    nombre: String!
+    tags: [Tag]
 }
 
 type Votacion {
@@ -81,9 +104,12 @@ type Grupo {
     privacidad: String!
     vencimiento: Date
     descripcion: String
+    icono: String
+    banner: String
     chat: Chat!
     admins: [Usuario]!
     miembros: [Usuario]!
+    solicitudes: [Usuario]!
 }
 
 type Chat {
@@ -99,6 +125,7 @@ type Mensaje {
     usuario: Usuario!
     texto: String
     imagenes: [String]
+    recibido : [Usuario]
     visto: [Usuario]
 }
 
@@ -120,6 +147,13 @@ type Horario{
     acronimo: String
     usuario: [Usuario]!
   }
+
+type Archivo {
+    id: ID!
+    url: String!
+    filename: String!
+    mimetype: String!
+}
 
 `
 
