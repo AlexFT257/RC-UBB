@@ -13,13 +13,16 @@ import {
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
 
-import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../utils/userContext';
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "../utils/userContext";
 import { useTheme } from "next-themes";
-import { useSearchUsers, useSearchGroups, useSendJoinRequest } from '../utils/searchUtils';
+import {
+  useSearchUsers,
+  useSearchGroups,
+  useSendJoinRequest,
+} from "../utils/searchUtils";
 import { useComponentVisible } from "@/hooks/useComponentVisible";
 import { HiOutlineUserGroup } from "react-icons/hi";
-
 
 export default function Header({
   headerVisible,
@@ -40,6 +43,8 @@ export default function Header({
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [onHoverLi, setOnHoverLi] = useState(-1);
 
+  const [search, setSearch] = useState("");
+  const [showResults, setShowResults] = useState(false);
 
   const {
     loading: loadingUser,
@@ -194,6 +199,63 @@ export default function Header({
         </div>
       );
     }
+
+    return userSearchResults.map(({ id, nombre, apellido, correo }) => {
+      // funcion que envia la solicitud de amistad
+      const handleAddFriend = (e) => {
+        e.preventDefault();
+        console.log("Agregando amigo", id);
+        // TODO: Agregar amigo
+
+        // refetch para actualizar la lista de amigos
+        // refecthQueries();
+      };
+
+      // determina si el usuario encontrado es el mismo que esta logueado
+      // para no mostrarlo en la lista de usuarios
+      // sacar el id del usuario logueado del user context
+      // si el id del usuario logueado es igual al id del usuario que se esta iterando
+      // se retorna null para no mostrarlo en la lista
+      if (user.id === id) {
+        return (
+          <div className="m-2 flex flex-grow justify-between rounded-md bg-background p-2">
+            <div className="flex flex-col">
+              <h1>No se encontraron usuarios</h1>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div
+          key={id}
+          className="m-2 flex flex-grow justify-between rounded-md bg-background p-2"
+        >
+          <div className="flex flex-col">
+            {/* TODO: inserte aqui la foto (user no tiene foto) */}
+            <h1>
+              {nombre} {apellido}
+            </h1>
+            <p className="hidden lg:flex">{correo}</p>
+          </div>
+          <div className="m-2 flex">
+            <button
+              onClick={handleAddFriend}
+              className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+            >
+              <AiOutlineUserAdd />
+            </button>
+          </div>
+        </div>
+      );
+    });
+  }
+
+  // la funcion DropDown es el componente que se muestra en pantalla
+  // y que contiene los resultados de la busqueda y usa el hook useComponentVisible
+  const DropDown = () => {
+    const { ref, isComponentVisible, setIsComponentVisible } =
+      useComponentVisible(showResults);
 
     return (
       <div ref={ref}>
@@ -383,8 +445,16 @@ const PrevChats = (lastMsgChats, setOnHoverLi, onHoverLi, changeChatState) => {
   );
 };
 
-const SideMenu = ({ user, sideMenuOpen, setSideMenuOpen, menuElements, setTheme, handleLastMsgs }) => {
-    const buttStyle = "flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold text-secondary transition-colors hover:bg-primary hover:text-foreground"
+const SideMenu = ({
+  user,
+  sideMenuOpen,
+  setSideMenuOpen,
+  menuElements,
+  setTheme,
+  handleLastMsgs,
+}) => {
+  const buttStyle =
+    "flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold text-secondary transition-colors hover:bg-primary hover:text-foreground";
 
   return (
     <div className="relative">
@@ -428,13 +498,11 @@ const SideMenu = ({ user, sideMenuOpen, setSideMenuOpen, menuElements, setTheme,
           </button>
         </ul>
 
-                <div className='w-[90%] h-[1px] mt-[5px] mb-[10px]  mx-auto bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent to-105%' />
+        <div className="to-105% mx-auto mb-[10px] mt-[5px]  h-[1px] w-[90%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
 
-                <ul className="py-[1vh]">
-                    {menuElements}
-                </ul>
+        <ul className="py-[1vh]">{menuElements}</ul>
 
-                <div className='w-[90%] h-[1px] mt-[5px] mb-[10px]  mx-auto bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent to-105%' />
+        <div className="to-105% mx-auto mb-[10px] mt-[5px]  h-[1px] w-[90%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
 
         <button
           className={
