@@ -94,11 +94,13 @@ export const GroupProvider = (props) => {
     });
   };
 
-  const requestGroupPost = async (skip) => {
+  const requestGroupPost = async (id, skip) => {
     var skips=0;
     if (skip == undefined||skip == null) {
-      skips=skip;
+      skips=skip.value;
     }
+    console.log("skips",skips);
+    console.log("id requestGroup",id);
     const { buscarPublicacionGrupo } = await clientRequester(
       `query buscarPublicacionGrupo($grupo: ID!, $skip: Int) {
         buscarPublicacionGrupo(grupo: $grupo, skip: $skip) {
@@ -130,8 +132,8 @@ export const GroupProvider = (props) => {
             }
         }
     }`,
-      { grupo: groupId, skip:  skips},
-      false
+      { grupo: groupId, },
+      true,
     ).then((data) => {
       return data;
     });
@@ -245,6 +247,7 @@ export const GroupProvider = (props) => {
         updateGroupContext,
         requestGroupPost,
         addGroupPost,
+        groupPost,
       }}
     >
       {props.children}

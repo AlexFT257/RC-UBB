@@ -17,7 +17,8 @@ export default function GroupHome() {
 
   useEffect(() => {
     if (group) {
-      requestGroupPost(group.id, skip).then((res) => {
+      console.log("skips", skip);
+      requestGroupPost(groupId, skip).then((res) => {
         setPosts(res);
       });
     }
@@ -39,16 +40,15 @@ export default function GroupHome() {
           const distanceToBottom = documentHeight - scrollPosition;
 
           // Definir un umbral para considerar que el usuario llegó al final
-          const threshold = 100; // Puedes ajustar este valor
+          const threshold = 70; // ajustar este valor
 
           if (distanceToBottom < threshold) {
             console.log('Usuario llegó al final de la página');
             // Aquí puedes realizar acciones adicionales, como cargar más contenido.
-            if (group) {
-              if (posts.length > 0) {
-                setSkip(posts.length+skip);
-              }
-              requestGroupPost(group.id, skip).then((res) => {
+            console.log("group", group); 
+            if (group || groupId) {
+              requestGroupPost(groupId, skip).then((res) => {
+                console.log("res", res);
                 setPosts(res);
               });
             }

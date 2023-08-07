@@ -20,7 +20,8 @@ export default function PostPublish({ user, addPost, enGrupo }) {
 
             setNewPost({
                 texto: "",
-                imagenes: []
+                imagenes: [],
+                enGrupo: enGrupo
             });
 
         }
