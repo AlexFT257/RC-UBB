@@ -21,11 +21,11 @@ export default function Login({ screenWidth }) {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const correoRegex = /^[\w.-]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+$/;
+        // const correoRegex = /^[\w.-]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+$/;
 
-        if (!correoRegex.test(email)) {
-            console.log("Email INCORRECTO:", email);
-        } else {
+        // if (!correoRegex.test(email)) {
+        //     console.log("Email INCORRECTO:", email);
+        // } else {
             const { buscarUsuarioCorreo } = await clientRequester(
                 `query BuscarUsuarioCorreo($correo: String!) {
                     buscarUsuarioCorreo(correo: $correo) {
@@ -45,7 +45,7 @@ export default function Login({ screenWidth }) {
                 await userInfo();
                 router.push("/Feed");
             }
-        }
+        // }
     };
 
     return (

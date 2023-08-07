@@ -1,8 +1,10 @@
-import { AiFillHeart, AiOutlineComment, AiOutlineSend, AiOutlineMenu, AiOutlinePicture } from "react-icons/ai";
+import { AiFillHeart, AiOutlineComment, AiOutlineClose, AiOutlineSend, AiOutlineMenu, AiOutlinePicture } from "react-icons/ai";
 
 import React, { useState, useEffect } from 'react';
 import ImgsDisplay from "@/components/ImgsDisplay"
 import { debounce } from 'lodash';
+
+
 
 export default function Post({ post, addComment, removePost, likePost, usuario, inFriends, modal }) {
     const date = new Date();
@@ -49,8 +51,10 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
                 texto: '',
                 imagenes: [],
                 esComentario: post.id
+
             });
         }
+
     };
 
     const handleLike = (id, likes) => {
@@ -64,20 +68,20 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
             setShowOptionMenu(!showOptionMenu);
         }
 
-        const clickOut = async() => {
+        const clickOut = async () => {
             await new Promise((resolve) => setTimeout(resolve, 100));
             setShowOptionMenu(false);
         }
 
         return (
             <div className="relative justify-self-center p-[10px]"  >
-                <button className="flex items-center self-center mr-[10px] ml-auto opacity-80 font-bold hover:text-accent"  onBlurCapture={()=> clickOut()} onClick={() => handleOptionsButtonClick()}>
+                <button className="flex items-center self-center mr-[10px] ml-auto opacity-80 font-bold hover:text-accent" onBlurCapture={() => clickOut()} onClick={() => handleOptionsButtonClick()}>
                     <AiOutlineMenu style={{ marginLeft: '0.25rem', width: '1.5rem', height: '1.5rem' }} />
                 </button>
                 {showOptionMenu && (
                     <div className="cursor-pointer absolute top-90 z-3 left-[-170px] w-[200px] overflow-hidden rounded-[10px] bg-background shadow-md"  >
                         <ul>
-                            {userPostID == usuario.id && <li className="p-[10px] hover:bg-primary hover:text-background"   onClick={() => modal(()=> removePost({ id: postID, inFriends: inFriends }), "¿Estas seguro de eliminar la publicacion?") }>Delete</li>}
+                            {userPostID == usuario.id && <li className="p-[10px] hover:bg-primary hover:text-background" onClick={() => modal(() => removePost({ id: postID, inFriends: inFriends }), "¿Estas seguro de eliminar la publicacion?")}>Delete</li>}
                             <li className="p-[10px] hover:bg-primary hover:text-background" >Report</li>
                         </ul>
                     </div>
@@ -85,6 +89,45 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
             </div>
         )
     }
+
+
+    const handleImageChange = (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+            const selectedImages = Array.from(files).slice(0, 4); // Limitar a 4 imágenes seleccionadas
+
+            // Convertir las imágenes a base64
+            const imagePromises = selectedImages.map((image) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        resolve(reader.result);
+                    };
+                    reader.onerror = (error) => {
+                        reject(error);
+                    };
+                    reader.readAsDataURL(image);
+                });
+            });
+
+            // Esperar a que todas las conversiones de base64 se completen
+            Promise.all(imagePromises).then((base64Images) => {
+                setNewComment({ ...newComment, imagenes: base64Images });
+            });
+        }
+        setImageKey((prevKey) => prevKey + 1);
+
+    };
+
+    const handleRemoveImage = (index) => {
+        const newImages = newComment.imagenes.slice();
+        newImages.splice(index, 1);
+        setNewComment({ ...newComment, imagenes: newImages, });
+    };
+
+    const [imageKey, setImageKey] = useState(0);
+
+
 
     return (
         <>
@@ -178,9 +221,18 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
 
                     <form className="border-t-[2px] border-dotted border-background pt-[20px] flex flex-row" onSubmit={handleCommentSubmit}>
 
-                        <button className="bg-background flex items-center pl-[20px] rounded-l-[10px] hover:text-accent">
+                        <label className="bg-background flex items-center pl-[20px] rounded-l-[10px] hover:text-accent">
                             <AiOutlinePicture className="w-[1.3rem] h-[1.3rem] fill-current opacity-80" />
-                        </button>
+                            <input
+                                key={imageKey}
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                                onChange={handleImageChange}
+                                onDrop={handleImageChange}
+                            />
+                        </label>
                         <textarea className="p-[10px] pl-[20px] bg-background text-base w-[93%] h-[45px] outline-none placeholder-secondary focus:outline-none  resize-none focus:h-[110px] focus:pt-[20px]
                     transition-height duration-300 ease-in-out "
 
@@ -194,11 +246,24 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
 
 
                 </div>
+                <div className="flex mt-4 space-x-2">
+                {newComment.imagenes.map((base64Image, index) => (
+                    <div key={index} className="relative max-w-[20%]">
+                        <img src={base64Image} alt={`Imagen ${index + 1}`} className="w-20 h-20 rounded-md" />
+                        <button
+                            className="absolute top-0 right-0 text-white bg-red-500 rounded-full p-1 hover:bg-red-600"
+                            onClick={() => handleRemoveImage(index)}
+                        >
+                            <AiOutlineClose className="h-4 w-4" />
+                        </button>
+                    </div>
+                ))}
+            </div>
             </div>
 
+           
 
 
-            
         </>
     );
 }

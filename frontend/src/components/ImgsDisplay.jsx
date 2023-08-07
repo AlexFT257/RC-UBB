@@ -1,4 +1,5 @@
-
+import React from "react";
+import { useState } from "react";
 
 
 
@@ -57,8 +58,6 @@ export default function ImgsDisplay({ images, containerHeight, containerMaxHeigh
               <img key={index} className="rounded-[10px] object-cover min-w-full" style={{ minHeight: `${midHeight}px` }} src={images[index + 1]} /></div>
           </div>
         }
-
-
       }
     }
   });
