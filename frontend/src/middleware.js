@@ -55,6 +55,8 @@ export const config = {
         '/feed/:path*',
         '/Feed/:path*',
         '/friends/:path*',
-        '/Friends/:path*'
+        '/Friends/:path*',
+        '/Editarusuario/:path*'
+        
     ]
 }

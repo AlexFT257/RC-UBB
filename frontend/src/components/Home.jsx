@@ -95,6 +95,9 @@ export default function Home({ screenWidth, children }) {
                     case 4:
                         href = '/Notas';
                         break;
+                    case 5:
+                        href = '/Editarusuario';
+                        break;
                     default:
                         href = '/Feed';
                         break;

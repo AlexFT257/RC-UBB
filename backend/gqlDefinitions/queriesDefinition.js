@@ -73,6 +73,9 @@ type Query {
     #archivos
     all_archivos: [Archivo]!
     buscarArchivoId(id: ID!): Archivo
+
+    #aaaaa
+    descUsuario(token:String!):Usuario
 }
 `
 

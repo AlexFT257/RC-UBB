@@ -7,6 +7,7 @@ const grupoQueries = {
     },
     buscarGrupo: async (root, args) => {
         const grupo = await Grupo.find({ nombre: { $regex: args.buscar, $options: 'i' } });
+        const grupo = await Grupo.find({ nombre: { $regex: args.buscar, $options: 'i' } });
         return grupo;
     },
     buscarGrupoId: async (root, args) => {

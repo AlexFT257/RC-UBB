@@ -1,8 +1,8 @@
 const Usuario = require('../models/usuario.js');
 const { io } = require('socket.io-client');
-const Grupo = require('../models/grupo.js');
-
+const JWT_SECRET = "SUPER_HYPER_MEGA_PALABRA_SECRETA";
 const socket = io('http://localhost:3001/', { transports: ['websocket'] });
+const jwt = require('jsonwebtoken');
 
 const usuarioQueries = {
     all_usuarios: async () => {
@@ -41,8 +41,24 @@ const usuarioQueries = {
         }
         const usuario = await Usuario.find({ carrera: args.carrera });
         return usuario;
-    }
-    ,gruposUsuario: async (root, args) => {
+    },
+    descUsuario: async(root,args)=>{
+     
+        try {
+            // Verificar la validez del token y decodificarlo
+            const decoded = jwt.verify(args.token, 'SUPER_HYPER_MEGA_PALABRA_SECRETA'); // Reemplaza 'clave-secreta' con tu clave secreta real
+            const usuario = await Usuario.findById(decoded.id);
+            
+              // Devolver los datos del usuario extraídos del token
+            return usuario;
+          } catch (error) {
+            throw new Error('Token inválido o expirado');
+          }
+
+    },
+
+    
+    gruposUsuario: async (root, args) => {
         const usuario = await Usuario.findById(args.id).populate('grupos');
         const grupos = usuario.grupos;
         console.log("GRUPOS",grupos);

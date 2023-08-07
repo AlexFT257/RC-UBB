@@ -4,7 +4,7 @@ export const UserContext = createContext();
 import { clientMutator, clientRequester, } from "./graphqlManager.js";
 import { socketPromise } from "@/utils/socketManager.js";
 
-const chatContent = ` 
+const chatContent = `
 id
 usuarios {
     id
@@ -12,7 +12,7 @@ usuarios {
     foto_perfil
 }
 nombre
-mensajes { 
+mensajes {
     id
     fecha
     usuario{
@@ -51,7 +51,7 @@ export const UserProvider = ({ children }) => {
 
             return await requestUser(document.cookie.toString().split('; ').find((cookie) => cookie.startsWith(`user=`)).split("=")[1]).
                 then((us) => {
-                    console.log(us)
+                    
                     setUser(us);
 
                     const nChats = us.chats.map((chat) => {
@@ -69,11 +69,13 @@ export const UserProvider = ({ children }) => {
         }
     }
 
-    const requestUser = async (id) => {
-        const { buscarUsuarioId } = await clientRequester(
-            `query BuscarUsuarioId($id: ID!) {
-                buscarUsuarioId(id: $id) {
+    const requestUser = async (token) => {
+        const { descUsuario } = await clientRequester(
+            `query DescUsuario($token: String!) {
+                descUsuario(token: $token) {
                     id
+                    nombre
+                    apellido
                     username
                     correo
                     foto_perfil
@@ -111,10 +113,10 @@ export const UserProvider = ({ children }) => {
                     }
                 }
             }`,
-            { id: id }, true).then((data) => { return data; })
+            { token: token }, true).then((data) => { return data; })
             .catch((error) => { throw error; })
 
-        return buscarUsuarioId;
+        return descUsuario;
     }
 
     const getLastMsgChats = async () => {

@@ -1,69 +1,89 @@
 import { useState } from "react";
-import Head from "next/head";
+import Head from 'next/head';
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 
-export default function crearUsuario() {
+
+
+export default function crearUsuario(screenWidth) {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
-  const [nombre_usuario, setNombreUsuario] = useState("");
+  const [username, setNombreUsuario] = useState("");
   const [correo, setEmail] = useState("");
   const [contrasena, setPassword] = useState("");
   const [fecha_nacimiento, setFechaNacimiento] = useState("");
   const [carrera, setCarrera] = useState([]);
-  const [estado, setEstado] = useState("");
-  const [rol, setRol] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [nombreError, setNombreError] = useState("");
+  const [apellidoError, setApellidoError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [correoError, setCorreoError] = useState("");
+  const [contrasenaError, setContrasenaError] = useState("");
+  const { resolvedTheme, setTheme } = useTheme();
+
   const router = useRouter();
   const CREATE_USER = gql`
-    mutation{crearUsuario(nombre: "${nombre}",apellido: "${apellido}",nombre_usuario:"${nombre_usuario}",correo: "${correo}", contrasena:"${contrasena}", fecha_nacimiento: "${fecha_nacimiento}", carrera: "${carrera}", estado: "${estado}", rol: "${rol}"){
+    mutation{crearUsuario(nombre: "${nombre}",apellido: "${apellido}",username:"${username}",correo: "${correo}", contrasena:"${contrasena}", fecha_nacimiento: "${fecha_nacimiento}", carrera: "${carrera}"){
     id
     nombre
     apellido
-    nombre_usuario
+    username
     correo
     contrasena
     fecha_nacimiento
-    estado
-    rol
   
       }
     }`;
-  const GET_CARRERAS = gql`
-    query {
-      all_carreras {
-        id
-        nombre
-      }
-    }
-  `;
+const GET_CARRERAS = gql`
+query {
+  all_carreras {
+    id
+    nombre
+  }
+}
+`;
 
   const [crearUsuario, { error, reset }] = useMutation(CREATE_USER);
-  const { data: carrerasData, loading: carrerasLoading } =
-    useQuery(GET_CARRERAS);
+  const { data: carrerasData, loading: carrerasLoading } = useQuery(GET_CARRERAS);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setNombreError("");
+    setApellidoError("");
+    setUsernameError("");
+    setCorreoError("");
+    setContrasenaError("")
+    // Validar el formulario antes de enviarlo
+    if (!validateForm()) {
+      return;
+    }
 
-    console.log(crearUsuario, "hola");
-    crearUsuario({
-      variables: {
-        nombre,
-        apellido,
-        nombre_usuario,
-        correo,
-        contrasena,
-        fecha_nacimiento,
-        estado,
-        rol,
-      },
-    })
-      .then((response) => {
-        console.log(response.data, "holahola");
-        router.push("/login");
-      })
-      .catch((error) => {
-        console.log(error);
+    try {
+      const { data } = await crearUsuario({
+        variables: {
+          nombre,
+          apellido,
+          username,
+          correo,
+          contrasena,
+          fecha_nacimiento,
+        },
       });
+
+      if (data.crearUsuario) {
+        router.push("/login");
+      }
+
+    } catch (error) {
+      if (error.message.includes("Ya existe un usuario con este correo")) {
+        setCorreoError("El correo ya está registrado");
+      } else if (error.message.includes("El nombre de usuario ya está ocupado")) {
+        setUsernameError("El nombre de usuario ya está ocupado");
+      } else {
+        console.log("Error al crear el usuario:", error.message);
+      }
+    }
   };
 
   if (carrerasLoading) {
@@ -73,114 +93,129 @@ export default function crearUsuario() {
   const carreras = carrerasData ? carrerasData.all_carreras : [];
   return (
     <>
-      <Head>
-        <title>Crear Usuario</title>
-      </Head>
-      <h1>Crear Usuario</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="nombre">Nombre:</label>
-          <input
-            type="text"
-            id="nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            required
-          />
+      <div
+        className={`z-1 fixed bottom-0 left-0 right-0 top-0 ${resolvedTheme === "light" ? "" : " opacity-70 "
+          } 
+            bg-background bg-cover bg-fixed`}
+      ></div>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="absolute top-4 left-4 mb-4">
+            <img
+              src="/LogoUchat.png"
+              alt="Logo UChat"
+              className="h-12 w-32 mr-4"
+            />
+            <div className="text-center">Red social creada para la Universidad del Bio-Bio</div>
+          </div>
+          <div className="flex justify-center ">
+            <div className="z-10  flex-col items-center justify-center rounded-[10px] bg-foreground p-4 text-primary shadow-2xl">
+              <h1 className="text-2xl font-bold mb-4 bg-foreground ">Crear Usuario</h1>
+              <form onSubmit={handleSubmit} className="space-y-4 bg-foreground ">
+                <div>
+                  <input
+                    type="text"
+                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    id="nombre"
+                    placeholder="nombre"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                  />
+
+                  {nombreError && <div className="text-red-500">{nombreError}</div>}
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    id="apellido"
+                    placeholder="apellido"
+                    value={apellido}
+                    onChange={(e) => setApellido(e.target.value)}
+                  />
+
+                  {apellidoError && <div className="text-red-500">{apellidoError}</div>}
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    id="username"
+                    placeholder="nombre de usuario"
+                    value={username}
+                    onChange={(e) => setNombreUsuario(e.target.value)}
+                  />
+
+
+                  {usernameError && <div className="text-red-500">{usernameError}</div>}
+                </div>
+                <div>
+
+                  <input
+                    type="correo"
+                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    placeholder="correo"
+                    value={correo}
+                    onChange={(e) => setEmail(e.target.value)} required
+                  />
+                  {correoError && <div className="text-red-500">{correoError}</div>}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    id="contrasena"
+                    placeholder="contrasena"
+                    value={contrasena}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+
+                  {contrasenaError && <div className="text-red-500">{contrasenaError}</div>}
+                </div>
+                <div>
+                  <input
+                    type="date"
+                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    id="fecha_nacimiento"
+                    placeholder="fecha_nacimiento"
+                    value={username}
+                    onChange={(e) => setFechaNacimiento(e.target.value)}
+                  />
+
+                </div>
+                <div>
+
+                  <select
+                    id="carrera"
+                    value={carrera}
+                    onChange={(e) => setCarrera(e.target.value)}
+                    required
+                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                  >
+                    <option value="">Selecciona una carrera</option>
+                    {carreras.map(carrera => (
+                      <option key={carrera.id} value={carrera.id}>
+                        {carrera.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    className="   w-5/6  max-w-[400px]  rounded-[10px] bg-accent p-3  font-semibold hover:bg-primary hover:text-background active:bg-background active:text-primary"
+                  >
+                    Crear usuario
+                  </button>
+                </div>
+              </form>
+              <p>
+                ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
+              </p>
+            </div>
+          </div>
         </div>
-        <div>
-          <label htmlFor="apellido">Apellido:</label>
-          <input
-            type="text"
-            id="apellido"
-            value={apellido}
-            onChange={(e) => setApellido(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="nombre_usuario">Nombre de Usuario:</label>
-          <input
-            type="text"
-            id="nombre_usuario"
-            value={nombre_usuario}
-            onChange={(e) => setNombreUsuario(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="correo">Correo:</label>
-          <input
-            type="email"
-            id="correo"
-            value={correo}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="contrasena">Contraseña:</label>
-          <input
-            type="password"
-            id="contrasena"
-            value={contrasena}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="fecha_nacimiento">Fecha de Nacimiento:</label>
-          <input
-            type="date"
-            id="fecha_nacimiento"
-            value={fecha_nacimiento}
-            onChange={(e) => setFechaNacimiento(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="carrera">Carrera:</label>
-          <select
-            id="carrera"
-            value={carrera}
-            onChange={(e) => setCarrera(e.target.value)}
-            required
-          >
-            <option value="">Selecciona una carrera</option>
-            {carreras.map((carrera) => (
-              <option key={carrera.id} value={carrera.id}>
-                {carrera.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="estado">Estado:</label>
-          <select
-            id="estado"
-            value={estado}
-            onChange={(e) => setEstado(e.target.value)}
-            required
-          >
-            <option value="">Selecciona un estado</option>
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="rol">Rol:</label>
-          <input
-            type="text"
-            id="rol"
-            value={rol}
-            onChange={(e) => setRol(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Crear usuario</button>
-      </form>
-      <p>
-        ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
-      </p>
-    </>
+      </div></>
   );
 }
