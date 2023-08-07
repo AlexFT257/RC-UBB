@@ -39,7 +39,7 @@ type Query {
     buscarPublicacionId(id: ID!): Publicacion
     buscarPublicacionUsuario(usuario: ID!): [Publicacion]
     buscarPublicacionHora(hora: Date!): [Publicacion]
-    buscarPublicacionGrupo(grupo: ID!): [Publicacion]
+    buscarPublicacionGrupo(grupo: ID!, skip: Int): [Publicacion]
     feedRecomendations(usuario: ID!): [Publicacion]
     feedFriends(usuario: ID!): [Publicacion]
 
@@ -55,6 +55,8 @@ type Query {
     logOut(id: ID!): Usuario
     buscarUsuarioCorreo(correo: String!): [Usuario]
     buscarUsuarioCarrera(carrera: ID!): [Usuario]
+    gruposUsuario(id: ID!): [Grupo]
+
 
     #Votacion
     all_votaciones: [Votacion]!

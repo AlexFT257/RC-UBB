@@ -38,9 +38,42 @@ const GET_GROUP_INFO = gql`
   }
 `;
 
+const GET_GROUP_POSTS = gql`
+  query buscarPublicacionGrupo($grupo: ID!, $skip: Int) {
+    buscarPublicacionGrupo(grupo: $grupo, skip: $skip) {
+      id
+      fecha
+      imagenes
+      texto
+      likes{
+          id
+      }
+      comentarios{
+          id
+          usuario{
+              id
+              username
+              foto_perfil
+          }
+          texto
+          imagenes
+          fecha
+          likes{
+              id
+          }
+      }
+      usuario{
+          id
+          username
+          foto_perfil
+      }
+    }
+  }
+`;
+
 export const GroupProvider = (props) => {
 
-  const {user} = useContext(UserContext);
+  const {user,setFriendsPosts,setUser} = useContext(UserContext);
   const [group, setGroup] = useState();
   const [groupPost, setGroupPost] = useState([]);
 
@@ -60,6 +93,103 @@ export const GroupProvider = (props) => {
       setGroup(data);
     });
   };
+
+  const requestGroupPost = async (skip) => {
+    if (skip == undefined||skip == null) {
+      skip = 0;
+    }
+    const { buscarPublicacionGrupo } = await clientRequester(
+      `query buscarPublicacionGrupo($grupo: ID!, $skip: Int) {
+        buscarPublicacionGrupo(grupo: $grupo, skip: $skip) {
+            id
+            fecha
+            imagenes
+            texto
+            likes{
+                id
+            }
+            comentarios{
+                id
+                usuario{
+                    id
+                    username
+                    foto_perfil
+                }
+                texto
+                imagenes
+                fecha
+                likes{
+                    id
+                }
+            }
+            usuario{
+                id
+                username
+                foto_perfil
+            }
+        }
+    }`,
+      { grupo: groupId, skip:  skip},
+      false
+    ).then((data) => {
+      return data;
+    });
+
+    console.log("publicaciones grupo", buscarPublicacionGrupo);
+    return buscarPublicacionGrupo;
+  };
+
+  const addGroupPost = async ({ texto, imagenes, enGrupo}) => {
+    // setFriendsPosts((prevFriendsPosts) => [{ waiting: true }, ...prevFriendsPosts])
+
+    const { crearPublicacion } = await clientMutator(
+        `mutation CrearPublicacion($usuario: ID!, $fecha: Date!, $texto: String, $imagenes: [String], $votacion: ID,) {
+            crearPublicacion(usuario: $usuario, fecha: $fecha, texto: $texto, imagenes: $imagenes, votacion: $votacion, ) {
+                id
+                fecha
+                imagenes
+                texto
+                tagInfo{
+                    tag{
+                        nombre
+                        id
+                    }
+                    valor
+                }
+            }
+        }`, { usuario: user.id, fecha: new Date(), texto: texto, imagenes: imagenes, enGrupo: enGrupo })
+        .then((data) => { return data; })
+        .catch((error) => { throw error; });
+
+
+    console.log("Nueva Publicacion", crearPublicacion);
+    if (!crearPublicacion || crearPublicacion === null) { return }
+
+
+
+    // setUser((prevUser) => {
+    //     return {
+    //         ...prevUser,
+    //         publicaciones: [...prevUser.publicaciones, crearPublicacion.id]
+    //     }
+    // })
+
+    // setFriendsPosts((prevFriendsPosts) => {
+    //     const updatedPosts = prevFriendsPosts.filter((post) => post.waiting !== true);
+
+    //     return [{
+    //         ...crearPublicacion, likes: [], comentarios: [],
+    //         usuario: { id: user.id, username: user.username, foto_perfil: user.foto_perfil }
+    //     },
+    //     ...updatedPosts,
+    //     ]
+
+    // })
+    return crearPublicacion;
+}
+
+
+
 
   const requestGroup = async () => {
     const { buscarGrupoId } = await clientRequester(
@@ -111,7 +241,9 @@ export const GroupProvider = (props) => {
         group,
         setGroup,
         requestGroup,
-        updateGroupContext
+        updateGroupContext,
+        requestGroupPost,
+        addGroupPost,
       }}
     >
       {props.children}

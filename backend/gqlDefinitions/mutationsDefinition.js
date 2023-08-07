@@ -21,7 +21,7 @@ type Mutation {
     eliminarCarrera(id: ID!): Carrera
 
     #Publicación
-    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID): Publicacion
+    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID,): Publicacion
     crearComentario(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID, esComentario: ID!): Publicacion
     editarPublicacion(id: ID!, usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: VotacionInput, comentarios:[ID], likes: [ID]): Publicacion
     eliminarPublicacion(id: ID!): Publicacion
@@ -33,7 +33,7 @@ type Mutation {
     eliminarVotacion(id: ID!): Votacion
   
     # Crear Grupo
-    crearGrupo(nombre: String!, privacidad: String!, vencimiento: Date, descripcion: String, admins: [ID]!, miembros: [ID]): Grupo
+    crearGrupo(nombre: String!, privacidad: String!,banner:String, icono:String, vencimiento: Date, descripcion: String, admins: [ID]!, miembros: [ID]): Grupo
     editarGrupo(id: ID!, nombre: String, privacidad: String, vencimiento: Date, descripcion: String, admins: [ID], miembros: [ID], icono: String, banner: String): Grupo
     eliminarGrupo(id: ID!): Grupo
     solicitarUnirse(idGrupo: ID!, idUsuario: ID!): Grupo

@@ -1,11 +1,17 @@
 const { UserInputError } = require('apollo-server-express');
+const Usuario = require('../models/usuario.js');
 const Grupo = require('../models/grupo.js');
 
 const mutations = {
     crearGrupo: async (root, args) => {
         const grupo = new Grupo({ ...args });
+        console.log("GRUPO",grupo.admins[0]._id);
         try {
+            const user = await Usuario.findById(grupo.admins[0]._id);
+            console.log("USER",user);
             await grupo.save();
+            user.grupos.push(grupo.id);
+            await user.save();
             return grupo;
         } catch (error) {
             throw new UserInputError(error.message, {
@@ -51,8 +57,11 @@ const mutations = {
         const grupo = await Grupo.findById(args.id);
         const admins = args.admins;
         try {
-            admins.forEach(admin => {
+            admins.forEach( async (admin) => {
                 grupo.admins.push(admin);
+                const user = await Usuario.findById(admin.id);
+                user.grupos.push(args.idGrupo);
+                await user.save();
             });
             await grupo.save();
             return grupo;
@@ -67,8 +76,11 @@ const mutations = {
         const grupo = await Grupo.findById(args.idGrupo);
         const miembros = args.miembros;
         try {
-            miembros.forEach(miembro => {
+            miembros.forEach( async(miembro) => {
                 grupo.miembros.push(miembro);
+                const user = await Usuario.findById(miembro.id);
+                user.grupos.push(args.idGrupo);
+                await user.save();
             });
             await grupo.save();
             return grupo;
@@ -83,8 +95,11 @@ const mutations = {
         const grupo = await Grupo.findById(args.idGrupo);
         const admins = args.admins;
         try {
-            admins.forEach(admin => {
+            admins.forEach( async (admin) => {
                 grupo.admins.pull(admin);
+                const user = await Usuario.findById(admin.id);
+                user.grupos.pull(args.idGrupo);
+                await user.save();
             });
             await grupo.save();
             return grupo;
@@ -99,8 +114,11 @@ const mutations = {
         const grupo = await Grupo.findById(args.idGrupo);
         const miembros = args.miembros;
         try {
-            miembros.forEach(miembro => {
+            miembros.forEach(async (miembro) => {
                 grupo.miembros.pull(miembro);
+                const user = await Usuario.findById(miembro.id);
+                user.grupos.pull(args.idGrupo);
+                await user.save();
             });
             await grupo.save();
             return grupo;
@@ -132,8 +150,6 @@ const mutations = {
                 invalidArgs: args,
             });
         }
-
-        
     },
 };
 

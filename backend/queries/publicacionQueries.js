@@ -28,7 +28,12 @@ const publicacionQueries = {
         return publicacion;
     },
     buscarPublicacionGrupo: async (root, args) => {
-        const publicacion = await Publicacion.find({ enGrupo: args.grupo });
+        if(args.skip!=0){
+            const publicacion = await Publicacion.find({ enGrupo: args.enGrupo },).skip(args.skip).limit(10);
+        }else{
+            const publicacion = await Publicacion.find({ enGrupo: args.enGrupo }).limit(10);
+        }
+
         return publicacion;
     },
 

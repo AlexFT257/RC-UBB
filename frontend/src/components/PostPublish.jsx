@@ -2,7 +2,7 @@ import { AiOutlineSend, AiOutlinePicture, AiOutlineUser, AiOutlineClose } from "
 import React, { useState, useContext } from 'react';
 
 
-export default function PostPublish({ user, addPost }) {
+export default function PostPublish({ user, addPost, groupId }) {
 
     const [newPost, setNewPost] = useState({
         texto: '',

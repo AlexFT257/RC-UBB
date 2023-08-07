@@ -1,5 +1,6 @@
 const Usuario = require('../models/usuario.js');
 const { io } = require('socket.io-client');
+const Grupo = require('../models/grupo.js');
 
 const socket = io('http://localhost:3001/', { transports: ['websocket'] });
 
@@ -40,6 +41,12 @@ const usuarioQueries = {
         }
         const usuario = await Usuario.find({ carrera: args.carrera });
         return usuario;
+    }
+    ,gruposUsuario: async (root, args) => {
+        const usuario = await Usuario.findById(args.id).populate('grupos');
+        const grupos = usuario.grupos;
+        console.log("GRUPOS",grupos);
+        return grupos;
     }
 }
 
