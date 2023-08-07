@@ -1,9 +1,9 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
 import { useState } from "react";
 
-const BUSCAR_USUARIO = gql`
-  query BuscarUsuario($buscar: String!) {
-    buscarUsuario(buscar: $buscar) {
+const BUSCAR_USUARIO_POR_ID = gql`
+  query BuscarUsuarioPorId($id: ID!) {
+    buscarUsuarioPorId(id: $id) {
       nombre
       apellido
       foto_perfil
@@ -12,47 +12,48 @@ const BUSCAR_USUARIO = gql`
 `;
 
 export default function BuscarUsuarioComponent() {
-    const [buscarTexto, setBuscarTexto] = useState("");
-    const { data: usuariosData, loading: usuariosLoading } = useQuery(BUSCAR_USUARIO, {
-        variables: { buscar: buscarTexto },
-        skip: !buscarTexto,
-    });
+  const [buscarId, setBuscarId] = useState("");
+  const [buscarUsuarioPorId, { data: usuarioData, loading: usuarioLoading }] =
+    useLazyQuery(BUSCAR_USUARIO_POR_ID);
 
-    const handleBuscarChange = (event) => {
-        setBuscarTexto(event.target.value);
-    };
+  const handleBuscarChange = (event) => {
+    setBuscarId(event.target.value);
+  };
 
-    return (
-        <div>
-            <div>
-                <input
-                    id="buscarInput"
-                    type="text"
-                    value={buscarTexto}
-                    onChange={handleBuscarChange}
-                    placeholder="Buscar usuario"
-                />
-            </div>
-            <div>
-                {/* Mostrar los resultados de la búsqueda */}
-                {usuariosLoading ? (
-                    <p>Cargando usuarios...</p>
-                ) : (
-                    usuariosData && usuariosData.buscarUsuario && usuariosData.buscarUsuario.length > 0 ? (
-                        usuariosData.buscarUsuario.map((usuario) => (
-                            <div key={usuario.id}>
-                                <p>Nombre: {usuario.nombre}</p>
-                                <p>Apellido: {usuario.apellido}</p>
-                                <p>Foto: {usuario.foto_perfil}</p>
-                                <img src={`${usuario.foto_perfil}`} alt="Foto de perfil" />
+  const handleBuscarClick = () => {
+    buscarUsuarioPorId({ variables: { id: buscarId } });
+  };
 
-                            </div>
-                        ))
-                    ) : (
-                        <p>No se encontraron usuarios.</p>
-                    )
-                )}
-            </div>
-        </div>
-    );
+  return (
+    <div>
+      <div>
+        <input
+          id="buscarInput"
+          type="text"
+          value={buscarId}
+          onChange={handleBuscarChange}
+          placeholder="Buscar usuario por ID"
+        />
+        <button onClick={handleBuscarClick}>Buscar</button>
+      </div>
+      <div>
+        {/* Mostrar el resultado de la búsqueda */}
+        {usuarioLoading ? (
+          <p>Cargando usuario...</p>
+        ) : usuarioData && usuarioData.buscarUsuarioPorId ? (
+          <div>
+            <p>Nombre: {usuarioData.buscarUsuarioPorId.nombre}</p>
+            <p>Apellido: {usuarioData.buscarUsuarioPorId.apellido}</p>
+            <p>Foto: {usuarioData.buscarUsuarioPorId.foto_perfil}</p>
+            <img
+              src={`${usuarioData.buscarUsuarioPorId.foto_perfil}`}
+              alt="Foto de perfil"
+            />
+          </div>
+        ) : (
+          <p>No se encontró ningún usuario con ese ID.</p>
+        )}
+      </div>
+    </div>
+  );
 }

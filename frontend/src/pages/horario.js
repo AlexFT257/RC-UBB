@@ -10,7 +10,7 @@ export default function CrearHorario ()  {
         asignatura: '',
         acronimo: '',
         sala: '',
-        usuario: '64431fc09583d7491a20ba9c', // Este valor es estático, pero podrías cambiarlo según tu lógica de autenticación
+        usuario: '646bed9a17030b238b722e08', // Este valor es estático, pero podrías cambiarlo según tu lógica de autenticación
     });
 
     // Estado local para guardar el resultado de la petición

@@ -95,8 +95,9 @@ export const GroupProvider = (props) => {
   };
 
   const requestGroupPost = async (skip) => {
+    var skips=0;
     if (skip == undefined||skip == null) {
-      skip = 0;
+      skips=skip;
     }
     const { buscarPublicacionGrupo } = await clientRequester(
       `query buscarPublicacionGrupo($grupo: ID!, $skip: Int) {
@@ -129,7 +130,7 @@ export const GroupProvider = (props) => {
             }
         }
     }`,
-      { grupo: groupId, skip:  skip},
+      { grupo: groupId, skip:  skips},
       false
     ).then((data) => {
       return data;
@@ -143,8 +144,8 @@ export const GroupProvider = (props) => {
     // setFriendsPosts((prevFriendsPosts) => [{ waiting: true }, ...prevFriendsPosts])
 
     const { crearPublicacion } = await clientMutator(
-        `mutation CrearPublicacion($usuario: ID!, $fecha: Date!, $texto: String, $imagenes: [String], $votacion: ID,) {
-            crearPublicacion(usuario: $usuario, fecha: $fecha, texto: $texto, imagenes: $imagenes, votacion: $votacion, ) {
+        `mutation CrearPublicacion($usuario: ID!, $fecha: Date!, $texto: String, $imagenes: [String], $votacion: ID,$enGrupo: ID) {
+            crearPublicacion(usuario: $usuario, fecha: $fecha, texto: $texto, imagenes: $imagenes, votacion: $votacion,enGrupo: $enGrupo ) {
                 id
                 fecha
                 imagenes

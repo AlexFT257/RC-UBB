@@ -6,7 +6,7 @@ export default function EventList() {
     const events = [{ nombre: "Party", fecha: "10/1", descripcion: "Descripcion del evento que sucedera en la fecha x", id:0 },
     { nombre: "Party", fecha: "10/3", descripcion: "Descripcion del evento que sucedera  en la fecha x", id:1 },
     { nombre: "Party", fecha: "4/12", descripcion: "Descripcion del evento que sucedera  en la fecha x", id:2 },
-    { nombre: "Party", fecha: "31/12", descripcion: "Descripcion del evento que sucedera  en la fecha x y blablabasl como si fuera esta la ultina", id:3 }]
+    { nombre: "Party", fecha: "31/12", descripcion: "Descripcion del evento que sucedera  en la fecha x  como si fuera esta la ultina", id:3 }]
 
   // map de eventos
   const eventList = events.map((event) => {

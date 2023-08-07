@@ -11,6 +11,7 @@ const schema = new mongoose.Schema({
     required: true,
   },
   foto_perfil: {
+        default:"/iconoDefault.png",
     type: String,
   },
   username: {

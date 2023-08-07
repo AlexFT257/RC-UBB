@@ -9,7 +9,7 @@ type Mutation {
     forgotPassword(correo: String!): ForgotPasswordResponse!
     verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
     actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
-    editarUsuario(id: ID!, nombre: String!, apellido: String!, username: String!, correo: String!, carrera: ID!, contrasena:String!,amigos:[ID]): Usuario
+    editarUsuario(id: ID, nombre: String, apellido: String, correo: String, contrasena:String, carrera: ID,foto_perfil:String): Usuario
     eliminarUsuario(id: ID!): Usuario
     #calendario
     crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
@@ -21,7 +21,7 @@ type Mutation {
     eliminarCarrera(id: ID!): Carrera
 
     #Publicación
-    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID,): Publicacion
+    crearPublicacion(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID,enGrupo: ID): Publicacion
     crearComentario(usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: ID, esComentario: ID!): Publicacion
     editarPublicacion(id: ID!, usuario: ID!, fecha: Date!, texto: String, imagenes: [String], votacion: VotacionInput, comentarios:[ID], likes: [ID]): Publicacion
     eliminarPublicacion(id: ID!): Publicacion

@@ -4,6 +4,7 @@ import { useContext,useState } from "react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
 import Home from "@/components/home";
+import Post from "@/components/post";
 import { UserContext } from "@/utils/userContext";
 import PostPublishGroup from "@/components/PostPublishGroup";
 import { GroupContext } from "@/utils/groupContext";
@@ -21,6 +22,63 @@ export default function GroupHome() {
       });
     }
   }, [group, skip]);
+
+  // cada vez que se llega al final de la pagina se recargan
+  // los posts del grupo
+  useEffect(() => {
+    let scrolling = false;
+
+    function handleScroll() {
+      if (!scrolling) {
+        scrolling = true;
+
+        setTimeout(() => {
+          // Calcular la posición del usuario en relación al final de la página
+          const scrollPosition = window.innerHeight + window.scrollY;
+          const documentHeight = document.body.offsetHeight;
+          const distanceToBottom = documentHeight - scrollPosition;
+
+          // Definir un umbral para considerar que el usuario llegó al final
+          const threshold = 100; // Puedes ajustar este valor
+
+          if (distanceToBottom < threshold) {
+            console.log('Usuario llegó al final de la página');
+            // Aquí puedes realizar acciones adicionales, como cargar más contenido.
+            if (group) {
+              if (posts.length > 0) {
+                setSkip(posts.length+skip);
+              }
+              requestGroupPost(group.id, skip).then((res) => {
+                setPosts(res);
+              });
+            }
+          }
+
+          scrolling = false;
+        }, 2000); // Cambia este valor según tus necesidades
+      }
+    }
+
+    // Agregar el evento de desplazamiento al montar el componente
+    window.addEventListener('scroll', handleScroll);
+
+    // Eliminar el evento cuando el componente se desmonte
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  
+
+  // useEffect que hace fetch de los posts del grupo
+  // periodicamente cada 60 segundos
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+      
+  //   }, 60000);
+  //   return () => clearInterval(interval);
+  // }, [group, skip]);
+
 
   // console.log("user", user);
   // console.log("GroupHome", group);
@@ -67,7 +125,7 @@ export default function GroupHome() {
               <Post
                 key={post.id}
                 post={post}
-                user={user}
+                usuario={user.id}
                 removePost={removePost}
                 addComment={addComment}
                 likePost={likePost}

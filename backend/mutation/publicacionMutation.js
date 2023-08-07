@@ -109,6 +109,20 @@ const mutations = {
             //     }
 
             //     /* const possibleTags = await classificationQuery({ */
+            
+            
+
+
+
+            // const allTags = await translationQuery(publicacion.texto.replace(/\s+/g, ' ').trim()).then(async (text) => {
+            //     console.log("Traduccion", text)
+            //     if (!text) {
+            //         throw new ValidationError("Translation API failed", {
+            //             invalidArgs: args,
+            //         });
+            //     }
+
+            //     /* const possibleTags = await classificationQuery({ */
 
             //     const possibleTags = await huggingQuery({
             //         "inputs": text.length > 310 ? await summarizationQuery([text]) : text,
