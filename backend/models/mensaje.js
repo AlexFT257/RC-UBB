@@ -12,6 +12,12 @@ const schema = new mongoose.Schema({
   },
   texto: String,
   imagenes: [String],
+  recibido: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Usuario'
+    }
+  ],
   visto: [
     {
       type: mongoose.Schema.Types.ObjectId,

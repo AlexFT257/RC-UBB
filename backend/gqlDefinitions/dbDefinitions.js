@@ -21,19 +21,23 @@ type Usuario {
     publicaciones: [Publicacion]
     likes: [Publicacion]
     comentarios: [Publicacion]
+    intereses:[TagInfo]
 }
+
 type Token{
     value: String!
 }
 
-type calendario {
-        id: ID!
-        titulo: String!
-        fecha_inicio: Date!
-        fecha_fin: Date!
-        descripcion: String
-        usuario: [Usuario]!
-    }
+type Calendario {
+    id: ID!
+    titulo: String!
+    fecha_inicio: Date!
+    fecha_fin: Date!
+    descripcion: String
+    creador: ID!
+    invitados: [String]
+    tipo: String
+}
 
 type Carrera {
     id: ID!
@@ -51,6 +55,27 @@ type Publicacion {
     votacion: Votacion
     comentarios: [Publicacion]
     likes:[Usuario]
+    tagInfo: [TagInfo]
+    enGrupo: Grupo
+    esComentario: Publicacion
+}
+
+type TagInfo{
+    tag: Tag!
+    valor: Float!
+}
+
+type Tag {
+    id: ID!
+    nombre: String!
+    publicaciones: [Publicacion]
+    categoria: [Category]
+}
+
+type Category {
+    id: ID!
+    nombre: String!
+    tags: [Tag]
 }
 
 type Votacion {
@@ -81,9 +106,12 @@ type Grupo {
     privacidad: String!
     vencimiento: Date
     descripcion: String
+    icono: String
+    banner: String
     chat: Chat!
     admins: [Usuario]!
     miembros: [Usuario]!
+    solicitudes: [Usuario]!
 }
 
 type Chat {
@@ -99,6 +127,7 @@ type Mensaje {
     usuario: Usuario!
     texto: String
     imagenes: [String]
+    recibido : [Usuario]
     visto: [Usuario]
 }
 
@@ -120,6 +149,30 @@ type Horario{
     acronimo: String
     usuario: [Usuario]!
   }
+
+type Archivo {
+    id: ID!
+    url: String!
+    filename: String!
+    mimetype: String!
+}
+
+type Reporte{
+    id: ID!
+    usuario: String!
+    fecha: Date!
+    titulo: String!
+    descripcion: String
+    tipo: String!
+    id_elemento: String!
+    estado: String!
+    resolucion: String
+}
+
+type idAdmin{
+    id: ID!
+    idAdmin: [String]!
+}
 
 `
 

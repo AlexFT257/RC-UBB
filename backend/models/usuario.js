@@ -1,80 +1,92 @@
-const mongoose = require('mongoose')
-const uniqueValidator = require('mongoose-unique-validator')
+const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const schema = new mongoose.Schema({
   nombre: {
     type: String,
-    required: true
+    required: true,
   },
   apellido: {
     type: String,
-    required: true
+    required: true,
   },
   foto_perfil: {
-    type: String
-},
+        default:"/iconoDefault.png",
+    type: String,
+  },
   username: {
     type: String,
-    required: true
+    required: true,
   },
   correo: {
     type: String,
-    required: true
+    required: true,
   },
   contrasena: {
     type: String,
     required: true,
-    minlength: 8
-},
+    minlength: 8,
+  },
   fecha_nacimiento: {
-    type: Date
+    type: Date,
   },
   chats: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Chat'
-    }
+      ref: "Chat",
+    },
   ],
   carrera: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Carrera',
-    required: true
+    ref: "Carrera",
+    required: true,
   },
   grupos: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Grupo'
-    }
+      ref: "Grupo",
+    },
   ],
   amigos: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Usuario'
-    }
+      ref: "Usuario",
+    },
   ],
   publicaciones: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Publicacion'
-    }
+      ref: "Publicacion",
+    },
   ],
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Publicacion'
-    }
+      ref: "Publicacion",
+    },
   ],
   comentarios: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Publicacion'
-    }
+      ref: "Publicacion",
+    },
+  ],
+  intereses: [
+    {
+      tag: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+      valor: {
+        type: Number,
+        default: 0.0,
+      },
+    },
   ],
   temporalKey: {
     type: String,
-    
   },
-})
+});
 
-schema.plugin(uniqueValidator)
-module.exports = mongoose.model('Usuario', schema)
+schema.plugin(uniqueValidator);
+module.exports = mongoose.model("Usuario", schema);

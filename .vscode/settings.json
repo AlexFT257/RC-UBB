@@ -1,0 +1,9 @@
+{
+        "[yaml]": {
+                "editor.autoIndent": "none",
+                "editor.tabSize": 4
+        },
+        "editor.tabSize": 2,
+        "editor.detectIndentation": false,
+        "editor.autoIndent": "full"
+}

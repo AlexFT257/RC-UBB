@@ -1,172 +1,214 @@
-import React from "react";
-import GroupHeader from "../components/groupHeader";
-import PublicationInput from "../components/publicationInput";
-import Image from "next/image";
+import React, { use } from "react";
 import { useEffect, useState } from "react";
-import Head from "next/head";
-import Header from "../components/header";
-import ProfileDisplay from "../components/profileDisplay";
-import RecentGroups from "../components/recentGroups";
-import FriendList from "../components/friendList";
-import EventList from "@/components/eventList";
+import { UserContext } from "@/utils/userContext";
+import { gql, useQuery } from "@apollo/client";
+import Home from "@/components/Home";
+import { useContext } from "react";
+import { VscLoading, VscError } from "react-icons/vsc";
+import { HiOutlineUserGroup } from "react-icons/hi";
+import { CgEnter } from "react-icons/cg";
+import { AiOutlineUsergroupAdd } from "react-icons/ai";
+import Link from "next/link";
+import CreateGroupModal from "@/components/CreateGroupModal";
 
-export default function GroupPage() {
-  const [date, setDate] = useState("");
+const GET_USER_GROUPS = gql`
+  query gruposUsuario($usuario: ID!) {
+    buscarGrupoUsuario(usuario: $usuario) {
+      id
+      nombre
+      descripcion
+      icono
+    }
+  }
+`;
+
+function GroupPage() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalComplete, setModalComplete] = useState(false);
+  const { user } = useContext(UserContext);
+  const { loading, error, data, refetch } = useQuery(GET_USER_GROUPS, {
+    variables: { usuario: user.id },
+    notifyOnNetworkStatusChange: true,
+  });
+
   useEffect(() => {
-    const date = new Date();
-    setDate(date);
+    if (error) {
+      console.log("error", error);
+    }
+  }, [error]);
+
+  console.log("data", modalComplete);
+  useEffect(() => {
+    if (modalComplete) {
+      setTimeout(() => {
+        refetch();
+      }, 5000);
+
+      console.log("refetch", data);
+      setModalComplete(false);
+    }
+
+  }, [modalComplete]);
+
+  // para que compruebe cada [] segundo si hay cambios en la base de datos
+  const interval = 60000;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      refetch();
+    }, interval);
+    return () => clearTimeout(timer);
   }, []);
+
+
+  if (loading) {
+    return (
+      <>
+        <div className="z-10 mt-[80px]   w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
+          <div className="ml-4 mt-[20px] flex w-[calc(100%-10px)] flex-row items-center justify-between ">
+            <h1 className="text-[5vw] font-bold text-secondary sm:text-[18px]">
+              Grupos
+            </h1>
+            <div className="ml-auto mr-[8px] flex h-[50px] rounded-[10px]  border-[2px]  border-b-0   border-secondary bg-background">
+              <button className=" flex gap-2  rounded-lg p-2 transition-all duration-200 ease-in-out hover:bg-primary hover:text-foreground">
+                <p className=" text-lg font-semibold max-md:hidden  ">
+                  Crear Grupo
+                </p>
+                <AiOutlineUsergroupAdd className="text-3xl font-semibold " />
+              </button>
+            </div>
+          </div>
+          <div className="to-105% mb-2 mt-[-4px] h-[4px] w-[100%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
+          <div className="flex  flex-col gap-2 p-2">
+            <div className="bg-bgDarkColorTrasparent flex flex-row justify-center  rounded-md p-2 dark:text-[#a9dacb]">
+              <VscLoading className="animate-spin text-3xl" />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        {/* groups Cards*/}
+        <div className="z-10 mt-[80px]   w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
+          <div className="ml-4 mt-[20px] flex w-[calc(100%-10px)] flex-row items-center justify-between ">
+            <h1 className="text-[5vw] font-bold text-secondary sm:text-[18px]">
+              Grupos
+            </h1>
+            <div className="ml-auto mr-[8px] flex h-[50px] rounded-[10px]  border-[2px]  border-b-0   border-secondary bg-background">
+              <button className=" flex gap-2  rounded-lg p-2 transition-all duration-200 ease-in-out hover:bg-primary hover:text-foreground">
+                <p className=" text-lg font-semibold max-md:hidden  ">
+                  Crear Grupo
+                </p>
+                <AiOutlineUsergroupAdd className="text-3xl font-semibold " />
+              </button>
+            </div>
+          </div>
+          <div className="to-105% mb-2 mt-[-4px] h-[4px] w-[100%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
+          <div className="grid grid-cols-1 gap-2 p-2">
+            <div className="bg-bgDarkColorTrasparent flex flex-row justify-center gap-2  rounded-md p-2 dark:text-[#a9dacb]">
+              <VscError className="animate-bounce text-3xl" />
+              <p>Error: {error?.message}</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  function iconRender(icon) {
+    if (icon.icono === null || icon.icono === "") {
+      return <HiOutlineUserGroup className="text-3xl" />;
+    }
+    // return <GrGroup className="text-3xl" />;
+    // console.log("icon", toString(icon.icono));
+    return (
+      <img
+        src={icon.icono}
+        width={40}
+        height={40}
+        className="max-h-10 rounded-full"
+      />
+    );
+  }
+
   return (
     <>
-      <div className="bg-[#e2e2e2] dark:bg-bgDarkColor ">
-        <Head>
-          <title>RC UBB</title>
-          <meta name="description" content="Generated by create next app" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+      {/* Modal */}
+      {modalOpen && (
+        <div className="h-screen ">
+          <CreateGroupModal
+            isOpen={modalOpen}
+            setModalOpen={setModalOpen}
+            onConfirm={() => {
+              setModalComplete(!modalComplete);
+            }}
+            refetch={refetch}
+            userId={user.id}
+          />
+        </div>
+      )}
 
-        <script></script>
-
-        <main className="min-h-screen dark:bg-[url(/BackgroundStars.jpg)] dark:bg-cover dark:bg-fixed">
-          {/* Header */}
-          <Header />
-
-          {/* content */}
-          <div className=" grid  w-screen grid-flow-col grid-cols-5">
-            {/* Perfil y grupos recientes(?) */}
-            <div className="col-span-1  dark:text-[#a9dacb] m-2 hidden h-fit flex-col rounded-md   p-2 text-black  shadow-xl lg:flex">
-              {/* perfil */}
-              <ProfileDisplay />
-
-              {/* grupos recientes */}
-              <RecentGroups />
-            </div>
-
-            {/* Publicaciones / feed */}
-            <div className="bg-slate- col-span-5  p-2 lg:col-span-3">
-              {/* publiacaiones cards */}
-              {/* Group header */}
-              <GroupHeader />
-              {/* Input para publicar */}
-              <PublicationInput />
-
-              {/* Publicaciones container */}
-              <div className="">
-                {/* publicacion "card" */}
-                <div className="mt-4 flex flex-col rounded-md  dark:bg-[#231842] dark:text-[#a9dacb]  bg-white  p-2 text-black shadow-2xl ">
-                  {/* perfil del que publica */}
-                  <div className=" m- flex flex-row items-center   gap-2">
-                    <Image
-                      src="/bodoque.jpeg"
-                      alt="Foto Perfil"
-                      className="rounded-full "
-                      height={50}
-                      width={50}
-                    />
-                    <h1 className="text-lg font-semibold">
-                      Juan Carlos Bodoque
-                    </h1>
-                    <div className="h-2 w-2 rounded-full bg-white"></div>
-                    <h2>{date.toLocaleString("en-GB")}</h2>
-                  </div>
-                  {/* contenido de la publicacion */}
-                  <div className="m-2">
-                    <p className="">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-                      adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit
-                      amet consectetur adipisicing elit. Quisquam, quod. Lorem
-                      ipsum dolor sit amet consectetur adipisicing elit.
-                      Quisquam, quod. Lorem ipsum dolor sit amet consectetur
-                      adipisicing elit. Quisquam, quod. Lorem ipsum dolor sit
-                      amet consectetur adipisicing elit. Quisquam, quod. Lorem
-                      ipsum dolor sit amet
-                    </p>
-                    {/* contenedor de images si corresponde */}
-                    <div className="flex justify-center">
-                      <div className="my-2 flex h-1/5 w-1/5 flex-row justify-center gap-2">
-                        <Image
-                          src="/juanin.png"
-                          alt="Foto"
-                          className="h-full  rounded-md hover:opacity-80"
-                          height={1000}
-                          width={1000}
-                        />
-                        <Image
-                          src="/juanin.png"
-                          alt="Foto"
-                          className="h-full  rounded-md hover:opacity-80"
-                          height={1000}
-                          width={1000}
-                        />
-                        <Image
-                          src="/juanin.png"
-                          alt="Foto"
-                          className="h-full  rounded-md hover:opacity-80"
-                          height={1000}
-                          width={1000}
-                        />
-                        <Image
-                          src="/juanin.png"
-                          alt="Foto"
-                          className="h-full  rounded-md hover:opacity-80"
-                          height={1000}
-                          width={1000}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* footer de la publicacion */}
-                  <div className=" bg-slate-">
-                    {/* informacion de publicacion */}
-                    <div className="m-2 flex flex-row gap-2  font-semibold md:justify-between">
-                      {/* left side */}
-                      <div className="flex flex-row gap-2">
-                        <h1 className=" ">Likes</h1>
-                        <h1>{32124}</h1>
-                        <h1>Dislike</h1>
-                        <h1>{123}</h1>
-                        <h1>Comentarios</h1>
-                        <h1>{123}</h1>
-                      </div>
-                      {/* right side */}
-                      <div>
-                        <h1 className="hover:cursor-pointer hover:opacity-80 active:opacity-70">
-                          Compartir
-                        </h1>
-                        {/* inserte icono(?) */}
-                      </div>
-                    </div>
-                    {/* input para comentar */}
-                    <div className="flex">
-                      <textarea
-                        type="text"
-                        className="h-10 dark:bg-bgDarkColor  dark:text-[#a9dacb] w-full resize-none rounded-md p-2  transition-all duration-500 ease-in-out focus:h-20"
-                        placeholder="Comentar"
-                      />
-                    </div>
-                  </div>
+      {/* Publicaciones / feed */}
+      <div className="z-10 mt-[80px]   w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
+        <div className="ml-4 mt-[20px] flex w-[calc(100%-10px)] flex-row items-center justify-between ">
+          <h1 className="text-[5vw] font-bold text-secondary sm:text-[18px]">
+            Grupos
+          </h1>
+          <div className="ml-auto mr-[8px] flex h-[50px] rounded-[10px]  border-[2px]  border-b-0   border-secondary bg-background">
+            <button
+              onClick={() => setModalOpen(!modalOpen)}
+              className=" flex gap-2  rounded-lg p-2 transition-all duration-200 ease-in-out hover:bg-primary hover:text-foreground"
+            >
+              <p className=" text-lg font-semibold max-md:hidden  ">
+                Crear Grupo
+              </p>
+              <AiOutlineUsergroupAdd className="text-3xl font-semibold " />
+            </button>
+          </div>
+        </div>
+        <div className="to-105% mb-2 mt-[-4px] h-[4px] w-[100%] bg-gradient-to-r from-transparent from-[-5%] via-secondary via-30% to-transparent" />
+        {/* groups Cards*/}
+        <div className="flex  flex-col gap-2 p-2">
+          {data?.buscarGrupoUsuario.map((group) => (
+            <div
+              className="flex flex-row justify-between rounded-md border-secondary   bg-foreground  p-2 text-primary"
+              key={group.id}
+            >
+              {/* icono del grupo */}
+              <div className="flex ">
+                <div className="m-2 flex items-center justify-center">
+                  {iconRender(group)}
+                </div>
+                <div>
+                  <h2 className="text-2xl font-semibold">{group.nombre}</h2>
+                  <p>{group.descripcion}</p>
                 </div>
               </div>
+              {/* Agrega un botón o enlace para redirigir a la página del grupo */}
+              <div className="m-2 flex items-center justify-center">
+                <Link
+                  href={`/${group.id}/home`}
+                  className="text-xl font-semibold"
+                >
+                  <CgEnter
+                    className="
+                    text-3xl font-semibold text-primary"
+                  />
+                </Link>
+              </div>
             </div>
-            <div className="col-span-1  dark:text-[#a9dacb] m-2 hidden h-fit flex-col rounded-md  p-2 text-black  shadow-xl lg:flex">
-              {/* calendario */}
-              <EventList/>
-              {/* Lista de amigos */}             
-              <FriendList />
-            </div>
-          </div>
-
-          {/* chat */}
-          <div className=" fixed bottom-1 right-4  h-10 w-48 rounded-md dark:bg-[#231842] dark:text-[#a9dacb] bg-white ">
-            <div className="bg-slate flex flex-col p-2">
-              <h1 className="font-semibold">Chat</h1>
-            </div>
-          </div>
-        </main>
+          ))}
+        </div>
       </div>
     </>
   );
 }
+
+GroupPage.getLayout = function getLayout(page, screenWidth) {
+  return <Home screenWidth={screenWidth}>{page}</Home>;
+};
+
+export default GroupPage;

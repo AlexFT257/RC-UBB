@@ -6,7 +6,6 @@ const horarioQueries = {
     buscarHorarioUsuario: async (parent, args, context, info) => {
         const { usuario } = args;
         try {
-           console.log(usuario);
             const horarios = await Horario.find({ usuario: usuario });
             return horarios;
         } catch (error) {
