@@ -3,7 +3,7 @@ import { AiFillHeart, AiOutlineComment, AiOutlineClose, AiOutlineSend, AiOutline
 import React, { useState, useEffect } from 'react';
 import ImgsDisplay from "@/components/ImgsDisplay"
 import { debounce } from 'lodash';
-
+import CrearReporte from "./CrearReporte";
 
 
 export default function Post({ post, addComment, removePost, likePost, usuario, inFriends, modal }) {
@@ -61,6 +61,20 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
         likePost({ id: id, dislike: likes.includes(usuario.id), inFriends: inFriends })
     }
 
+    const [reporteModalVisible, setReporteModalVisible] = useState(false);
+
+    // Función para abrir el modal de reporte
+    const openReporteModal = () => {
+        setReporteModalVisible(true);
+    };
+
+    // Función para cerrar el modal de reporte
+    const closeReporteModal = () => {
+        setReporteModalVisible(false);
+    };
+
+
+
     const OptionsMenu = ({ userPostID, postID }) => {
         const [showOptionMenu, setShowOptionMenu] = useState(false);
 
@@ -82,9 +96,20 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
                     <div className="cursor-pointer absolute top-90 z-3 left-[-170px] w-[200px] overflow-hidden rounded-[10px] bg-background shadow-md"  >
                         <ul>
                             {userPostID == usuario.id && <li className="p-[10px] hover:bg-primary hover:text-background" onClick={() => modal(() => removePost({ id: postID, inFriends: inFriends }), "¿Estas seguro de eliminar la publicacion?")}>Delete</li>}
-                            <li className="p-[10px] hover:bg-primary hover:text-background" >Report</li>
+                            <li className="p-[10px] hover:bg-primary hover:text-background" onClick={() => openReporteModal()}>Report</li>
                         </ul>
                     </div>
+                )}
+                {reporteModalVisible && (
+                    <CrearReporte
+                        usuarios={userPostID}
+                        closeModal={closeReporteModal}
+                        onReporteCreado={() => {
+                            // Aquí puedes hacer algo después de que se crea el reporte, si lo deseas.
+                        }}
+                        idElemento={post.id} // Pasa el ID del post actual al componente CrearReporte
+                        idUsuarioActual={usuario.id} // Pasa el ID del usuario actual al componente CrearReporte
+                    />
                 )}
             </div>
         )
@@ -247,21 +272,21 @@ export default function Post({ post, addComment, removePost, likePost, usuario, 
 
                 </div>
                 <div className="flex mt-4 space-x-2">
-                {newComment.imagenes.map((base64Image, index) => (
-                    <div key={index} className="relative max-w-[20%]">
-                        <img src={base64Image} alt={`Imagen ${index + 1}`} className="w-20 h-20 rounded-md" />
-                        <button
-                            className="absolute top-0 right-0 text-white bg-red-500 rounded-full p-1 hover:bg-red-600"
-                            onClick={() => handleRemoveImage(index)}
-                        >
-                            <AiOutlineClose className="h-4 w-4" />
-                        </button>
-                    </div>
-                ))}
-            </div>
+                    {newComment.imagenes.map((base64Image, index) => (
+                        <div key={index} className="relative max-w-[20%]">
+                            <img src={base64Image} alt={`Imagen ${index + 1}`} className="w-20 h-20 rounded-md" />
+                            <button
+                                className="absolute top-0 right-0 text-white bg-red-500 rounded-full p-1 hover:bg-red-600"
+                                onClick={() => handleRemoveImage(index)}
+                            >
+                                <AiOutlineClose className="h-4 w-4" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
             </div>
 
-           
+
 
 
         </>

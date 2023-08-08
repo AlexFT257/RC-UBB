@@ -155,6 +155,23 @@ type Archivo {
     mimetype: String!
 }
 
+type Reporte{
+    id: ID!
+    usuario: String!
+    fecha: Date!
+    titulo: String!
+    descripcion: String
+    tipo: String!
+    id_elemento: String!
+    estado: String!
+    resolucion: String
+}
+
+type idAdmin{
+    id: ID!
+    idAdmin: [String]!
+}
+
 `
 
 module.exports = typeDefs;

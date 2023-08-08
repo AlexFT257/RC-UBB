@@ -10,7 +10,7 @@ export default function Login({ screenWidth }) {
     if(screenWidth == 0){
         return
     }
-    
+
     const { resolvedTheme, setTheme } = useTheme();
     const router = useRouter();
     const { userInfo } = useContext(UserContext);

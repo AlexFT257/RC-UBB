@@ -1,8 +1,4 @@
-import {
-    AiOutlineHome, AiOutlineUser, AiOutlineSetting, AiOutlineCalendar, AiOutlineApartment,
-    AiOutlineMenu, AiOutlineBook, AiOutlineRead
-} from "react-icons/ai";
-
+import { AiOutlineHome, AiOutlineUser, AiOutlineSetting, AiOutlineCalendar, AiOutlineApartment, AiOutlineMenu, AiOutlineBook, AiOutlineRead, AiOutlineWarning } from "react-icons/ai";
 import { useRouter } from 'next/router';
 import React, { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../utils/userContext';
@@ -65,12 +61,13 @@ export default function Home({ screenWidth, children }) {
     }, [prevScrollPos]);
 
     const handleMenuTransitions = (idx) => {
-        if (idx === actPage || isNavigating) { return; }
+        if (idx === actPage || isNavigating) {
+            return;
+        }
 
         setIsNavigating(true);
         setActPage(idx);
     };
-
     useEffect(() => {
         let navigationTimeout = null;
 
@@ -94,6 +91,9 @@ export default function Home({ screenWidth, children }) {
                         break;
                     case 4:
                         href = '/Notas';
+                        break;
+                    case 5:
+                        href = '/CheckReportes';
                         break;
                     default:
                         href = '/Feed';
@@ -215,6 +215,9 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
 
             <button className={buttStyle} {...actButtonStyle(4)} onClick={() => handleMenuTransitions(4)}>
                 <AiOutlineRead className="w-[25px] h-[25px] mr-[3vw]" /> Notas </button>
+
+            <button className={buttStyle} {...actButtonStyle(5)} onClick={() => handleMenuTransitions(5)}>
+                <AiOutlineWarning className="w-[25px] h-[25px] mr-[3vw]" /> Reportes </button>
         </>
     )
 }

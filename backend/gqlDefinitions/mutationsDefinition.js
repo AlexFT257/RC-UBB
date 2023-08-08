@@ -60,6 +60,16 @@ type Mutation {
     crearHorario(dia: String!, hora_inicio: Date!, hora_termino: Date!, asignatura: String!, sala: String!, acronimo: String, usuario: ID!): Horario
     editarHorario(id: ID!, dia: String, hora_inicio: Date, hora_termino: Date, asignatura: String, sala: String, acronimo: String, usuario: ID): Horario
     eliminarHorario(id: ID!): Horario
+
+    # Crear Reporte
+    crearReporte(titulo: String! ,usuario: ID!, tipo: String!, descripcion: String!, fecha: Date!, id_elemento: String): Reporte
+    editarReporte(id: ID!, usuario: ID!, titulo: String ,tipo: String, descripcion: String, fecha: Date, resolucion: String): Reporte
+    eliminarReporte(id: ID!): Reporte
+
+  # Crear idAdmin
+    crearIdAdmin(idAdmin: String!) : idAdmin
+    eliminarIdAdmin(id: ID!): idAdmin
+
   }
   
 type ForgotPasswordResponse {

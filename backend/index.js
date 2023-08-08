@@ -18,6 +18,8 @@ const publicacionMutation = require("./mutation/publicacionMutation.js");
 const usuarioMutation = require("./mutation/usuarioMutation.js");
 const votacionMutation = require("./mutation/votacionMutation.js");
 const horarioMutation = require("./mutation/horarioMutation.js");
+const reporteMutation = require("./mutation/reporteMutation.js");
+const idAdminMutation = require("./mutation/idAdminMutation.js");
 
 //Queries
 const { carreraQueries } = require("./queries/carreraQueries.js");
@@ -28,6 +30,8 @@ const { publicacionQueries } = require("./queries/publicacionQueries.js");
 const { usuarioQueries } = require("./queries/usuarioQueries.js");
 const { votacionQueries } = require("./queries/votacionQueries.js");
 const { horarioQueries } = require("./queries/horarioQueries.js");
+const { reporteQueries } = require("./queries/reporteQueries.js");
+const { idAdminQueries } = require("./queries/idAdminQueries.js");
 
 const { tagQueries } = require("./queries/tagQueries.js");
 //Nesting
@@ -57,6 +61,8 @@ const resolvers = {
     ...votacionQueries,
     ...horarioQueries,
     ...tagQueries,
+    ...reporteQueries,
+    ...idAdminQueries,
   },
   Mutation: {
     ...carreraMutation,
@@ -68,6 +74,8 @@ const resolvers = {
     ...votacionMutation,
     ...horarioMutation,
     ...calendarioMutation,
+    ...reporteMutation,
+    ...idAdminMutation,
     // ...ArchivoMutation,
   },
   Usuario: { ...UsuarioNesting },
