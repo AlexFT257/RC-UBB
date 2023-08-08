@@ -119,7 +119,7 @@ export default function Chat({ chatInfo, user }) {
 
         display.push(msgDispl(-1))
 
-        return display;
+        return <div className='mt-[20px]'> {display} </div>;
     }
 
     return (

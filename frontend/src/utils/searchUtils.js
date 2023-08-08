@@ -37,6 +37,7 @@ export const useSearchUsers = (search) => {
   const [searchResults, setSearchResults] = useState([]);
   const { loading, error, data, refetch } = useQuery(GET_USER_BY_NAME, {
     variables: { search },
+    notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export const useSearchGroups = (searchGroup) => {
   const [searchResults, setSearchResults] = useState([]);
   const { loading, error, data, refetch } = useQuery(GET_GROUP_BY_NAME, {
     variables: { searchGroup },
+    notifyOnNetworkStatusChange: true,
   });
 
   useEffect(() => {
@@ -76,7 +78,9 @@ export const useSearchGroups = (searchGroup) => {
 export const useSendJoinRequest = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [sendJoinRequestMutation] = useMutation(SEND_JOIN_REQUEST);
+  const [sendJoinRequestMutation] = useMutation(SEND_JOIN_REQUEST,{
+    notifyOnNetworkStatusChange: true,
+  });
 
   const sendJoinRequest = (groupId, userId) => {
     setLoading(true);

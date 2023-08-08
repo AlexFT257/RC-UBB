@@ -244,6 +244,7 @@ export default function Options() {
                   type="file"
                   name="icono"
                   id="icono"
+                  accept="image/*"
                   className="max-sm:w-4/5 w-full rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none"
                   onChange={handleIconChange}
                 />
@@ -256,6 +257,7 @@ export default function Options() {
                   type="file"
                   name="banner"
                   id="banner"
+                  accept="image/*"
                   className="rounded-md p-2 max-sm:w-4/5 w-full"
                   onChange={handleBannerChange}
                 />

@@ -223,6 +223,7 @@ export default function CreateGroupModal({
                     </label>
                     <input
                       type="file"
+                      accept="image/*"
                       name="banner"
                       id="banner"
                       onChange={handleBannerChange}
@@ -235,6 +236,7 @@ export default function CreateGroupModal({
                     </label>
                     <input
                       type="file"
+                      accept="image/*"
                       name="icono"
                       id="icono"
                       onChange={handleIconChange}

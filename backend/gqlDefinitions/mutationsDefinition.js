@@ -9,13 +9,13 @@ type Mutation {
     forgotPassword(correo: String!): ForgotPasswordResponse!
     verificarClaveTemporal(temporalKey: String!, correo: String!): Boolean!
     actualizarContrasena(correo: String!, temporalKey: String!, nuevaClave: String!): Boolean!
-    editarUsuario(id: ID, nombre: String, apellido: String, correo: String, contrasena:String, carrera: ID): Usuario
+    editarUsuario(id: ID, nombre: String, apellido: String, correo: String, contrasena:String, carrera: ID,foto_perfil:String): Usuario
     agregarAmigo(id: ID!, amigo: ID!): Usuario
     eliminarUsuario(id: ID): Usuario
-    #calendario
-    crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
-    editarEvento(id: ID!, titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, usuario: ID!): calendario
-    eliminarEvento(id: ID!): calendario
+    #Calendario
+    crearEvento(titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, creador: ID!, invitados: [String]): Calendario
+    editarEvento(id: ID!, titulo: String!, fecha_inicio: Date!, fecha_fin: Date!, descripcion: String, creador: ID!, invitados: [String]): Calendario
+    eliminarEvento(id: ID!): Calendario
     #Carrera
     crearCarrera(nombre: String!, acronimo: String!, alumnos: [ID]): Carrera
     editarCarrera(id: ID!, nombre: String, acronimo: String, alumnos: [ID!]): Carrera
@@ -61,6 +61,15 @@ type Mutation {
     crearHorario(dia: String!, hora_inicio: Date!, hora_termino: Date!, asignatura: String!, sala: String!, acronimo: String, usuario: ID!): Horario
     editarHorario(id: ID!, dia: String, hora_inicio: Date, hora_termino: Date, asignatura: String, sala: String, acronimo: String, usuario: ID): Horario
     eliminarHorario(id: ID!): Horario
+
+    # Crear Reporte
+    crearReporte(titulo: String! ,usuario: ID!, tipo: String!, descripcion: String!, fecha: Date!, id_elemento: String): Reporte
+    editarReporte(id: ID!, usuario: ID!, titulo: String ,tipo: String, descripcion: String, fecha: Date, resolucion: String): Reporte
+    eliminarReporte(id: ID!): Reporte
+
+  # Crear idAdmin
+    crearIdAdmin(idAdmin: String!) : idAdmin
+    eliminarIdAdmin(id: ID!): idAdmin
   }
   
 type ForgotPasswordResponse {

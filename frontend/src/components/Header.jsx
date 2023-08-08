@@ -6,6 +6,7 @@ import {
   AiFillCaretLeft,
   AiOutlineMenu,
   AiOutlineUserAdd,
+  AiOutlineUser,
   AiOutlineExport,
   AiOutlineUsergroupAdd,
 } from "react-icons/ai";
@@ -23,6 +24,7 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { gql, useMutation } from "@apollo/client";
+import { is } from "date-fns/locale";
 
 export default function Header({
   handleMenuTransitions,
@@ -136,7 +138,7 @@ export default function Header({
         refecthQueries();
       };
 
-      console.log("Miembros", miembros);
+      // console.log("Miembros", miembros);
 
       // determina si el usuario es miembro del grupo que busco
       // para renderizar un boton de unirse o no
@@ -215,9 +217,11 @@ export default function Header({
       );
     }
 
-     // mutation para agregar un amigo
-     const [agregarAmigo, { loading: agregarLoading, error: errorAgregar, refetch: refetchAgregar }] = useMutation(AGREGAR_AMIGO, {
-
+    // mutation para agregar un amigo
+    const [
+      agregarAmigo,
+      { loading: agregarLoading, error: errorAgregar, refetch: refetchAgregar },
+    ] = useMutation(AGREGAR_AMIGO, {
       onCompleted: () => {
         console.log("Amigo agregado");
       },
@@ -228,7 +232,15 @@ export default function Header({
       const handleAddFriend = (e) => {
         e.preventDefault();
         console.log("Agregando amigo", id);
-        agregarAmigo({ variables: { id: user.id, amigo: id } });
+
+        agregarAmigo({ variables: { id: user.id, amigo: id } })
+          .then(() => {
+            refecthQueries();
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
         if (errorAgregar) {
           console.log(errorAgregar);
         }
@@ -255,6 +267,12 @@ export default function Header({
         );
       }
 
+      // bool que determina si el usuario es amigo
+      const isFriend = user.amigos.some((amigo) => {
+        return amigo.id === id;
+      });
+      console.log("Es amigo", isFriend);
+
       return (
         <div
           key={id}
@@ -268,12 +286,22 @@ export default function Header({
             <p className="hidden lg:flex">{correo}</p>
           </div>
           <div className="m-2 flex">
-            <button
+            {isFriend ? (
+              <button
+              disabled
+              className="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+            >
+              <AiOutlineUser />
+            </button>
+              )
+            : (
+              <button
               onClick={handleAddFriend}
               className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
             >
               <AiOutlineUserAdd />
             </button>
+            )}
           </div>
         </div>
       );
@@ -285,6 +313,14 @@ export default function Header({
   const DropDown = () => {
     const { ref, isComponentVisible, setIsComponentVisible } =
       useComponentVisible(showResults);
+
+      useEffect(() => {
+        if (!isComponentVisible) {
+          // console.log("Componente no visible");
+          setShowResults(false);
+        }
+      }, [isComponentVisible]);
+
 
     return (
       <div ref={ref}>
@@ -392,20 +428,6 @@ export default function Header({
                 </div>
               )}
             </button>
-            <button className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-primary text-background hover:bg-background hover:text-primary">
-              <AiOutlineBell className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
-              {false && ( //Reemplazar por la condicion de nueva notificacion
-                <div className="absolute right-[3px] top-[3px] h-3 w-3 rounded-full bg-accent">
-                  <div className="absolute h-3 w-3 animate-ping rounded-full bg-accent" />
-                </div>
-              )}
-            </button>
-            <button
-              className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
-              onClick={handleCerrarSesion}
-            >
-              <AiOutlineExport className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
-            </button>
             <button
               className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
               onClick={() =>
@@ -413,6 +435,12 @@ export default function Header({
               }
             >
               <AiOutlineBulb className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
+            </button>
+            <button
+              className="relative inline-block h-[45px] w-[45px] min-w-[45px] rounded-[10px] bg-background text-primary hover:bg-primary hover:text-background"
+              onClick={handleCerrarSesion}
+            >
+              <AiOutlineExport className="ml-[11px] h-[1.5rem] w-[1.5rem] " />
             </button>
           </div>
         )}

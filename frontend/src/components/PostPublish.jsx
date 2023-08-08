@@ -41,10 +41,19 @@ export default function PostPublish({ user, addPost, groupId }) {
     const handleImageChange = (event) => {
         const files = event.target.files;
         if (files.length > 0) {
+            let showAlert = false; // Inicializar en falso para no mostrar alerta por defecto
+    
             const selectedImages = Array.from(files).slice(0, 4); // Limitar a 4 imágenes seleccionadas
-
-            // Convertir las imágenes a base64
+    
             const imagePromises = selectedImages.map((image) => {
+                if (image.size > 700 * 1024) {
+                    if (!showAlert) {
+                        window.alert('Una o más imágenes superan los 700 KB de tamaño.');
+                        showAlert = true;
+                    }
+                    return null; // Retornar null para evitar procesar la imagen
+                }
+    
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onloadend = () => {
@@ -56,16 +65,17 @@ export default function PostPublish({ user, addPost, groupId }) {
                     reader.readAsDataURL(image);
                 });
             });
-
-            // Esperar a que todas las conversiones de base64 se completen
-            Promise.all(imagePromises).then((base64Images) => {
+    
+            Promise.allSettled(imagePromises.filter((promise) => promise !== null)).then((results) => {
+                const base64Images = results
+                    .filter((result) => result.status === 'fulfilled')
+                    .map((result) => result.value);
+    
                 setNewPost({ ...newPost, imagenes: base64Images });
             });
         }
-
+    
         setImageKey((prevKey) => prevKey + 1);
-
-
     };
 
     const handleRemoveImage = (index) => {
@@ -122,15 +132,15 @@ export default function PostPublish({ user, addPost, groupId }) {
 
 
             </div>
-            <div className="flex  justify-evenly w-full ">
+            <div className="flex  justify-evenly w-full p-2">
                 {newPost.imagenes.map((base64Image, index) => (
                     <div key={index} className="relative">
                         <img src={base64Image} alt={`Imagen ${index + 1}`} className="w-40 h-40 rounded-md" />
                         <button
-                            className="absolute top-0 right"
+                            className="absolute top-0 right text-white rounded-full p-1 hover:bg-primary"
                             onClick={() => handleRemoveImage(index)}
                         >
-                            <AiOutlineClose className="h-4 w-4" />
+                            <AiOutlineClose className="h-4 w-4  text-black" />
                         </button>
                     </div>
                 ))}

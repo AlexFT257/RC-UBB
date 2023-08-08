@@ -76,6 +76,25 @@ type Query {
 
     #aaaaa
     descUsuario(token:String!):Usuario
+
+    #Calendario
+    all_eventos: [Calendario]!
+    buscarEventoId(id: ID!): Calendario
+    buscarEventoUsuario(creador: ID!): [Calendario]
+
+    #Reporte
+    all_reportes: [Reporte]!
+    buscarReporte(buscar: String!): [Reporte]
+    buscarReporteId(id: ID!): Reporte
+    buscarReporteUsuario(usuario: ID!): [Reporte]
+    buscarReporteTipo(tipo: String!): [Reporte]
+    buscarReporteFecha(fecha: String, fechaInicio: String, fechaFin: String): [Reporte]
+    buscarReporteEstado(estado: String!): [Reporte]
+
+    #idAdmin
+    obtenerIdAdmin(id: ID!): idAdmin
+    all_idAdmin: [idAdmin]
+    verifyAdmin(idAdmin: String!): idAdmin
 }
 `
 

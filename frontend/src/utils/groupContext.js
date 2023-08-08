@@ -143,7 +143,7 @@ export const GroupProvider = (props) => {
   };
 
   const addGroupPost = async ({ texto, imagenes, enGrupo}) => {
-    // setFriendsPosts((prevFriendsPosts) => [{ waiting: true }, ...prevFriendsPosts])
+    setFriendsPosts((prevFriendsPosts) => [{ waiting: true }, ...prevFriendsPosts])
 
     const { crearPublicacion } = await clientMutator(
         `mutation CrearPublicacion($usuario: ID!, $fecha: Date!, $texto: String, $imagenes: [String], $votacion: ID,$enGrupo: ID) {
@@ -170,24 +170,24 @@ export const GroupProvider = (props) => {
 
 
 
-    // setUser((prevUser) => {
-    //     return {
-    //         ...prevUser,
-    //         publicaciones: [...prevUser.publicaciones, crearPublicacion.id]
-    //     }
-    // })
+    setUser((prevUser) => {
+        return {
+            ...prevUser,
+            publicaciones: [...prevUser.publicaciones, crearPublicacion.id]
+        }
+    })
 
-    // setFriendsPosts((prevFriendsPosts) => {
-    //     const updatedPosts = prevFriendsPosts.filter((post) => post.waiting !== true);
+    setFriendsPosts((prevFriendsPosts) => {
+        const updatedPosts = prevFriendsPosts.filter((post) => post.waiting !== true);
 
-    //     return [{
-    //         ...crearPublicacion, likes: [], comentarios: [],
-    //         usuario: { id: user.id, username: user.username, foto_perfil: user.foto_perfil }
-    //     },
-    //     ...updatedPosts,
-    //     ]
+        return [{
+            ...crearPublicacion, likes: [], comentarios: [],
+            usuario: { id: user.id, username: user.username, foto_perfil: user.foto_perfil }
+        },
+        ...updatedPosts,
+        ]
 
-    // })
+    })
     return crearPublicacion;
 }
 

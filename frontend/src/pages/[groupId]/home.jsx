@@ -1,19 +1,21 @@
 import React, { use, useEffect } from "react";
 import GroupHeader from "../../components/groupHeader";
-import { useContext,useState } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { gql, useQuery } from "@apollo/client";
-import Home from "@/components/home";
-import Post from "@/components/post";
+import Home from "@/components/Home";
+import Post from "@/components/Post";
 import { UserContext } from "@/utils/userContext";
 import PostPublishGroup from "@/components/PostPublishGroup";
 import { GroupContext } from "@/utils/groupContext";
 
-export default function GroupHome() {
-  const { user,removePost,addComment,likePost } = useContext(UserContext);
-  const { group, updateGroupContext, requestGroupPost, addGroupPost} = useContext(GroupContext);
+export default function GroupHome({ showModal }) {
+  const { user, removePost, addComment, likePost } = useContext(UserContext);
+  const { group, updateGroupContext, requestGroupPost, addGroupPost } =
+    useContext(GroupContext);
   const [posts, setPosts] = useState([]);
   const [skip, setSkip] = useState(0);
+  const [isNewPost, setIsNewPost] = useState(false);
 
   useEffect(() => {
     if (group) {
@@ -23,6 +25,17 @@ export default function GroupHome() {
       });
     }
   }, [group, skip]);
+
+  useEffect(() => {
+    console.log("isNewPost", isNewPost);
+    if (isNewPost) {
+      setSkip(skip + 1);
+      setIsNewPost(false);
+      requestGroupPost(groupId, skip).then((res) => {
+        setPosts(res);
+      });
+    }
+  }, [isNewPost]);
 
   // cada vez que se llega al final de la pagina se recargan
   // los posts del grupo
@@ -43,9 +56,9 @@ export default function GroupHome() {
           const threshold = 70; // ajustar este valor
 
           if (distanceToBottom < threshold) {
-            console.log('Usuario llegó al final de la página');
+            console.log("Usuario llegó al final de la página");
             // Aquí puedes realizar acciones adicionales, como cargar más contenido.
-            console.log("group", group); 
+            console.log("group", group);
             if (group || groupId) {
               requestGroupPost(groupId, skip).then((res) => {
                 console.log("res", res);
@@ -60,25 +73,27 @@ export default function GroupHome() {
     }
 
     // Agregar el evento de desplazamiento al montar el componente
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     // Eliminar el evento cuando el componente se desmonte
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  
-
   // useEffect que hace fetch de los posts del grupo
   // periodicamente cada 60 segundos
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-      
-  //   }, 60000);
-  //   return () => clearInterval(interval);
-  // }, [group, skip]);
-
+  useEffect(() => {
+    console.log("posts length", posts.length);
+    if (posts.length <= 2) {
+      const interval = setInterval(() => {
+        requestGroupPost(groupId, skip).then((res) => {
+          setPosts(res);
+        });
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, []);
 
   // console.log("user", user);
   // console.log("GroupHome", group);
@@ -117,7 +132,12 @@ export default function GroupHome() {
             GroupBanner={group?.banner}
           />
           {/* Input para publicar */}
-          <PostPublishGroup user={user} addPost={addGroupPost} enGrupo={groupId}/>
+          <PostPublishGroup
+            user={user}
+            setIsNewPost={setIsNewPost}
+            addPost={addGroupPost}
+            enGrupo={groupId}
+          />
 
           {/* Publicaciones container */}
           <div className="">
@@ -125,13 +145,13 @@ export default function GroupHome() {
               <Post
                 key={post.id}
                 post={post}
-                usuario={user.id}
+                usuario={user}
                 removePost={removePost}
                 addComment={addComment}
                 likePost={likePost}
+                modal={showModal}
               />
             ))}
-
           </div>
         </div>
       </div>

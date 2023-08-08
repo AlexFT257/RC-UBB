@@ -1,3 +1,4 @@
+import { set } from 'date-fns';
 import { useState, useEffect, useRef } from 'react';
 
 // hook que permite cerrar un componente al hacer click fuera de el
@@ -16,6 +17,7 @@ export const useComponentVisible = (showResults) => {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' || e.key === 'Esc') {
         setIsComponentVisible(false);
+        // setSearch("");
       }
     });
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Head from 'next/head';
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
@@ -21,7 +21,7 @@ export default function crearUsuario(screenWidth) {
   const [correoError, setCorreoError] = useState("");
   const [contrasenaError, setContrasenaError] = useState("");
   const { resolvedTheme, setTheme } = useTheme();
-
+  const [fechaError, setFechaError] = useState("");
   const router = useRouter();
   const CREATE_USER = gql`
     mutation{crearUsuario(nombre: "${nombre}",apellido: "${apellido}",username:"${username}",correo: "${correo}", contrasena:"${contrasena}", fecha_nacimiento: "${fecha_nacimiento}", carrera: "${carrera}"){
@@ -69,7 +69,16 @@ query {
       setContrasenaError("La contraseña debe tener al menos 8 caracteres y una letra mayúscula");
       return false;
     }
+    const birthDate = new Date(fecha_nacimiento);
+    const today = new Date();
+    const ageDifference = today.getFullYear() - birthDate.getFullYear();
+    const hasPassedBirthday =
+      today.getMonth() >= birthDate.getMonth() && today.getDate() >= birthDate.getDate();
 
+    if (ageDifference < 17 || (ageDifference === 17 && !hasPassedBirthday)) {
+      setFechaError("No cumples con la edad");
+      return false;
+    }
     // Si todas las validaciones pasan, el formulario es válido
     return true;
   };
@@ -112,6 +121,85 @@ query {
       }
     }
   };
+  
+  useEffect(() => {
+    if (nombreError) {
+      // Ocultar el mensaje de éxito después de 3 segundos
+      const timeoutId = setTimeout(() => {
+        setNombreError(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+
+  }, [nombreError]);
+  useEffect(() => {
+    if (apellidoError) {
+      // Ocultar el mensaje de éxito después de 3 segundos
+      const timeoutId = setTimeout(() => {
+        setApellidoError(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+
+  }, [apellidoError]);
+  useEffect(() => {
+    if (correoError) {
+      // Ocultar el mensaje de éxito después de 3 segundos
+      const timeoutId = setTimeout(() => {
+        setCorreoError(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+
+  }, [correoError]);
+  useEffect(() => {
+    if (contrasenaError) {
+      // Ocultar el mensaje de éxito después de 3 segundos
+      const timeoutId = setTimeout(() => {
+        setContrasenaError(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+
+  }, [contrasenaError]);
+  useEffect(() => {
+    if (fechaError) {
+      // Ocultar el mensaje de éxito después de 3 segundos
+      const timeoutId = setTimeout(() => {
+        setFechaError(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+
+  }, [fechaError]);
+  useEffect(() => {
+    if (usernameError) {
+      // Ocultar el mensaje de éxito después de 3 segundos
+      const timeoutId = setTimeout(() => {
+        setUsernameError(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+
+  }, [usernameError]);
 
   if (carrerasLoading) {
     return <p>Cargando carreras...</p>;
@@ -209,6 +297,7 @@ query {
                     value={fecha_nacimiento}
                     onChange={(e) => setFechaNacimiento(e.target.value)}
                   />
+                   {fechaError && <div className="text-red-500">{fechaError}</div>}
 
                 </div>
                 <div>

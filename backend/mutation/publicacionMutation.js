@@ -97,7 +97,7 @@ async function summarizationQuery(text) {
 const mutations = {
     crearPublicacion: async (root, args) => {
         const publicacion = new Publicacion({ ...args });
-        console.log("Publicacion",publicacion);
+        // console.log("Publicacion",publicacion);
         try {
 
             // const allTags = await translationQuery(publicacion.texto.replace(/\s+/g, ' ').trim()).then(async (text) => {

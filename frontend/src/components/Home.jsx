@@ -7,6 +7,8 @@ import {
   AiOutlineMenu,
   AiOutlineBook,
   AiOutlineRead,
+  AiOutlineSchedule,
+  AiOutlineWarning,
 } from "react-icons/ai";
 
 import { useRouter } from "next/router";
@@ -35,6 +37,12 @@ export default function Home({ screenWidth, children }) {
       userInfo().then((info) => {
         console.log("Usuario Conectado", info);
       });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (window.location.pathname != "/Feed" && actPage == 0) {
+      setActPage(-1);
     }
   }, []);
 
@@ -90,6 +98,12 @@ export default function Home({ screenWidth, children }) {
             break;
           case 5:
             href = "/Editarusuario";
+            break;
+          case 6:
+            href = "/Calendar";
+            break;
+          case 7:
+            href = "/CheckReportes";
             break;
           default:
             href = "/Feed";
@@ -151,15 +165,17 @@ export default function Home({ screenWidth, children }) {
                 </div>
               </div>
               <div
-                className={`z-2 fixed right-8 flex w-[20vw] flex-col items-center 
+                className={`mod-scroll z-2 fixed right-8 flex w-[20vw] flex-col items-center  overflow-y-auto 
                             ${
                               headerVisible
                                 ? "translate-y-[90px] transform transition-transform duration-100 ease-in-out"
                                 : "translate-y-[30px] transform transition-transform duration-100 ease-in-out"
                             }`}
+                style={{ maxHeight: "99vh" }}
               >
                 {/*Seccion derecha*/
                 /* AKI VA MI COMPONENTE*/}
+
                 <EventList />
                 <HorarioList />
                 <FriendsList friends={user.amigos} hide={actPage === 1} />
@@ -238,13 +254,6 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
         <AiOutlineUser className="mr-[3vw] h-[25px] w-[25px]" /> Amigos{" "}
       </button>
 
-      <button
-        className={buttStyle}
-        {...actButtonStyle(2)}
-        onClick={() => handleMenuTransitions(2)}
-      >
-        <AiOutlineCalendar className="mr-[3vw] h-[25px] w-[25px]" /> Eventos{" "}
-      </button>
 
       <button
         className={buttStyle}
@@ -257,11 +266,30 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
 
       <button
         className={buttStyle}
+        {...actButtonStyle(2)}
+        onClick={() => handleMenuTransitions(2)}
+      >
+        <AiOutlineCalendar className="mr-[3vw] h-[25px] w-[25px]" /> Horario{" "}
+      </button>
+      
+      <button
+        className={buttStyle}
         {...actButtonStyle(4)}
         onClick={() => handleMenuTransitions(4)}
       >
         <AiOutlineRead className="mr-[3vw] h-[25px] w-[25px]" /> Notas{" "}
       </button>
+
+      <button
+        className={buttStyle}
+        {...actButtonStyle(6)}
+        onClick={() => handleMenuTransitions(6)}
+      >
+        <AiOutlineSchedule className="mr-[3vw] h-[25px] w-[25px]" /> Calendario{" "}
+      </button>
+
+      {/* <button className={buttStyle} {...actButtonStyle(7)} onClick={() => handleMenuTransitions(7)}>
+                <AiOutlineWarning className="w-[25px] h-[25px] mr-[3vw]" /> Reportes </button> */}
     </>
   );
 };

@@ -1,12 +1,11 @@
-import { useState, useContext, } from "react";
+import { useState, useContext, useEffect  } from "react";
 import Head from "next/head";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 
 import { useTheme } from "next-themes";
 
-import { UserContext } from '../utils/userContext';
-
+import { UserContext } from "../utils/userContext";
 
 export default function ForgotPassword({ screenWidth }) {
   const { resolvedTheme, setTheme } = useTheme();
@@ -22,14 +21,16 @@ export default function ForgotPassword({ screenWidth }) {
     }
   `;
   const GET_CORREOS_REGISTRADOS = gql`
-  query {
-    all_usuarios {
-      correo
+    query {
+      all_usuarios {
+        correo
+      }
     }
-  }
   `;
   const { data: correosRegistradosData } = useQuery(GET_CORREOS_REGISTRADOS);
-  const correosRegistrados = correosRegistradosData ? correosRegistradosData.all_usuarios.map(user => user.correo) : [];
+  const correosRegistrados = correosRegistradosData
+    ? correosRegistradosData.all_usuarios.map((user) => user.correo)
+    : [];
 
   const emailRegex = /^[a-zA-Z]+\.[a-zA-Z]+\d{4}@alumnos\.ubiobio\.cl$/i;
   const [forgotPassword, { error }] = useMutation(FORGOT_PASSWORD);
@@ -37,14 +38,14 @@ export default function ForgotPassword({ screenWidth }) {
     if (!correosRegistrados.includes(correo)) {
       setCorreoError("El correo no está registrado.");
       return false;
-    }
-    else {
+    } else {
       if (!emailRegex.test(correo)) {
-        setCorreoError("Correo no valido, el correo debe pertenecer a la institucion");
+        setCorreoError(
+          "Correo no valido, el correo debe pertenecer a la institucion"
+        );
         return false;
       }
     }
-
 
     return true;
   };
@@ -54,15 +55,26 @@ export default function ForgotPassword({ screenWidth }) {
       return;
     }
     forgotPassword({ variables: { correo } })
-      .then(response => {
+      .then((response) => {
         setSuccessMessage("Se ha enviado una clave temporal a tu correo.");
       })
-      .catch(error => {
+      .catch((error) => {
         setCorreoError("El correo ya está registrado");
         console.log(error);
       });
   };
+  useEffect(() => {
+    if (correoError) {
+      const timeoutId = setTimeout(() => {
+        setCorreoError(false);
+      }, 3000);
 
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+    
+  }, [correoError]);
   const handleLogin = () => {
     // Redirigir al usuario a la página de inicio de sesión
     router.push("/Login");
@@ -75,8 +87,9 @@ export default function ForgotPassword({ screenWidth }) {
   return (
     <>
       <div
-        className={`z-1 fixed bottom-0 left-0 right-0 top-0 ${resolvedTheme === "light" ? "" : " opacity-70 "
-          } 
+        className={`z-1 fixed bottom-0 left-0 right-0 top-0 ${
+          resolvedTheme === "light" ? "" : " opacity-70 "
+        } 
             bg-background bg-cover bg-fixed`}
       ></div>
 
@@ -130,10 +143,13 @@ export default function ForgotPassword({ screenWidth }) {
                       className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                       placeholder="correo"
                       value={correo}
-                      onChange={(e) => setEmail(e.target.value)} required
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
                     />
                   </div>
-                  {correoError && <div className="text-red-500">{correoError}</div>}
+                  {correoError && (
+                    <div className="text-red-500">{correoError}</div>
+                  )}
                   <div className="flex w-full flex-col gap-2  lg:flex-row lg:justify-between">
                     <button
                       type="submit"
@@ -157,5 +173,4 @@ export default function ForgotPassword({ screenWidth }) {
       </main>
     </>
   );
-
 }

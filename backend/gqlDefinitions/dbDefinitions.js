@@ -28,14 +28,16 @@ type Token{
     value: String!
 }
 
-type calendario {
-        id: ID!
-        titulo: String!
-        fecha_inicio: Date!
-        fecha_fin: Date!
-        descripcion: String
-        usuario: [Usuario]!
-    }
+type Calendario {
+    id: ID!
+    titulo: String!
+    fecha_inicio: Date!
+    fecha_fin: Date!
+    descripcion: String
+    creador: ID!
+    invitados: [String]
+    tipo: String
+}
 
 type Carrera {
     id: ID!
@@ -153,6 +155,23 @@ type Archivo {
     url: String!
     filename: String!
     mimetype: String!
+}
+
+type Reporte{
+    id: ID!
+    usuario: String!
+    fecha: Date!
+    titulo: String!
+    descripcion: String
+    tipo: String!
+    id_elemento: String!
+    estado: String!
+    resolucion: String
+}
+
+type idAdmin{
+    id: ID!
+    idAdmin: [String]!
 }
 
 `

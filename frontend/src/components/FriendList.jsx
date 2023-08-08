@@ -18,7 +18,7 @@ export default function FriendsList({ friends, hide }) {
     }
 
     return (
-        <div className={`w-[100%] ${!hide ? 'grow-animation' : 'shrink-animation'}`} onAnimationEnd={handleAnimationEnd}>
+        <div className={`w-[100%] ${!hide ? 'grow-animation' : 'shrink-animation'} mb-10`} onAnimationEnd={handleAnimationEnd}>
 
             <h2 className="flex font-bold justify-self-center mr-auto ml-[10px] mb-[10px] text-secondary opacity-80 "> AMIGOS
                 <div className="flex items-center self-center me-auto px-[10px] rounded-[10px] ml-[10px] bg-secondary text-background opacity-80">

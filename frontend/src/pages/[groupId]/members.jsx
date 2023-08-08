@@ -17,13 +17,9 @@ export default function Members() {
   // obtener el id del grupo desde la url
   const router = useRouter();
   const { groupId } = router.query;
-  
+
   const isAdmin = () => {
-    if (
-      group?.admins?.some(
-        (admin) => admin.id === user.id
-      )
-    ) {
+    if (group?.admins?.some((admin) => admin.id === user.id)) {
       return true;
     } else {
       return false;
@@ -31,7 +27,7 @@ export default function Members() {
   };
 
   function MemberList() {
-    if (!group||group ===undefined) return <p>Cargando...</p>;
+    if (!group || group === undefined) return <p>Cargando...</p>;
     if (group?.miembros?.length === 0) {
       return (
         <div className="bg-slate flex flex-col p-2">
@@ -40,21 +36,21 @@ export default function Members() {
             <p>No hay miembros</p>
           </div>
         </div>
-      )
+      );
     }
-    
 
     return (
       <div className="bg-slate flex flex-col p-2">
         <h1 className="text-2xl font-semibold">Miembros</h1>
         <div className="flex flex-col">
           {group?.miembros?.map((miembro) => (
-            <div className="flex flex-row items-center justify-between "
-            key={miembro.id}
+            <div
+              className="flex flex-row items-center justify-between "
+              key={miembro.id}
             >
               <div className="m-2 flex flex-row font-semibold">
                 {userFoto(miembro.foto_perfil)}
-                <p className="ml-2">
+                <p className="ml-2 max-w-md max-2xl:hidden">
                   {miembro.nombre} {miembro.apellido}
                 </p>
                 <p className="ml-2">@ {miembro.username}</p>
@@ -81,19 +77,20 @@ export default function Members() {
     }
   };
   function AdminList() {
-    if (!group||group ===undefined) return <p>Cargando...</p>;
-
+    if (!group || group === undefined) return <p>Cargando...</p>;
 
     return (
       <div className="bg-slate flex flex-col p-2">
         <h1 className="text-2xl font-semibold">Administradores</h1>
         <div className="flex flex-col">
           {group?.admins?.map((admin) => (
-            <div className="flex flex-row items-center justify-between"
-             key={admin.id}>
+            <div
+              className="flex flex-row items-center justify-between"
+              key={admin.id}
+            >
               <div className="m-2 flex flex-row font-semibold">
                 {userFoto(admin.foto_perfil)}
-                <p className="ml-2 max-2xl:hidden">
+                <p className="ml-2 max-xl:hidden">
                   {admin.nombre} {admin.apellido}
                 </p>
                 <p className="ml">@{admin.username}</p>
@@ -113,7 +110,7 @@ export default function Members() {
   }
 
   function SolicitudesList() {
-    if (!group||group ===undefined) return <p>Cargando...</p>;
+    if (!group || group === undefined) return <p>Cargando...</p>;
 
     if (group?.solicitudes?.length === 0) {
       return (
@@ -131,11 +128,13 @@ export default function Members() {
         <h1 className="text-2xl font-semibold">Solicitudes</h1>
         <div className="flex flex-col">
           {group?.solicitudes?.map((solicitud) => (
-            <div className="flex flex-row items-center justify-between"
-            key={solicitud.id}>
+            <div
+              className="flex flex-row items-center justify-between"
+              key={solicitud.id}
+            >
               <div className="m-2 flex flex-row font-semibold">
                 {userFoto(solicitud.foto_perfil)}
-                <p className="ml-2">
+                <p className="ml-2 max-2xl:hidden">
                   {solicitud.nombre} {solicitud.apellido}
                 </p>
                 <p className="ml-2">@ {solicitud.username}</p>
@@ -170,7 +169,7 @@ export default function Members() {
             GroupBanner={group?.banner}
           />
           {/* listas container */}
-          <div className="grid grid-cols-3 rounded-md bg-foreground text-primary">
+          <div className="grid grid-cols-3  max-2xl:grid-cols-1 max-2xl::grid-rows-3 rounded-md bg-foreground text-primary">
             {/* lista miembros */}
             <div className="col-span-1 m-2  h-fit flex-col rounded-md bg-background p-2   lg:flex">
               {MemberList()}

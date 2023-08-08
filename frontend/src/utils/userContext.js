@@ -51,6 +51,11 @@ export const UserProvider = ({ children }) => {
 
             return await requestUser(document.cookie.toString().split('; ').find((cookie) => cookie.startsWith(`user=`)).split("=")[1]).
                 then((us) => {
+                    if(!us){
+                        document.cookie = `user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                        window.location.reload();
+                        return 
+                    }
                     
                     setUser(us);
 
@@ -152,7 +157,9 @@ export const UserProvider = ({ children }) => {
             }`,
             { chats: user.chats.map((chat) => chat.id) }, false).then((data) => { return data; })
             .catch((error) => { throw error; })
-
+        if(!getLastMsgChats){
+            return []
+        }
         let isNew = false;
         setLastMsgChats(getLastMsgChats.map((chat) => {
             const newMsg = chat.mensajes[0].usuario.id !== user.id && !chat.mensajes[0].visto.some((us) => us.id === user.id);
@@ -904,7 +911,7 @@ export const UserProvider = ({ children }) => {
             user, chats, recomendations, friendsPosts, lastMsgChats, isNewMsgs, userInfo,
             sendMessage, changeFriendChatState, changeChatState, setIsNewMsgs,
             addPost, removePost, addComment, likePost,
-            getRecomendations, getFriendsPosts, getLastMsgChats
+            getRecomendations, getFriendsPosts, getLastMsgChats,setFriendsPosts, setUser
         }}>
             {children}
         </UserContext.Provider>
