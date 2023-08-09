@@ -115,15 +115,15 @@ export default function Login({ screenWidth }) {
             shadow-2xl md:w-[40%] md:rounded-l-[0] md:pl-[5vw]"
             >
               {/* login form title */}
-              <h1 className="mt-[5vh] text-4xl font-semibold text-primary ">
-                Iniciar Sesion
-              </h1>
-              <h1 className="mt-[5px] text-lg font-semibold  text-primary ">
-                Inicia sesion para continuar
+              <h1 className="mt-[5vh] text-4xl font-semibold text-primary  items-center ">
+                Iniciar Sesión
               </h1>
               {/* login form inputs */}
               <div className="mt-[10vh] flex flex-col">
                 {/* email input */}
+                <h1 className="mt-[5px] text-lg font-semibold  text-primary ">
+                Inicia sesión para continuar
+              </h1>
                 <input
                   type="email"
                   className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
@@ -145,13 +145,14 @@ export default function Login({ screenWidth }) {
                   </div>
                 )}
               </div>
+              
               <div className="flex w-full flex-col gap-2  lg:flex-row lg:justify-between">
                 {/* login button */}
                 <button
                   type="submit"
                   className=" my-2 mt-[10vh] w-5/6  max-w-[400px]  rounded-[10px] bg-accent p-3  font-semibold hover:bg-primary hover:text-background active:bg-background active:text-primary"
                 >
-                  Iniciar Sesion
+                  Iniciar Sesión
                 </button>
               </div>
               <div className="mt-8 space-x-2">

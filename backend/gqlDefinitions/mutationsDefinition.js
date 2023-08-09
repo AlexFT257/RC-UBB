@@ -38,10 +38,10 @@ type Mutation {
     editarGrupo(id: ID!, nombre: String, privacidad: String, vencimiento: Date, descripcion: String, admins: [ID], miembros: [ID], icono: String, banner: String): Grupo
     eliminarGrupo(id: ID!): Grupo
     solicitarUnirse(idGrupo: ID!, idUsuario: ID!): Grupo
-    agregarAdmins(idGrupo: ID!, admins: [ID]!): Grupo
-    agregarMiembros(idGrupo: ID!, miembros: [ID]!): Grupo
-    eliminarAdmins(idGrupo: ID!, admins: [ID]!): Grupo
-    eliminarMiembros(idGrupo: ID!, miembros: [ID]!): Grupo
+    agregarAdmins(idGrupo: ID!, admins: ID!): Grupo
+    agregarMiembros(idGrupo: ID!, miembros: ID!): Grupo
+    eliminarAdmins(idGrupo: ID!, admins: ID!): Grupo
+    eliminarMiembros(idGrupo: ID!, miembros: ID!): Grupo
     
     # Crear Chat
     crearChat(usuarios: [ID]!, nombre: String!, mensaje: MensajeInput): Chat

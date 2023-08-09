@@ -41,6 +41,8 @@ export default function Header({
     changeChatState,
     isNewMsgs,
     setIsNewMsgs,
+    userInfo,
+    agregarAmigo: agregarAmigoUserContext,
   } = useContext(UserContext);
 
   const handleCerrarSesion = () => {
@@ -72,6 +74,8 @@ export default function Header({
     error: errorJoin,
     sendJoinRequest,
   } = useSendJoinRequest();
+
+
 
   // funcion para actualizar las queries (refetch) cada vez que se hace una busqueda
   const refecthQueries = () => {
@@ -235,7 +239,11 @@ export default function Header({
 
         agregarAmigo({ variables: { id: user.id, amigo: id } })
           .then(() => {
-            refecthQueries();
+            setTimeout(() => {
+              // userInfo();
+              refecthQueries();
+            }
+            , 1000);
           })
           .catch((error) => {
             console.log(error);
@@ -249,7 +257,8 @@ export default function Header({
         // TODO: Agregar amigo
 
         // refetch para actualizar la lista de amigos
-        refecthQueries();
+        // refecthQueries();
+        // agregarAmigoUserContext(id);
       };
 
       // determina si el usuario encontrado es el mismo que esta logueado
@@ -258,13 +267,7 @@ export default function Header({
       // si el id del usuario logueado es igual al id del usuario que se esta iterando
       // se retorna null para no mostrarlo en la lista
       if (user.id === id) {
-        return (
-          <div className="m-2 flex flex-grow justify-between rounded-md bg-background p-2">
-            <div className="flex flex-col">
-              <h1>No se encontraron usuarios</h1>
-            </div>
-          </div>
-        );
+        return ;
       }
 
       // bool que determina si el usuario es amigo

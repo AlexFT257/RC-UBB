@@ -61,3 +61,32 @@ export function hasForbiddenWords(text) {
   
   return false; // No se encontraron palabras prohibidas
 }
+
+
+import { useQuery, useMutation, gql } from "@apollo/client";
+import { useState,useEffect } from "react";
+
+const VERIFY_ADMIN = gql`
+    query verifyAdmin($idAdmin: String!) {
+      verifyAdmin(idAdmin: $idAdmin) {
+        idAdmin
+      }
+    }
+  `;
+
+export const useVerifyAdmin = (userId) => {
+  const { loading, error, data, refetch } = useQuery(VERIFY_ADMIN, {
+    variables: { idAdmin: userId },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  
+
+  return {
+    loading,
+    error,
+    data,
+    refetch,
+  };
+};
+

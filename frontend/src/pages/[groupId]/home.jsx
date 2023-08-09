@@ -19,7 +19,7 @@ export default function GroupHome({ showModal }) {
 
   useEffect(() => {
     if (group) {
-      console.log("skips", skip);
+      // console.log("skips", skip);
       requestGroupPost(groupId, skip).then((res) => {
         setPosts(res);
       });
@@ -27,7 +27,7 @@ export default function GroupHome({ showModal }) {
   }, [group, skip]);
 
   useEffect(() => {
-    console.log("isNewPost", isNewPost);
+    // console.log("isNewPost", isNewPost);
     if (isNewPost) {
       setSkip(skip + 1);
       setIsNewPost(false);
@@ -56,12 +56,12 @@ export default function GroupHome({ showModal }) {
           const threshold = 70; // ajustar este valor
 
           if (distanceToBottom < threshold) {
-            console.log("Usuario llegó al final de la página");
+            // console.log("Usuario llegó al final de la página");
             // Aquí puedes realizar acciones adicionales, como cargar más contenido.
-            console.log("group", group);
+            // console.log("group", group);
             if (group || groupId) {
               requestGroupPost(groupId, skip).then((res) => {
-                console.log("res", res);
+                // console.log("res", res);
                 setPosts(res);
               });
             }
@@ -84,7 +84,7 @@ export default function GroupHome({ showModal }) {
   // useEffect que hace fetch de los posts del grupo
   // periodicamente cada 60 segundos
   useEffect(() => {
-    console.log("posts length", posts.length);
+    // console.log("posts length", posts.length);
     if (posts.length <= 2) {
       const interval = setInterval(() => {
         requestGroupPost(groupId, skip).then((res) => {

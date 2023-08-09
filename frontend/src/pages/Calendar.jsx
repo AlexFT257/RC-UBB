@@ -142,7 +142,6 @@ function CalendarScreen() {
 
   useEffect(() => {
     if (data && data.buscarEventoUsuario) {
-      // Formatear las fechas a objetos Date antes de establecer los eventos en el estado
       const formattedEvents = data.buscarEventoUsuario.map((event) => ({
         ...event,
         fecha_inicio: new Date(event.fecha_inicio),
@@ -181,7 +180,6 @@ function CalendarScreen() {
     const formattedFechaInicio = moment(fecha_inicio).toISOString();
     const formattedFechaFin = moment(fecha_fin).toISOString();
 
-    // Validación de fechas
     if (moment(fecha_inicio).isAfter(fecha_fin)) {
       alert("La fecha de inicio no puede ser posterior a la fecha de término.");
       return;
@@ -222,13 +220,12 @@ function CalendarScreen() {
   };
 
   const eventPropGetter = (event, start, end, isSelected) => {
-    // Aquí definimos el estilo para los eventos de tipo "creador" y "invitado"
     if (event.tipo === "creador") {
       return { style: { backgroundColor: "#001C30" } };
     } else if (event.tipo === "invitado") {
       return { style: { backgroundColor: "#FF4500" } };
     }
-    return {}; // Si el tipo no es "creador" ni "invitado", se mantendrá el estilo predeterminado
+    return {}; 
   };
 
   const EventAgenda = ({ event }) => (
@@ -243,7 +240,6 @@ function CalendarScreen() {
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
 
-    // Establecer los datos del evento seleccionado en el estado "agendaData"
     setAgendaData({
       titulo: event.titulo,
       fecha_inicio: moment(event.fecha_inicio).format("YYYY-MM-DDTHH:mm"),
@@ -259,7 +255,6 @@ function CalendarScreen() {
     const handleEditClick = () => {
       setSelectedEvent(event);
 
-      // Establecer los datos del evento seleccionado en el estado "agendaData"
       setAgendaData({
         titulo: event.titulo,
         fecha_inicio: moment(event.fecha_inicio).format("YYYY-MM-DDTHH:mm"),
@@ -302,199 +297,231 @@ function CalendarScreen() {
   const currentMonth = localizer.format(currentDate, "MMMM", "es");
   const currentYear = localizer.format(currentDate, "YYYY");
 
+  const dayPropGetter = (date) => {
+    const currentDate = new Date();
+    const isSameDay = moment(date).isSame(currentDate, "day");
+
+    if (isSameDay) {
+      return {
+        style: {
+          backgroundColor: "#fc5a8d",
+        },
+      };
+    }
+    return {};
+  };
+
   return (
     <>
-      <div className="mt-[80px]   max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
-          <div className="flex flex-col  items-center justify-center py-2">
-            <div className="flex w-full flex-col items-center justify-center  bg-foreground rounded-md text-center">
-              <style>
-                {`
-              .rbc-calendar {
-                height: 600px; /* Altura del calendario */
-                margin-top: 40px; /* Margen superior para posicionar el calendario más arriba */
-                margin-bottom: 40px;
-              }
+      <div className="z-10 mt-[80px]  w-[100vw] max-w-[100vw] text-current lg:w-[55vw] lg:max-w-[90vw] lg:px-10">
+        <div className="m-4 flex-col items-center  justify-between text-[5vw] font-bold sm:text-[18px] ">
+          <div className="flex w-full flex-col items-center justify-center  rounded-md bg-foreground text-center">
+            <style>
+              {`
               .rbc-month-header {
-                font-size: 20px; /* Tamaño de fuente para el mes y el año */
+                font-size: 20px;
               }
               .form-group label {
-                margin-right: 10px; /* Ajusta el espacio entre el label y el input */
+                margin-right: 10px;
               }              
+              @media screen and (max-width: 1340px) {
+                .rbc-toolbar {
+                  flex-direction: column; /* Cambiar la dirección del flex para apilar los elementos verticalmente */
+                  align-items: center; /* Centrar elementos horizontalmente */
+                }
+              
+                .rbc-btn-group {
+                  margin-top: 10px; /* Agregar espacio entre los botones y el rbc-toolbar-label */
+                }
+
+                .rbc-calendar-wrapper .rbc-calendar {
+                  width: 100%;
+                }
+
+                  .rbc-month-header {
+                    font-size: 18px;
+                  }
+              
+                  .form-group label {
+                    margin-right: 5px;
+                  }
+
+              }
             `}
-              </style>
-              <Calendar
-                localizer={localizer}
-                messages={{
-                  today: "Hoy",
-                  previous: "Anterior",
-                  next: "Siguiente",
-                  month: "Mes",
-                  week: "Semana",
-                  day: "Día",
-                  agenda: "Agenda",
-                  date: "Fecha",
-                  time: "Hora",
-                  event: "Evento",
-                  allDay: "Todo el día",
-                  showMore: (total) => `+ Ver más (${total})`,
-                }}
-                events={events}
-                eventPropGetter={eventPropGetter}
-                startAccessor="fecha_inicio"
-                endAccessor="fecha_fin"
-                style={{ height: 600, width: 750 }}
-                selectable={true}
-                onSelecting={(event) => false}
-                onSelectSlot={handleSelectSlot}
-                onSelectEvent={handleSelectEvent}
-                views={["month", Views.DAY, Views.WEEK, "agenda"]}
-                components={{
-                  agenda: {
-                    event: (props) => <EventAgenda {...props} />,
-                  },
+            </style>
+            <Calendar
+              localizer={localizer}
+              dayPropGetter={dayPropGetter}
+              messages={{
+                today: "Hoy",
+                previous: "Anterior",
+                next: "Siguiente",
+                month: "Mes",
+                week: "Semana",
+                day: "Día",
+                agenda: "Agenda",
+                date: "Fecha",
+                time: "Hora",
+                event: "Evento",
+                allDay: "Todo el día",
+                showMore: (total) => `+ Ver más (${total})`,
+              }}
+              events={events}
+              eventPropGetter={eventPropGetter}
+              startAccessor="fecha_inicio"
+              endAccessor="fecha_fin"
+              style={{
+                height: 600,
+                width: "100%",
+              }}
+              selectable={true}
+              onSelecting={(event) => false}
+              onSelectSlot={handleSelectSlot}
+              onSelectEvent={handleSelectEvent}
+              views={["month", Views.DAY, Views.WEEK, "agenda"]}
+              components={{
+                agenda: {
+                  event: (props) => <EventAgenda {...props} />,
+                },
+                event: EventCell,
+                month: {
                   event: EventCell,
-                  month: {
-                    event: EventCell,
-                  },
-                  day: {
-                    event: EventCell,
-                  },
-                }}
-              />
-              <Modal
-                open={isModalOpen}
-                onClose={() => {
-                  setIsModalOpen(false);
-                  setCreatingEvent(false);
-                }}
-                styles={{
-                  modal: {
-                    maxWidth: "400px",
-                    borderRadius: "8px",
-                    padding: "20px",
-                    backgroundColor: "var(--color-foreground)",
-                  },
-                  overlay: {
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                  },
+                },
+                day: {
+                  event: EventCell,
+                },
+              }}
+            />
+            <Modal
+              open={isModalOpen}
+              onClose={() => {
+                setIsModalOpen(false);
+                setCreatingEvent(false);
+              }}
+              styles={{
+                modal: {
+                  borderRadius: "8px",
+                  padding: "20px",
+                  backgroundColor: "var(--color-foreground)",
+                },
+                overlay: {
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                },
+              }}
+            >
+              <form
+                onSubmit={handleEditEvento}
+                className="flex-col items-center justify-center bg-foreground text-[5vw] sm:text-[18px]"
+                style={{
+                  margin: 0,
+                  padding: "20px",
+                  borderRadius: "8px",
                 }}
               >
-                <form
-                  onSubmit={handleEditEvento}
-                  className="flex-col items-center justify-center bg-foreground text-[5vw] sm:text-[18px]"
-                  style={{
-                    margin: 0,
-                    padding: "20px",
-                    borderRadius: "8px",
-                    maxWidth: "400px",
-                  }}
-                >
-                  <h2 className="modal-label">
-                    {creatingEvent ? "Nuevo Evento" : "Editar Evento"}{" "}
-                  </h2>
-                  <div className="form-group">
-                    <label htmlFor="titulo" className="modal-label">
-                      Título
-                    </label>
-                    <br />
-                    <input
-                      type="text"
-                      name="titulo"
-                      value={agendaData.titulo}
-                      onChange={handleChange}
-                      id="titulo"
-                      required
-                    />
-                  </div>
+                <h2 className="modal-label">
+                  {creatingEvent ? "Nuevo Evento" : "Editar Evento"}{" "}
+                </h2>
+                <div className="form-group">
+                  <label htmlFor="titulo" className="modal-label">
+                    Título
+                  </label>
+                  <br />
+                  <input
+                    type="text"
+                    name="titulo"
+                    value={agendaData.titulo}
+                    onChange={handleChange}
+                    id="titulo"
+                    required
+                  />
+                </div>
 
-                  <div className="form-group">
-                    <label htmlFor="fecha_inicio" className="modal-label">
-                      Fecha de inicio
-                    </label>
-                    <br />
-                    <input
-                      type="datetime-local"
-                      name="fecha_inicio"
-                      value={agendaData.fecha_inicio}
-                      onChange={handleChange}
-                      id="fecha_inicio"
-                      required
-                    />
-                  </div>
+                <div className="form-group">
+                  <label htmlFor="fecha_inicio" className="modal-label">
+                    Fecha de inicio
+                  </label>
+                  <br />
+                  <input
+                    type="datetime-local"
+                    name="fecha_inicio"
+                    value={agendaData.fecha_inicio}
+                    onChange={handleChange}
+                    id="fecha_inicio"
+                    required
+                  />
+                </div>
 
-                  <div className="form-group">
-                    <label htmlFor="fecha_fin" className="modal-label">
-                      Fecha de fin
-                    </label>
-                    <br />
-                    <input
-                      type="datetime-local"
-                      name="fecha_fin"
-                      value={agendaData.fecha_fin}
-                      onChange={handleChange}
-                      id="fecha_fin"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="descripcion" className="modal-label">
-                      Descripción
-                    </label>
-                    <br />
-                    <textarea
-                      name="descripcion"
-                      value={agendaData.descripcion}
-                      onChange={handleChange}
-                      id="descripcion"
-                      rows={4}
-                      style={{
-                        resize: "vertical",
-                        width: "100%",
-                        padding: "5px",
-                      }}
-                    />
-                  </div>
+                <div className="form-group">
+                  <label htmlFor="fecha_fin" className="modal-label">
+                    Fecha de fin
+                  </label>
+                  <br />
+                  <input
+                    type="datetime-local"
+                    name="fecha_fin"
+                    value={agendaData.fecha_fin}
+                    onChange={handleChange}
+                    id="fecha_fin"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="descripcion" className="modal-label">
+                    Descripción
+                  </label>
+                  <br />
+                  <textarea
+                    name="descripcion"
+                    value={agendaData.descripcion}
+                    onChange={handleChange}
+                    id="descripcion"
+                    rows={4}
+                    style={{
+                      resize: "vertical",
+                      padding: "5px",
+                    }}
+                  />
+                </div>
 
-                  <div className="form-group">
-                    <label htmlFor="invitados" className="modal-label">
-                      Invitados
-                    </label>
-                    <br />
-                    <textarea
-                      name="invitados"
-                      value={agendaData.invitados}
-                      onChange={handleChange}
-                      id="invitados"
-                      disabled={!creatingEvent}
-                      rows={4}
-                      style={{
-                        resize: "vertical",
-                        width: "100%",
-                        padding: "5px",
-                      }}
-                    />
-                  </div>
-                  <div className="form-group" style={{ textAlign: "center" }}>
-                    <button
-                      type="submit"
-                      style={{
-                        fontSize: "1.5rem",
-                        padding: "10px 20px",
-                        backgroundColor: "var(--color-primary)",
-                        color: "white",
-                        borderRadius: "4px",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {creatingEvent ? "Crear" : "Editar"}
-                    </button>
-                  </div>
-                </form>
-              </Modal>
-            </div>
+                <div className="form-group">
+                  <label htmlFor="invitados" className="modal-label">
+                    Invitados
+                  </label>
+                  <br />
+                  <textarea
+                    name="invitados"
+                    value={agendaData.invitados}
+                    onChange={handleChange}
+                    id="invitados"
+                    disabled={!creatingEvent}
+                    rows={4}
+                    style={{
+                      resize: "vertical",
+                      padding: "5px",
+                    }}
+                  />
+                </div>
+                <div className="form-group" style={{ textAlign: "center" }}>
+                  <button
+                    type="submit"
+                    style={{
+                      fontSize: "1.5rem",
+                      padding: "10px 20px",
+                      backgroundColor: "var(--color-primary)",
+                      color: "white",
+                      borderRadius: "4px",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {creatingEvent ? "Crear" : "Editar"}
+                  </button>
+                </div>
+              </form>
+            </Modal>
           </div>
         </div>
+      </div>
     </>
   );
 }

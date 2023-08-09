@@ -12,9 +12,11 @@ import {
 } from "react-icons/ai";
 
 import { useRouter } from "next/router";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, use } from "react";
 import { UserContext } from "../utils/userContext";
 import { gql, useLazyQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import { useVerifyAdmin } from "../utils/validationUtils";
 
 import Header from "./Header";
 import Chat from "../components/Chat";
@@ -31,11 +33,13 @@ export default function Home({ screenWidth, children }) {
   const [isNavigating, setIsNavigating] = useState(false);
 
   const { userInfo, user, chats } = useContext(UserContext);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     if (!user) {
       userInfo().then((info) => {
-        console.log("Usuario Conectado", info);
+        // console.log("Usuario Conectado", info);
+        // setUserId(info.id);
       });
     }
   }, []);
@@ -161,7 +165,11 @@ export default function Home({ screenWidth, children }) {
 
                 {/* Menu isquierdo */}
                 <div className="mt-[30px] flex w-full flex-col overflow-hidden rounded-lg bg-foreground shadow-md">
-                  {homeMenuElements({ actPage, handleMenuTransitions })}
+                  {homeMenuElements({
+                    actPage,
+                    handleMenuTransitions,
+                    userId,
+                  })}
                 </div>
               </div>
               <div
@@ -195,7 +203,11 @@ export default function Home({ screenWidth, children }) {
             headerVisible={headerVisible}
             screenWidth={screenWidth}
             user={user}
-            menuElements={homeMenuElements({ actPage, handleMenuTransitions })}
+            menuElements={homeMenuElements({
+              actPage,
+              handleMenuTransitions,
+              userId,
+            })}
           />
 
           <div className="overflow-hidden ">
@@ -213,7 +225,7 @@ export default function Home({ screenWidth, children }) {
   );
 }
 
-const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
+const homeMenuElements = ({ actPage, handleMenuTransitions, userId }) => {
   const buttStyle =
     "flex justify-start items-center w-full h-[60px] p-[20px] pl-[30px] text-lg font-bold text-secondary transition-colors border-b border-background hover:bg-primary hover:text-foreground";
 
@@ -254,7 +266,6 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
         <AiOutlineUser className="mr-[3vw] h-[25px] w-[25px]" /> Amigos{" "}
       </button>
 
-
       <button
         className={buttStyle}
         {...actButtonStyle(3)}
@@ -271,7 +282,7 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
       >
         <AiOutlineCalendar className="mr-[3vw] h-[25px] w-[25px]" /> Horario{" "}
       </button>
-      
+
       <button
         className={buttStyle}
         {...actButtonStyle(4)}
@@ -288,8 +299,13 @@ const homeMenuElements = ({ actPage, handleMenuTransitions }) => {
         <AiOutlineSchedule className="mr-[3vw] h-[25px] w-[25px]" /> Calendario{" "}
       </button>
 
-      {/* <button className={buttStyle} {...actButtonStyle(7)} onClick={() => handleMenuTransitions(7)}>
-                <AiOutlineWarning className="w-[25px] h-[25px] mr-[3vw]" /> Reportes </button> */}
+      <button
+        className={buttStyle}
+        {...actButtonStyle(7)}
+        onClick={() => handleMenuTransitions(7)}
+      >
+        <AiOutlineWarning className="mr-[3vw] h-[25px] w-[25px]" /> Reportes
+      </button>
     </>
   );
 };

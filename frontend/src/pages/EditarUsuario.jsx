@@ -7,8 +7,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import Cookies from "js-cookie";
 import { useApolloClient } from "@apollo/client";
 import Home from "../components/Home";
-import {AiOutlineClose} from "react-icons/ai";
-
+import { AiOutlineClose } from "react-icons/ai";
 
 const EditarUsuarioPage = ({ screenWidth }) => {
   const { resolvedTheme, setTheme } = useTheme();
@@ -184,14 +183,14 @@ const EditarUsuarioPage = ({ screenWidth }) => {
 
       setEdicionExitosa(true);
       setMostrarMensajeExito(true);
-      console.log("Usuario editado:", data.editarUsuario);
+      //console.log("Usuario editado:", data.editarUsuario);
     } catch (error) {
       if (error.message.includes("Ya existe un usuario con este correo")) {
         setEdicionFallida(true);
         setMostrarMensajeFallido(true);
         setCorreoError("El correo ya está registrado");
       } else {
-        console.error("Error al editar usuario:", error.message);
+        console.error("Error al editar usuario:");
       }
       setEdicionFallida(true);
       setMostrarMensajeFallido(true);
@@ -280,7 +279,7 @@ const EditarUsuarioPage = ({ screenWidth }) => {
 
       router.push("/login");
     } catch (error) {
-      console.error("Error al eliminar usuario:", error);
+      console.error("Error al eliminar usuario:");
     }
   };
 
@@ -289,57 +288,56 @@ const EditarUsuarioPage = ({ screenWidth }) => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-        let showAlert = false; // Inicializar en falso para no mostrar alerta por defecto
+      let showAlert = false; // Inicializar en falso para no mostrar alerta por defecto
 
-        if (file.size > 700 * 1024) {
-            window.alert('La imagen supera los 700 KB de tamaño.');
-            showAlert = true;
-            return;
-        }
+      if (file.size > 700 * 1024) {
+        window.alert("La imagen supera los 700 KB de tamaño.");
+        showAlert = true;
+        return;
+      }
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setNuevaFoto(reader.result); 
-        };
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNuevaFoto(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-};
+  };
 
-const handleImageDelete = () => {
-  setNuevaFoto(null); 
-};
+  const handleImageDelete = () => {
+    setNuevaFoto(null);
+  };
 
   return (
     <>
       <main>
-        <div className="flex h-screen flex-col items-center justify-center ">
-          <div className="mx-auto mt-20 rounded-lg bg-foreground p-6 shadow-lg px-[3vw] w-[50vw] min-w-[400px] flex flex-col items-center justify-center">
+        <div className="flex  flex-col items-center justify-center align-middle mt-[100px]">
+          <div className="mx-auto flex w-[50vw] min-w-[400px] flex-col items-center justify-center rounded-lg bg-foreground p-6 px-[3vw] shadow-lg">
             <h2 className="mb-4 text-2xl font-bold">Editar Usuario</h2>
             <div className="m-2 flex flex-col items-center justify-center gap-2">
-            <div>
-        {nuevaFoto && (
-            <div className="relative">
-                <img
-                    src={nuevaFoto}
-                    alt="Foto Perfil"
-                    className="rounded-lg border shadow-lg"
-                    height={200}
-                    width={200}
-                />
-                <button
-                    onClick={handleImageDelete}
-                    className="right absolute top-0 rounded-full p-1 text-white hover:bg-primary"
-                >
-                    <AiOutlineClose />
-                </button>
-            </div>
-        )}
+              <div>
+                {nuevaFoto && (
+                  <div className="relative">
+                    <img
+                      src={nuevaFoto}
+                      alt="Foto Perfil"
+                      className="rounded-lg border shadow-lg"
+                      height={200}
+                      width={200}
+                    />
+                    <button
+                      onClick={handleImageDelete}
+                      className="right absolute top-0 rounded-full p-1 text-white hover:bg-primary"
+                    >
+                      <AiOutlineClose />
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col items-center justify-center">
                 <label
                   htmlFor="imageUpload"
-                  className="bg-accent hover:bg-background px-4 py-2 rounded-[10px] font-bold mx-auto cursor-pointer"
-                  
+                  className="mx-auto cursor-pointer rounded-[10px] bg-accent px-4 py-2 font-bold hover:bg-background"
                 >
                   Subir Foto
                 </label>
@@ -352,8 +350,8 @@ const handleImageDelete = () => {
                 />
               </div>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-4 flex flex-col">
-              <div >
+            <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+              <div>
                 <input
                   type="text"
                   id="nombre"
@@ -366,7 +364,7 @@ const handleImageDelete = () => {
                   <div className="text-red-500">{nombreError}</div>
                 )}
               </div>
-              <div >
+              <div>
                 <input
                   type="text"
                   id="apellido"
@@ -379,7 +377,7 @@ const handleImageDelete = () => {
                   <div className="text-red-500">{apellidoError}</div>
                 )}
               </div>
-              <div >
+              <div>
                 <input
                   type="email"
                   id="correo"
@@ -392,7 +390,7 @@ const handleImageDelete = () => {
                   <div className="text-red-500">{correoError}</div>
                 )}
               </div>
-              <div >
+              <div>
                 <input
                   type="password"
                   id="contrasena"
@@ -404,12 +402,12 @@ const handleImageDelete = () => {
                 {contrasenaError && (
                   <div className="text-red-500">{contrasenaError}</div>
                 )}
-              </div >
-              <select 
+              </div>
+              <select
                 id="carrera"
                 value={nuevaCarreraId} // Ahora utiliza nuevaCarreraId como valor inicial
                 onChange={(e) => setNuevaCarreraId(e.target.value)}
-                className="my-2 w-[30vw] rounded-[10px] bg-background mb-[100px] p-2 placeholder-secondary outline-none focus:outline-secondary"
+                className="my-2 mb-[100px] w-[30vw] rounded-[10px] bg-background p-2 placeholder-secondary outline-none focus:outline-secondary"
               >
                 <option value="">Selecciona una carrera...</option>
                 {carrerasData &&
@@ -422,7 +420,7 @@ const handleImageDelete = () => {
 
               <button
                 type="submit"
-                className="bg-primary self-center text-foreground hover:bg-background hover:text-primary px-4 py-2 rounded-[10px] font-bold mx-auto"
+                className="mx-auto self-center rounded-[10px] bg-primary px-4 py-2 font-bold text-foreground hover:bg-background hover:text-primary"
               >
                 Guardar Cambios
               </button>
@@ -439,30 +437,32 @@ const handleImageDelete = () => {
               )}
             </form>
 
-            <div className="mt-4 flex justify-between">
-              {!mostrarConfirmacion ? (
-                <button
-                  onClick={() => setMostrarConfirmacion(true)}
-                  className="mt-[10px] bg-accent self-center text-background hover:bg-background hover:text-primary px-4 py-2 rounded-[10px] font-bold mx-auto"
-                >
-                  Eliminar cuenta
-                </button>
-              ) : (
-                <div className="mt-4 flex">
-                  <p>¿Estás seguro que deseas eliminar tu cuenta?</p>
+            <div className="mt-4">
+              {mostrarConfirmacion ? (
+                <div className="flex flex-col items-center">
+                  <p className="mb-2">
+                    ¿Estás seguro que deseas eliminar tu cuenta?
+                  </p>
                   <button
                     onClick={handleEliminarUsuario}
-                    className="mt-2 rounded bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-600"
+                    className="mb-2 rounded bg-red-500 px-4 py-2 font-medium text-white hover:bg-red-600"
                   >
                     Confirmar eliminación
                   </button>
                   <button
                     onClick={() => setMostrarConfirmacion(false)}
-                    className="mt-2 rounded bg-gray-300 px-4 py-2 font-medium text-gray-800 hover:bg-gray-400"
+                    className="rounded bg-gray-300 px-4 py-2 font-medium text-gray-800 hover:bg-gray-400"
                   >
                     Cancelar
                   </button>
                 </div>
+              ) : (
+                <button
+                  onClick={() => setMostrarConfirmacion(true)}
+                  className="mx-auto mt-[10px] self-center rounded-[10px] bg-accent px-4 py-2 font-bold text-background hover:bg-background hover:text-primary"
+                >
+                  Eliminar cuenta
+                </button>
               )}
             </div>
           </div>

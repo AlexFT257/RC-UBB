@@ -59,7 +59,7 @@ const mutations = {
         try {
             admins.forEach( async (admin) => {
                 grupo.admins.push(admin);
-                const user = await Usuario.findById(admin.id);
+                const user = await Usuario.findById(admin);
                 user.grupos.push(args.idGrupo);
                 await user.save();
             });
@@ -78,8 +78,9 @@ const mutations = {
         try {
             miembros.forEach( async(miembro) => {
                 grupo.miembros.push(miembro);
-                const user = await Usuario.findById(miembro.id);
-                user.grupos.push(args.idGrupo);
+                const user = await Usuario.findById(miembro);
+                console.log("USER",user);
+                user.grupos?.push(args.idGrupo);
                 await user.save();
             });
             await grupo.save();
@@ -93,14 +94,12 @@ const mutations = {
     },
     eliminarAdmins: async (root, args) => {
         const grupo = await Grupo.findById(args.idGrupo);
-        const admins = args.admins;
+        const admin = args.admins;
         try {
-            admins.forEach( async (admin) => {
                 grupo.admins.pull(admin);
-                const user = await Usuario.findById(admin.id);
-                user.grupos.pull(args.idGrupo);
+                const user = await Usuario.findById(admin);//NO EXISTE
+                user.grupos?.pull(args.idGrupo);
                 await user.save();
-            });
             await grupo.save();
             return grupo;
         }
@@ -112,14 +111,13 @@ const mutations = {
     },
     eliminarMiembros: async (root, args) => {
         const grupo = await Grupo.findById(args.idGrupo);
-        const miembros = args.miembros;
+        const miembro = args.miembros;
         try {
-            miembros.forEach(async (miembro) => {
                 grupo.miembros.pull(miembro);
-                const user = await Usuario.findById(miembro.id);
-                user.grupos.pull(args.idGrupo);
+                const user = await Usuario.findById(miembro);
+                console.log("USER",user);
+                user.grupos?.pull(args.idGrupo);
                 await user.save();
-            });
             await grupo.save();
             return grupo;
         }

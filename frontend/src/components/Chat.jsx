@@ -129,9 +129,9 @@ export default function Chat({ chatInfo, user }) {
 
             {/* chat header */}
             <div className="flex justify-between shadow-foreground items-center px-[14px] bg-background rounded-t-[10px] font-bold border-t-[1px] border-foreground">
-                <button onClick={handleOptions} className="my-[14px]">
+                {/* <button onClick={handleOptions} className="my-[14px]">
                     <AiOutlineMenu className="text-secondary w-[1.5rem] h-[1.5rem] hover:text-accent" />
-                </button>
+                </button> */}
 
                 <button onClick={toggleMinimized} className="w-[100%] py-0 h-[100%]">
                     {chatInfo.nombre === '*' ? chatInfo.usuarios.find((us) => us.id != user.id).username : chatInfo.nombre}
@@ -149,9 +149,9 @@ export default function Chat({ chatInfo, user }) {
             </div>
             {/* chat input */}
             <form onSubmit={processMessage} className="relative mt-auto mb-0 flex justify-between items-center h-[50] px-[10] bg-backgroundAlpha rounded-[10px]">
-                <button className="flex items-center pl-[20px] rounded-l-[10px]  hover:text-accent">
+                {/* <button className="flex items-center pl-[20px] rounded-l-[10px]  hover:text-accent">
                     <AiOutlinePicture className="w-[1.3rem] h-[1.3rem] fill-current opacity-80" />
-                </button>
+                </button> */}
                 <input className="flex-grow mr-[10px] ml-[10px] border-none rounded-[10px] p-[16px] bg-backgroundAlpha placeholder-secondary  focus:outline-none"
                     type="text" value={newMsg.msg.texto} placeholder="Type your message..." onChange={changeMessage} />
                 <button className=" flex items-center pr-[20px] rounded-r-[10px] hover:text-accent " type="submit">

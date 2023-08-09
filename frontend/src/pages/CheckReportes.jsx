@@ -84,7 +84,7 @@ const CheckReportes = () => {
                                                 <td className="border p-2">{new Date(reporte.fecha).toLocaleDateString()}</td>
                                                 <td className="border p-2">{reporte.tipo}</td>
                                                 <td className="border p-2">{reporte.resolucion ? reporte.resolucion : "Pendiende por resolución "}</td>
-                                                <td className="border p-2">{"NOSE"}</td>
+                                                <td className="border p-2">{reporte.usuario}</td>
                                                 <td className="border p-2">
                                                     <AiOutlineEdit onClick={() => openEditModal(reporte)} className="text-2xl cursor-pointer"/>
                                                     <ConfirmationModal reporteId={reporte.id} onConfirm={() => console.log("Eliminando reporte...")} />

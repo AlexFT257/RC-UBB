@@ -74,6 +74,13 @@ export const UserProvider = ({ children }) => {
         }
     }
 
+    const agregarAmigo = (friend) => {
+      setUser((prevUser) => ({
+        ...prevUser,
+        amigos: [...prevUser.amigos, friend]
+      }));
+    };
+
     const requestUser = async (token) => {
         const { descUsuario } = await clientRequester(
             `query DescUsuario($token: String!) {
@@ -911,7 +918,7 @@ export const UserProvider = ({ children }) => {
             user, chats, recomendations, friendsPosts, lastMsgChats, isNewMsgs, userInfo,
             sendMessage, changeFriendChatState, changeChatState, setIsNewMsgs,
             addPost, removePost, addComment, likePost,
-            getRecomendations, getFriendsPosts, getLastMsgChats,setFriendsPosts, setUser
+            getRecomendations, getFriendsPosts, getLastMsgChats,setFriendsPosts, setUser, agregarAmigo
         }}>
             {children}
         </UserContext.Provider>

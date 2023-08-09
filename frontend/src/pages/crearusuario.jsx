@@ -117,7 +117,7 @@ query {
       } else if (error.message.includes("El nombre de usuario ya está ocupado")) {
         setUsernameError("El nombre de usuario ya está ocupado");
       } else {
-        console.log("Error al crear el usuario:", error.message);
+        console.log("Error al crear el usuario:");
       }
     }
   };
@@ -224,13 +224,13 @@ query {
             <div className="text-center">Red social creada para la Universidad del Bio-Bio</div>
           </div>
           <div className="flex justify-center ">
-            <div className="z-10  flex-col items-center justify-center rounded-[10px] bg-foreground p-4 text-primary shadow-2xl">
+            <div className="z-10  flex-col items-center justify-center rounded-[10px] bg-foreground  w-[30vw] p-4 text-primary shadow-2xl">
               <h1 className="text-2xl font-bold mb-4 bg-foreground ">Crear Usuario</h1>
-              <form onSubmit={handleSubmit} className="space-y-4 bg-foreground ">
+              <form onSubmit={handleSubmit} className="space-y-4 bg-foreground justify-center items-center flex flex-col">
                 <div>
                   <input
                     type="text"
-                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    className="my-2 w-[25vw] min-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     id="nombre"
                     placeholder="nombre"
                     value={nombre}
@@ -242,7 +242,7 @@ query {
                 <div>
                   <input
                     type="text"
-                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    className="my-2 w-[25vw] min-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     id="apellido"
                     placeholder="apellido"
                     value={apellido}
@@ -254,7 +254,7 @@ query {
                 <div>
                   <input
                     type="text"
-                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    className="my-2  w-[25vw] min-w-[400px]  rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     id="username"
                     placeholder="nombre de usuario"
                     value={username}
@@ -268,7 +268,7 @@ query {
 
                   <input
                     type="correo"
-                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    className="my-2  w-[25vw] min-w-[400px]  rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     placeholder="correo"
                     value={correo}
                     onChange={(e) => setEmail(e.target.value)} required
@@ -278,7 +278,7 @@ query {
                 <div>
                   <input
                     type="password"
-                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    className="my-2  w-[25vw] min-w-[400px]  rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     id="contrasena"
                     placeholder="contrasena"
                     value={contrasena}
@@ -291,7 +291,7 @@ query {
                 <div>
                   <input
                     type="date"
-                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    className="my-2  w-[25vw] min-w-[400px]  rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                     id="fecha_nacimiento"
                     placeholder="fecha_nacimiento"
                     value={fecha_nacimiento}
@@ -307,7 +307,7 @@ query {
                     value={carrera}
                     onChange={(e) => setCarrera(e.target.value)}
                     required
-                    className="my-2 w-5/6 max-w-[400px] rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
+                    className="my-2  w-[25vw] min-w-[400px]  rounded-[10px] bg-background p-2  placeholder-secondary outline-none focus:outline-secondary"
                   >
                     <option value="">Selecciona una carrera</option>
                     {carreras.map(carrera => (
@@ -320,13 +320,13 @@ query {
                 <div>
                   <button
                     type="submit"
-                    className="   w-5/6  max-w-[400px]  rounded-[10px] bg-accent p-3  font-semibold hover:bg-primary hover:text-background active:bg-background active:text-primary"
+                    className="    w-[25vw] min-w-[400px]   rounded-[10px] bg-accent p-3  font-semibold hover:bg-primary hover:text-background active:bg-background active:text-primary"
                   >
                     Crear usuario
                   </button>
                 </div>
               </form>
-              <p>
+              <p className="text-center self-center">
                 ¿Ya tienes cuenta? <a href="/login">Inicia sesión</a>
               </p>
             </div>

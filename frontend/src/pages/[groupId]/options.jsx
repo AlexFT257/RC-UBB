@@ -50,7 +50,7 @@ export default function Options() {
     if (file) {
       reader.readAsDataURL(e.target.files[0]);
     }
-    console.log("selectedIcon", selectedIcon);
+    // console.log("selectedIcon", selectedIcon);
   };
 
   const handleBannerChange = (e) => {
@@ -141,7 +141,7 @@ export default function Options() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("groupInfo", groupInfo);
+    // console.log("groupInfo", groupInfo);
     if (hasForbiddenWords(groupInfo.nombre)) {
       alert("El nombre del grupo no puede contener palabras prohibidas");
       return;
